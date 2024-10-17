@@ -1,8 +1,17 @@
 from fastapi import FastAPI
 
+from . import db
+
 app = FastAPI()
 
 
-@app.get("/")
-async def read_root():
-    return {"message": "Hello World"}
+# Simple API entry points
+
+@app.get("/users/")
+def users(id: int | None = None):
+    """List of all users.
+
+    If id is not None, the list contains only the country with given id.
+
+    """
+    return db.get_users(id)
