@@ -1,7 +1,5 @@
 fastapi
 uvicorn
-sqlalchemy
-alembic
 python-dotenv
 pydantic
 pymysql
