@@ -41,7 +41,6 @@ function App() {
           <h3 className="text-2xl font-semibold">Users</h3>
           <ul>
             {users.map(user => (
-              console.log(user),
               <li key={user[0]} className="p-2 border-b border-gray-200">
                 {user[1]} {user[2]} - {user[3]}
               </li>
