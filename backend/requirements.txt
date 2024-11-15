@@ -1,6 +1,4 @@
-fastapi
-uvicorn
+fastapi[standard]
 python-dotenv
 pydantic
-pymysql
 mariadb
