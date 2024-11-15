@@ -19,3 +19,39 @@ Pour l’expérience utilisateur et les fonctionnalités du site, du Javascript.
 Pour le fonctionnement du site en back, nous songeons à utiliser du Python. 
 Pour tout ce qui est base de données, nous nous pencherons pour l’instant sur du SQL.
 
+## Démarrage backend
+
+### Se déplacer dans le dossier du projet (studentplanner)
+ ```bash
+ cd studentplanner
+```
+ OU
+ ```bash
+ cd ../
+ ```
+
+### Activer la venv
+ ```bash
+venv\Scripts\activate
+ ```
+
+### Se déplacer dans le dossier backend
+ ```bash
+cd backend
+ ```
+
+### Vérifier que fastapi est bel et bien installé
+ ```bash
+pip check
+ ```
+OU (checker manuellement)
+ ```bash
+ pip list
+ ```
+
+### Commande à utiliser
+ ```bash
+fastapi dev backend/app
+```
+
+
