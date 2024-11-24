@@ -53,5 +53,27 @@ OU (checker manuellement)
  ```bash
 fastapi dev backend/app
 ```
+## Démarrage frontend
+### Installer NodeJS s'il n'est pas déjà installé
+https://nodejs.org
 
+### Pour vérifier si NodeJS est installé
+```bash
+node -v
+```
 
+### Se déplacer dans le dossier frontend
+```bash
+cd frontend
+ ```
+
+### Installer les paquets
+```bash
+npm i
+ ```
+
+### Commande à utiliser
+```bash
+npm run start
+ ```
+Cela ouvrira automatiquement une page web de l'app
