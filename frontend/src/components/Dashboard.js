@@ -8,7 +8,9 @@ import EventStats from "./Dashboard/EventStats";
 import TimeDistribution from "./Dashboard/Charts/Time";
 import EventAdd from "./EventAdd";
 
-import Plannings from "../pages/Plannings";
+import Scolaire from "../pages/plannings/scolaire";
+import Personnel from "../pages/plannings/personnel";
+import Professionnel from "../pages/plannings/professionnel";
 
 const Dashboard = () => {
   return (
@@ -36,7 +38,9 @@ const Dashboard = () => {
                 </div>
               }
             />
-            <Route path="/plannings" element={<Plannings />} />
+            <Route path="/plannings/scolaire" element={<Scolaire />} />
+            <Route path="/plannings/personnel" element={<Personnel />} />
+            <Route path="/plannings/professionnel" element={<Professionnel />} />
             <Route path="/class" element={<div>Ma classe</div>} />
           </Routes>
           <EventAdd />
