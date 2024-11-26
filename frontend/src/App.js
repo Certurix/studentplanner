@@ -1,6 +1,8 @@
 import React from 'react';
 import Dashboard from './components/Dashboard';
 import { BrowserRouter as Router } from 'react-router-dom';
+
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
 function App() {
