@@ -40,7 +40,10 @@ const Dashboard = () => {
             />
             <Route path="/plannings/scolaire" element={<Scolaire />} />
             <Route path="/plannings/personnel" element={<Personnel />} />
-            <Route path="/plannings/professionnel" element={<Professionnel />} />
+            <Route
+              path="/plannings/professionnel"
+              element={<Professionnel />}
+            />
             <Route path="/class" element={<div>Ma classe</div>} />
           </Routes>
           <EventAdd />
