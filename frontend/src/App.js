@@ -1,11 +1,13 @@
 import React from 'react';
 import Dashboard from './components/Dashboard';
+import { BrowserRouter as Router } from 'react-router-dom';
+import './App.css';
 
 function App() {
   return (
-    <div className="App">
+    <Router>
       <Dashboard />
-    </div>
+    </Router>
   );
 }
 
