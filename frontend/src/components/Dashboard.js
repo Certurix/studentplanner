@@ -1,6 +1,7 @@
-import React from "react";
+// frontend/src/components/Dashboard.js
+
+import React, { useState } from "react";
 import {
-  BrowserRouter as Router,
   Route,
   Routes,
   useLocation,
@@ -11,14 +12,19 @@ import Calendar from "./Dashboard/SmallCalendar";
 import EventsList from "./Dashboard/EventsList";
 import EventStats from "./Dashboard/EventStats";
 import TimeDistribution from "./Dashboard/Charts/Time";
-import EventAdd from "./EventAdd";
+import ModalEventAdd from "./Modals/ModalEventAdd";
 
 import Scolaire from "../pages/plannings/scolaire";
 import Personnel from "../pages/plannings/personnel";
 import Professionnel from "../pages/plannings/professionnel";
+import { FaPlus } from "react-icons/fa";
 
 const Dashboard = () => {
   const location = useLocation();
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   const getHeaderProps = () => {
     switch (location.pathname) {
@@ -33,17 +39,36 @@ const Dashboard = () => {
           title: "Planning personnel",
           subtitle:
             "Consultez votre planning personnel et modifiez vos événements",
+          btnData: [
+            {
+              text: "Ajouter",
+              icon: <FaPlus />,
+              onClick: handleShow,
+            },
+          ]
         };
       case "/plannings/professionnel":
         return {
           title: "Planning professionnel",
           subtitle:
             "Consultez votre planning professionnel et modifiez vos événements",
+          btnData: [
+            {
+              text: "Ajouter un événement",
+              onClick: handleShow,
+            },
+          ]
         };
       default:
         return {
           title: "Bonjour, Marc",
           subtitle: "Consultez vos dernières informations et détails",
+          btnData: [
+            {
+              text: "Ajouter un événement",
+              onClick: handleShow,
+            },
+          ]
         };
     }
   };
@@ -54,7 +79,12 @@ const Dashboard = () => {
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar />
       <div className="flex-1 p-6">
-        <Header title={headerProps.title} subtitle={headerProps.subtitle} />
+        <Header
+          title={headerProps.title}
+          subtitle={headerProps.subtitle}
+          btnData={headerProps.btnData}
+          onClick={handleShow}
+        />
         <Routes>
           <Route
             path="/"
@@ -68,7 +98,6 @@ const Dashboard = () => {
                   <EventStats />
                   <TimeDistribution />
                 </div>
-                <EventAdd />
               </div>
             }
           />
@@ -77,15 +106,10 @@ const Dashboard = () => {
           <Route path="/plannings/professionnel" element={<Professionnel />} />
           <Route path="/class" element={<div>Ma classe</div>} />
         </Routes>
+        <ModalEventAdd show={show} handleClose={handleClose} />
       </div>
     </div>
   );
 };
 
-const App = () => (
-  <Router>
-    <Dashboard />
-  </Router>
-);
-
-export default App;
+export default Dashboard;
