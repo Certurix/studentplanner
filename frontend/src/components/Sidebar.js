@@ -1,6 +1,7 @@
 // src/components/Sidebar.js
 
 import { FaHome, FaCalendarAlt, FaUser } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 export default function Sidebar() {
   return (
@@ -15,13 +16,19 @@ export default function Sidebar() {
         <nav>
           <ul>
             <li className="flex items-center p-2 mb-4 text-indigo-600">
-              <FaHome className="mr-2" /> Accueil
+              <Link to="/" className="flex items-center">
+                <FaHome className="mr-2" /> Accueil
+              </Link>
             </li>
             <li className="flex items-center p-2 mb-4 text-gray-600">
-              <FaCalendarAlt className="mr-2" /> Plannings
+              <Link to="/plannings" className="flex items-center">
+                <FaCalendarAlt className="mr-2" /> Plannings
+              </Link>
             </li>
             <li className="flex items-center p-2 mb-4 text-gray-600">
-              <FaUser className="mr-2" /> Ma classe
+              <Link to="/class" className="flex items-center">
+                <FaUser className="mr-2" /> Ma classe
+              </Link>
             </li>
           </ul>
         </nav>
