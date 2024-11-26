@@ -1,13 +1,9 @@
 // frontend/src/components/Dashboard.js
 
 import React, { useState } from "react";
-import {
-  Route,
-  Routes,
-  useLocation,
-} from "react-router-dom";
-import Sidebar from "./Sidebar";
-import Header from "./Header";
+import { Route, Routes, useLocation } from "react-router-dom";
+import Sidebar from "./Dashboard/Sidebar";
+import Header from "./Dashboard/Header";
 import Calendar from "./Dashboard/SmallCalendar";
 import EventsList from "./Dashboard/EventsList";
 import EventStats from "./Dashboard/EventStats";
@@ -17,6 +13,10 @@ import ModalEventAdd from "./Modals/ModalEventAdd";
 import Scolaire from "../pages/plannings/scolaire";
 import Personnel from "../pages/plannings/personnel";
 import Professionnel from "../pages/plannings/professionnel";
+
+import Chat from "../pages/class/chat";
+import Members from "../pages/class/members";
+
 import { FaPlus } from "react-icons/fa";
 
 const Dashboard = () => {
@@ -41,11 +41,11 @@ const Dashboard = () => {
             "Consultez votre planning personnel et modifiez vos événements",
           btnData: [
             {
-              text: "Ajouter",
+              text: "Nouveau",
               icon: <FaPlus />,
               onClick: handleShow,
             },
-          ]
+          ],
         };
       case "/plannings/professionnel":
         return {
@@ -57,7 +57,7 @@ const Dashboard = () => {
               text: "Ajouter un événement",
               onClick: handleShow,
             },
-          ]
+          ],
         };
       default:
         return {
@@ -68,7 +68,7 @@ const Dashboard = () => {
               text: "Ajouter un événement",
               onClick: handleShow,
             },
-          ]
+          ],
         };
     }
   };
@@ -104,8 +104,10 @@ const Dashboard = () => {
           <Route path="/plannings/scolaire" element={<Scolaire />} />
           <Route path="/plannings/personnel" element={<Personnel />} />
           <Route path="/plannings/professionnel" element={<Professionnel />} />
-          <Route path="/class" element={<div>Ma classe</div>} />
+          <Route path="/class/chat" element={<Chat />} />
+          <Route path="/class/members" element={<Members />} />
         </Routes>
+
         <ModalEventAdd show={show} handleClose={handleClose} />
       </div>
     </div>
