@@ -16,7 +16,7 @@ const Header = ({ title, subtitle, btnData, onClick }) => {
             key={index}
             variant="primary"
             onClick={btn.onClick || onClick}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center"
+            className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded flex items-center"
           >
             {btn.icon && <span className="mr-2">{btn.icon}</span>}
             {btn.text}
