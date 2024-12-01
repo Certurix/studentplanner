@@ -1,7 +1,7 @@
 // src/components/Sidebar.js
 
 import React from "react";
-import { FaHome, FaCalendarAlt, FaUser, FaSuitcase } from "react-icons/fa";
+import { FaHome, FaCalendarAlt, FaUser, FaSuitcase, FaComments, FaUsers, FaBan } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 import { Nav, Navbar, NavDropdown } from "react-bootstrap";
 import "./Sidebar.css";
@@ -15,7 +15,7 @@ export default function Sidebar() {
       <div>
         <div className="flex items-center mb-6">
           <img
-            src="https://via.placeholder.com/40"
+            src="../../../public/logo192.png"
             alt="Logo"
             className="mr-2"
           />
@@ -84,17 +84,17 @@ export default function Sidebar() {
                 to="/class/chat"
                 className="flex items-center p-2"
               >
-                Chat
+                <FaComments className="mr-2" /> Chat
               </NavDropdown.Item>
               <NavDropdown.Item
                 as={NavLink}
                 to="/class/members"
                 className="flex items-center p-2"
               >
-                Membres
+                <FaUsers className="mr-2" /> Membres
               </NavDropdown.Item>
               <NavDropdown.Item className="flex items-center p-2" disabled>
-                Personnel
+                <FaBan className="mr-2" /> Personnel
               </NavDropdown.Item>
             </NavDropdown>
           </Nav>
