@@ -1,5 +1,13 @@
 import React from "react";
-import { FaHome, FaCalendarAlt, FaUser, FaSuitcase, FaComments, FaUsers, FaBan } from "react-icons/fa";
+import {
+  FaHome,
+  FaCalendarAlt,
+  FaUser,
+  FaSuitcase,
+  FaComments,
+  FaUsers,
+  FaBan,
+} from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 import { Nav, Navbar, NavDropdown } from "react-bootstrap";
 import "./Sidebar.css";

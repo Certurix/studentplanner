@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 const EventItem = ({ color, title, date }) => (
   <div className="flex items-center justify-between mb-4 p-4 bg-white rounded-lg shadow-md">
@@ -10,18 +10,51 @@ const EventItem = ({ color, title, date }) => (
       </div>
     </div>
     <button className="text-gray-500">
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+      <svg
+        className="w-5 h-5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          d="M5 13l4 4L19 7"
+        ></path>
+      </svg>
     </button>
   </div>
 );
 
 const EventsList = () => {
   const events = [
-    { color: 'bg-red-500', title: 'RDV médecin', date: '04.04 | 14:00 - 15:00' },
-    { color: 'bg-yellow-500', title: 'Remplir le contrat d’étude', date: '04.07 | 14:00 - 15:00' },
-    { color: 'bg-purple-500', title: 'Reviser Algèbre de BOOLE', date: '04.08 | 14:00 - 15:00' },
-    { color: 'bg-blue-500', title: 'Soutenance', date: '04.11 | 13:00 - 17:00' },
-    { color: 'bg-green-500', title: 'Entretien stage', date: '04.13 | 10:00 - 13:00' },
+    {
+      color: "bg-red-500",
+      title: "RDV médecin",
+      date: "04.04 | 14:00 - 15:00",
+    },
+    {
+      color: "bg-yellow-500",
+      title: "Remplir le contrat d’étude",
+      date: "04.07 | 14:00 - 15:00",
+    },
+    {
+      color: "bg-purple-500",
+      title: "Reviser Algèbre de BOOLE",
+      date: "04.08 | 14:00 - 15:00",
+    },
+    {
+      color: "bg-blue-500",
+      title: "Soutenance",
+      date: "04.11 | 13:00 - 17:00",
+    },
+    {
+      color: "bg-green-500",
+      title: "Entretien stage",
+      date: "04.13 | 10:00 - 13:00",
+    },
   ];
 
   return (
@@ -32,6 +65,6 @@ const EventsList = () => {
       ))}
     </div>
   );
-}
+};
 
 export default EventsList;

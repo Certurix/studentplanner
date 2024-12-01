@@ -1,7 +1,7 @@
 // frontend/src/components/Header.js
 
-import React from 'react';
-import { Button } from 'react-bootstrap';
+import React from "react";
+import { Button } from "react-bootstrap";
 
 const Header = ({ title, subtitle, btnData, onClick }) => {
   return (
@@ -25,6 +25,6 @@ const Header = ({ title, subtitle, btnData, onClick }) => {
       </div>
     </div>
   );
-}
+};
 
 export default Header;
