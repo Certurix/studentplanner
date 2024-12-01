@@ -1,0 +1,27 @@
+.no-border .rbc-calendar {
+    border: none;
+  }
+  
+  .no-border .rbc-header {
+    border: none;
+  }
+  
+  .no-border .rbc-day-bg {
+    border: none;
+  }
+  
+  .no-border .rbc-time-content {
+    border: none;
+  }
+  
+  .no-border .rbc-time-header {
+    border: none;
+  }
+  
+  .no-border .rbc-time-header-cell {
+    border: none;
+  }
+  
+  .no-border .rbc-time-slot {
+    border: none;
+  }
