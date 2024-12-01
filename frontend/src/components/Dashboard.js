@@ -33,6 +33,13 @@ const Dashboard = () => {
           title: "Planning scolaire",
           subtitle:
             "Consultez votre planning scolaire et modifiez vos événements",
+          btnData: [
+            {
+              text: "Nouveau",
+              icon: <FaPlus />,
+              onClick: handleShow,
+            },
+          ],
         };
       case "/plannings/personnel":
         return {
@@ -54,7 +61,8 @@ const Dashboard = () => {
             "Consultez votre planning professionnel et modifiez vos événements",
           btnData: [
             {
-              text: "Ajouter un événement",
+              text: "Nouveau",
+              icon: <FaPlus />,
               onClick: handleShow,
             },
           ],
