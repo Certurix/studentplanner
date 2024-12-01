@@ -1,5 +1,3 @@
-// src/components/Sidebar.js
-
 import React from "react";
 import { FaHome, FaCalendarAlt, FaUser, FaSuitcase, FaComments, FaUsers, FaBan } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
@@ -15,7 +13,7 @@ export default function Sidebar() {
       <div>
         <div className="flex items-center mb-6">
           <img
-            src="../../../public/logo192.png"
+            src={`${process.env.PUBLIC_URL}/logo.svg`}
             alt="Logo"
             className="mr-2"
           />
