@@ -17,7 +17,7 @@ app.add_middleware(
 
 # Simple API entry points
 
-@app.get("/users/")
+@app.get("/users/{id}")
 def users(id: int | None = None):
     """List of all users.
 
