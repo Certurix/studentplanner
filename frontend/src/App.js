@@ -1,6 +1,8 @@
 import React from 'react';
 import Dashboard from './components/Dashboard';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+
+import Login from "./pages/Login";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
@@ -8,7 +10,10 @@ import './App.css';
 function App() {
   return (
     <Router>
-      <Dashboard />
+      <Routes>
+        <Route path="*" element={<Dashboard />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
     </Router>
   );
 }
