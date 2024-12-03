@@ -23,7 +23,7 @@ def get_users(id=None):
     If id is not None, the list contains only the country with given id.
 
     """
-    cursor = get_connection().cursor()
+    cursor = get_connection().cursor(dictionary = True)
     if id is None:
         cursor.execute('''
             SELECT *
@@ -35,6 +35,7 @@ def get_users(id=None):
             SELECT *
             FROM user
             WHERE id = ?
-        ''', (id,)).fetchall()
+        ''', (id,))
+        rows = cursor.fetchone()
     cursor.close()
     return rows
