@@ -93,11 +93,7 @@ const Dashboard = () => {
           btnData={headerProps.btnData}
           onClick={handleShow}
         />
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <div className="grid grid-cols-3 gap-6">
+                <div className="grid grid-cols-3 gap-6">
                 <div className="col-span-2 space-y-6">
                   <Calendar />
                   <EventsList />
@@ -107,8 +103,7 @@ const Dashboard = () => {
                   <TimeDistribution />
                 </div>
               </div>
-            }
-          />
+        <Routes>
           <Route path="/plannings/scolaire" element={<Scolaire />} />
           <Route path="/plannings/personnel" element={<Personnel />} />
           <Route path="/plannings/professionnel" element={<Professionnel />} />
