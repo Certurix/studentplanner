@@ -72,10 +72,6 @@ const Dashboard = () => {
           title: "Bonjour, Marc",
           subtitle: "Consultez vos dernières informations et détails",
           btnData: [
-            {
-              text: "Ajouter un événement",
-              onClick: handleShow,
-            },
           ],
         };
     }
