@@ -71,8 +71,7 @@ const Dashboard = () => {
         return {
           title: "Bonjour, Marc",
           subtitle: "Consultez vos dernières informations et détails",
-          btnData: [
-          ],
+          btnData: [],
         };
     }
   };
@@ -89,28 +88,31 @@ const Dashboard = () => {
           btnData={headerProps.btnData}
           onClick={handleShow}
         />
-                <div className="grid grid-cols-3 gap-6">
-                <div className="col-span-2 space-y-6">
-                  <Calendar />
-                  <EventsList />
-                </div>
-                <div className="space-y-6">
-                  <EventStats />
-                  <TimeDistribution />
-                </div>
-              </div>
         <Routes>
+          <Route path="/" element={<Home />} />
           <Route path="/plannings/scolaire" element={<Scolaire />} />
           <Route path="/plannings/personnel" element={<Personnel />} />
           <Route path="/plannings/professionnel" element={<Professionnel />} />
-          <Route path="/class/chat" element={<Chat />} />
-          <Route path="/class/members" element={<Members />} />
+          {/* <Route path="/class/chat" element={<Chat />} />
+          <Route path="/class/members" element={<Members />} /> */}
         </Routes>
-
         <ModalEventAdd show={show} handleClose={handleClose} />
       </div>
     </div>
   );
 };
+
+const Home = () => (
+  <div className="grid grid-cols-3 gap-6">
+    <div className="col-span-2 space-y-6">
+      <Calendar />
+      <EventsList />
+    </div>
+    <div className="space-y-6">
+      <EventStats />
+      <TimeDistribution />
+    </div>
+  </div>
+);
 
 export default Dashboard;
