@@ -25,3 +25,18 @@ def users(id: int | None = None):
 
     """
     return db.get_users(id)
+
+@app.get("/users/{id}/email")
+def user_email(id: int):
+    """Get user email."""
+    return db.get_user_email(id)
+
+@app.get("/users/{id}/name")
+def user_name(id: int):
+    """Get user name."""
+    return db.get_user_name(id)
+
+@app.get("/users/{id}/lastname")
+def user_lastname(id: int):
+    """Get user lastname."""
+    return db.get_user_lastname(id)
