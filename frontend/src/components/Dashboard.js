@@ -1,6 +1,4 @@
-// frontend/src/components/Dashboard.js
-
-import React, { useState } from "react";
+import React, { useState, useTransition, useEffect } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import Sidebar from "./Dashboard/Sidebar";
 import Header from "./Dashboard/Header";
@@ -25,6 +23,57 @@ const Dashboard = () => {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  const [isPending, startTransition] = useTransition();
+
+  const [name, setName] = useState("Sophie");
+  const [lastname, setLastname] = useState("Dupont");
+  const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    getName();
+    getEmail();
+    getLastname();
+  }, []);
+
+  function getName() {
+    startTransition(() => {
+      fetch("http://localhost:8000/users/1/name", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => setName(data));
+    });
+  }
+
+  function getLastname() {
+    startTransition(() => {
+      fetch("http://localhost:8000/users/1/lastname", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => setLastname(data));
+    });
+  }
+
+  function getEmail() {
+    startTransition(() => {
+      fetch("http://localhost:8000/users/1/email", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => setEmail(data));
+    });
+  }
 
   const getHeaderProps = () => {
     switch (location.pathname) {
@@ -69,7 +118,7 @@ const Dashboard = () => {
         };
       default:
         return {
-          title: "Bonjour, Marc",
+          title: `Bonjour, ${name}`,
           subtitle: "Consultez vos dernières informations et détails",
           btnData: [],
         };
@@ -80,7 +129,7 @@ const Dashboard = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      <Sidebar />
+      <Sidebar name={name} lastname={lastname} email={email}/>
       <div className="flex-1 p-6">
         <Header
           title={headerProps.title}
