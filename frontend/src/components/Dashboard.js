@@ -29,6 +29,7 @@ const Dashboard = () => {
   const [name, setName] = useState("Sophie");
   const [lastname, setLastname] = useState("Dupont");
   const [email, setEmail] = useState("");
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     getName();
@@ -44,8 +45,14 @@ const Dashboard = () => {
           "Content-Type": "application/json",
         },
       })
-        .then((res) => res.json())
-        .then((data) => setName(data));
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return res.json();
+        })
+        .then((data) => setName(data))
+        .catch((error) => setError(error.message));
     });
   }
 
@@ -57,8 +64,14 @@ const Dashboard = () => {
           "Content-Type": "application/json",
         },
       })
-        .then((res) => res.json())
-        .then((data) => setLastname(data));
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return res.json();
+        })
+        .then((data) => setLastname(data))
+        .catch((error) => setError(error.message));
     });
   }
 
@@ -70,8 +83,14 @@ const Dashboard = () => {
           "Content-Type": "application/json",
         },
       })
-        .then((res) => res.json())
-        .then((data) => setEmail(data));
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return res.json();
+        })
+        .then((data) => setEmail(data))
+        .catch((error) => setError(error.message));
     });
   }
 
@@ -129,7 +148,7 @@ const Dashboard = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      <Sidebar name={name} lastname={lastname} email={email}/>
+      <Sidebar name={name} lastname={lastname} email={email} />
       <div className="flex-1 p-6">
         <Header
           title={headerProps.title}
