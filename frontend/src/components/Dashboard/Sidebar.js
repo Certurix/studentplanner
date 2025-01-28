@@ -1,13 +1,5 @@
 import React from "react";
-import {
-  FaHome,
-  FaCalendarAlt,
-  FaUser,
-  FaSuitcase,
-  FaComments,
-  FaUsers,
-  FaBan,
-} from "react-icons/fa";
+import { Icon } from "@iconify-icon/react";
 import { NavLink } from "react-router-dom";
 import { Nav, Navbar, NavDropdown } from "react-bootstrap";
 import "./Sidebar.css";
@@ -64,13 +56,13 @@ export default function Sidebar({ name, lastname, email }) {
               to="/"
               className="flex items-center p-2 mb-4"
             >
-              <FaHome className="mr-2" /> Accueil
+              <Icon icon="tabler:home" className="mr-2" /> Accueil
             </Nav.Link>
             <NavDropdown
               title={
                 <div className="flex items-center justify-between w-full">
                   <span className="flex items-center">
-                    <FaCalendarAlt className="mr-2" /> Plannings
+                    <Icon icon="tabler:calendar-week" width="20" height="20" className="mr-2" /> Plannings
                   </span>
                 </div>
               }
@@ -82,28 +74,28 @@ export default function Sidebar({ name, lastname, email }) {
                 to="/plannings/scolaire"
                 className="flex items-center p-2"
               >
-                <FaCalendarAlt className="mr-2" /> Scolaire
+                <Icon icon="tabler:school" className="mr-2" /> Scolaire
               </NavDropdown.Item>
               <NavDropdown.Item
                 as={NavLink}
                 to="/plannings/personnel"
                 className="flex items-center p-2"
               >
-                <FaUser className="mr-2" /> Personnel
+                <Icon icon="tabler:user" className="mr-2" /> Personnel
               </NavDropdown.Item>
               <NavDropdown.Item
                 as={NavLink}
                 to="/plannings/professionnel"
                 className="flex items-center p-2"
               >
-                <FaSuitcase className="mr-2" /> Professionnel
+                <Icon icon="tabler:briefcase" className="mr-2" /> Professionnel
               </NavDropdown.Item>
             </NavDropdown>
             <NavDropdown
               title={
                 <div className="flex items-center justify-between w-full">
                   <span className="flex items-center">
-                    <FaUser className="mr-2" /> Ma classe
+                    <Icon icon="tabler:school" width="20" height="20" className="mr-2" /> Ma classe
                   </span>
                 </div>
               }
@@ -115,23 +107,37 @@ export default function Sidebar({ name, lastname, email }) {
                 to="/class/chat"
                 className="flex items-center p-2"
               >
-                <FaComments className="mr-2" /> Chat
+                <Icon icon="tabler:messages" className="mr-2" /> Chat
               </NavDropdown.Item>
               <NavDropdown.Item
                 as={NavLink}
                 to="/class/members"
                 className="flex items-center p-2"
               >
-                <FaUsers className="mr-2" /> Membres
+                <Icon icon="tabler:users" className="mr-2" /> Membres
               </NavDropdown.Item>
               <NavDropdown.Item className="flex items-center p-2" disabled>
-                <FaBan className="mr-2" /> Personnel
+                <Icon icon="tabler:ban" className="mr-2" /> Personnel
               </NavDropdown.Item>
             </NavDropdown>
           </Nav>
         </Navbar>
       </div>
       <div className="mt-6">
+        <Nav.Link
+          as={NavLink}
+          to="/settings"
+          className="flex items-center p-2 mb-4"
+        >
+          <Icon icon="tabler:settings" width="20" height="20" className="mr-2" /> Paramètres
+        </Nav.Link>
+        <Nav.Link
+          as={NavLink}
+          to="/support"
+          className="flex items-center p-2 mb-4"
+        >
+          <Icon icon="tabler:lifebuoy" width="20" height="20" className="mr-2" /> Assistance
+        </Nav.Link>
         <hr />
         <div className="px-4 py-2">
           <div className="flex items-center">
