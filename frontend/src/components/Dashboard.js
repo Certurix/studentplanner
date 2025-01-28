@@ -3,8 +3,8 @@ import { Route, Routes, useLocation } from "react-router-dom";
 import Sidebar from "./Dashboard/Sidebar";
 import Header from "./Dashboard/Header";
 import Calendar from "./Dashboard/SmallCalendar";
-import EventsList from "./Dashboard/EventsList";
-import EventStats from "./Dashboard/EventStats";
+import EventsList from "./Dashboard/Events/EventsList";
+import EventStats from "./Dashboard/Events/EventStats";
 import TimeDistribution from "./Dashboard/Charts/Time";
 import ModalEventAdd from "./Modals/ModalEventAdd";
 
@@ -15,7 +15,8 @@ import Professionnel from "../pages/plannings/professionnel";
 import Chat from "../pages/class/chat";
 import Members from "../pages/class/members";
 
-import { FaPlus } from "react-icons/fa";
+import { Icon } from "@iconify-icon/react";
+import SearchResults from "./SearchResults";
 
 const Dashboard = () => {
   const location = useLocation();
@@ -104,7 +105,7 @@ const Dashboard = () => {
           btnData: [
             {
               text: "Nouveau",
-              icon: <FaPlus />,
+              icon: <Icon icon="tabler:plus" width="20" height="20" style={{ display: 'block' }} />,
               onClick: handleShow,
             },
           ],
@@ -117,7 +118,7 @@ const Dashboard = () => {
           btnData: [
             {
               text: "Nouveau",
-              icon: <FaPlus />,
+              icon: <Icon icon="tabler:plus" width="20" height="20" style={{ display: 'block' }} />,
               onClick: handleShow,
             },
           ],
@@ -130,7 +131,7 @@ const Dashboard = () => {
           btnData: [
             {
               text: "Nouveau",
-              icon: <FaPlus />,
+              icon: <Icon icon="tabler:plus" width="20" height="20" style={{ display: 'block' }} />,
               onClick: handleShow,
             },
           ],
@@ -161,6 +162,8 @@ const Dashboard = () => {
           <Route path="/plannings/scolaire" element={<Scolaire />} />
           <Route path="/plannings/personnel" element={<Personnel />} />
           <Route path="/plannings/professionnel" element={<Professionnel />} />
+          <Route path="/search" element={<SearchResults />} />
+
           {/* <Route path="/class/chat" element={<Chat />} />
           <Route path="/class/members" element={<Members />} /> */}
         </Routes>
