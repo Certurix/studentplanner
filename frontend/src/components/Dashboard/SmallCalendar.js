@@ -5,7 +5,7 @@ export default function Calendar() {
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-lg mb-6 w-full max-w-md mx-auto">
-      <h2 className="text-center text-xl font-semibold mb-4">Avril</h2>
+      <h2 className="text-center text-xl font-semibold mb-4">{      new Date().toLocaleString('default', { month: 'long' }).toUpperCase()}</h2>
 
       {/* Weekday headers */}
       <div className="grid grid-cols-7 text-center text-sm text-gray-500 mb-2">
