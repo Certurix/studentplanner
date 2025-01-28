@@ -66,7 +66,7 @@ export default function Sidebar({ name, lastname, email }) {
               to="/"
               className="flex items-center p-2 mb-4"
             >
-              <Icon icon="tabler:home" className="mr-2" /> Accueil
+              <Icon icon="tabler:home" width="20" height="20" className="mr-2" /> Accueil
             </Nav.Link>
             <NavDropdown
               title={
