@@ -3,7 +3,7 @@
 import React from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import EventAdd from "../Dashboard/EventAdd";
+import EventAdd from "../Dashboard/Events/EventAdd";
 
 const ModalEventAdd = ({ show, handleClose }) => {
   return (
