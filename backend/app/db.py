@@ -11,7 +11,7 @@ def get_connection():
     connection = mariadb.connect(
         user ="root",
         password ="123456789",
-        host ="localhost",
+        host ="127.0.0.1",
         port =3306,
         database = "studentplanner"
     )
@@ -75,3 +75,123 @@ def get_user_email(id):
     row = cursor.fetchone()
     cursor.close()
     return row[0] if row else None
+
+def get_user_school(id):
+    """Get user school."""
+    cursor = get_connection().cursor()
+    cursor.execute('''
+        SELECT school
+        FROM user
+        WHERE id = ?
+    ''', (id,))
+    row = cursor.fetchone()
+    cursor.close()
+    return row[0] if row else None
+
+def get_user_class(id):
+    """Get user class."""
+    cursor = get_connection().cursor()
+    cursor.execute('''
+        SELECT class
+        FROM user
+        WHERE id = ?
+    ''', (id,))
+    row = cursor.fetchone()
+    cursor.close()
+    return row[0] if row else None
+
+def get_user_avatar(id):
+    """Get user avatar."""
+    cursor = get_connection().cursor()
+    cursor.execute('''
+        SELECT avatar
+        FROM user
+        WHERE id = ?
+    ''', (id,))
+    row = cursor.fetchone()
+    cursor.close()
+    return row[0] if row else None
+
+def set_user_name(id, name):
+    """Update user name."""
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute('''
+        UPDATE user
+        SET name = ?
+        WHERE id = ?
+    ''', (name, id))
+    connection.commit()
+    cursor.close()
+
+def set_user_lastname(id, lastname):
+    """Update user lastname."""
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute('''
+        UPDATE user
+        SET lastname = ?
+        WHERE id = ?
+    ''', (lastname, id))
+    connection.commit()
+    cursor.close()
+
+def set_user_email(id, email):
+    """Update user email."""
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute('''
+        UPDATE user
+        SET email = ?
+        WHERE id = ?
+    ''', (email, id))
+    connection.commit()
+    cursor.close()
+
+def set_user_school(id, school):
+    """Update user school."""
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute('''
+        UPDATE user
+        SET school = ?
+        WHERE id = ?
+    ''', (school, id))
+    connection.commit()
+    cursor.close()
+
+def set_user_class(id, user_class):
+    """Update user class."""
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute('''
+        UPDATE user
+        SET class = ?
+        WHERE id = ?
+    ''', (user_class, id))
+    connection.commit()
+    cursor.close()
+
+def set_user_avatar(id, avatar):
+    """Update user avatar."""
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute('''
+        UPDATE user
+        SET avatar = ?
+        WHERE id = ?
+    ''', (avatar, id))
+    connection.commit()
+    cursor.close()
+
+def get_events_month(month):
+    """Get list of events in given month."""
+    cursor = get_connection().cursor(dictionary=True)
+    cursor.execute('''
+        SELECT ID, title, description, type, priority, startdate, enddate, place
+        FROM events
+        WHERE MONTH(startdate) = ? OR MONTH(enddate) = ?
+    ''', (month, month))
+    rows = cursor.fetchall()
+    cursor.close()
+    return rows

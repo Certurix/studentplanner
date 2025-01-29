@@ -1,5 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
 from . import db
 
@@ -14,6 +15,22 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Pydantic models for request bodies
+class UserEmail(BaseModel):
+    email: str
+
+class UserName(BaseModel):
+    name: str
+
+class UserSchool(BaseModel):
+    school: str
+
+class UserClass(BaseModel):
+    className: str
+
+class UserLastname(BaseModel):
+    lastname: str
 
 # Simple API entry points
 
@@ -31,12 +48,52 @@ def user_email(id: int):
     """Get user email."""
     return db.get_user_email(id)
 
+@app.post("/users/{id}/email")
+def set_user_email(id: int, email: UserEmail):
+    """Set user email."""
+    return db.set_user_email(id, email.email)
+
 @app.get("/users/{id}/name")
 def user_name(id: int):
     """Get user name."""
     return db.get_user_name(id)
 
+@app.post("/users/{id}/name")
+def set_user_name(id: int, name: UserName):
+    """Set user name."""
+    return db.set_user_name(id, name.name)
+
+@app.get("/users/{id}/school")
+def user_school(id: int):
+    """Get user school."""
+    return db.get_user_school(id)
+
+@app.post("/users/{id}/school")
+def set_user_school(id: int, school: UserSchool):
+    """Set user school."""
+    return db.set_user_school(id, school.school)
+
+@app.get("/users/{id}/class")
+def user_class(id: int):
+    """Get user class."""
+    return db.get_user_class(id)
+
+@app.post("/users/{id}/class")
+def set_user_class(id: int, className: UserClass):
+    """Set user class."""
+    return db.set_user_class(id, className.className)
+
 @app.get("/users/{id}/lastname")
 def user_lastname(id: int):
     """Get user lastname."""
     return db.get_user_lastname(id)
+
+@app.post("/users/{id}/lastname")
+def set_user_lastname(id: int, lastname: UserLastname):
+    """Set user lastname."""
+    return db.set_user_lastname(id, lastname.lastname)
+
+@app.get("/events/month/{month}")
+def events_month(month: int):
+    """Get events for a given month."""
+    return db.get_events_month(month)
