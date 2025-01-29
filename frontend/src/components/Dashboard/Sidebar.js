@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Icon } from "@iconify-icon/react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Nav, Navbar, NavDropdown } from "react-bootstrap";
-import "./Sidebar.css";
 
 export default function Sidebar({ name, lastname, email }) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -15,7 +14,7 @@ export default function Sidebar({ name, lastname, email }) {
 
   return (
     <aside
-      className="w-1/5 bg-gray-50 p-6 flex flex-col justify-between shadow-lg"
+      className="w-full md:w-1/5 bg-gray-50 p-6 flex flex-col justify-between shadow-lg"
       style={{ minHeight: "100vh" }}
     >
       <div>
@@ -25,12 +24,12 @@ export default function Sidebar({ name, lastname, email }) {
             alt="Logo"
             className="mr-2"
           />
-          <h1 className="text-2xl font-semibold">StudentPlanner</h1>
+          <h1 className="text-2xl font-semibold whitespace-nowrap overflow-hidden text-ellipsis">StudentPlanner</h1>
         </div>
 
         <form className="max-w-md mx-auto" onSubmit={handleSearchSubmit}>
           <div className="relative">
-            <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
               <svg
                 className="w-4 h-4 text-gray-500 dark:text-gray-400"
                 aria-hidden="true"
@@ -50,7 +49,7 @@ export default function Sidebar({ name, lastname, email }) {
             <input
               type="search"
               id="default-search"
-              className="block w-full p-2 px-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Rechercher..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -77,7 +76,7 @@ export default function Sidebar({ name, lastname, email }) {
                 </div>
               }
               id="nav-dropdown"
-              className="w-full text-left mb-4 custom-dropdown"
+              className="w-full text-left mb-4"
             >
               <NavDropdown.Item
                 as={NavLink}
@@ -110,7 +109,7 @@ export default function Sidebar({ name, lastname, email }) {
                 </div>
               }
               id="nav-dropdown-class"
-              className="w-full text-left mb-4 custom-dropdown"
+              className="w-full text-left mb-4"
             >
               <NavDropdown.Item
                 as={NavLink}
