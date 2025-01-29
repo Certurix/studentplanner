@@ -69,8 +69,13 @@ cd frontend
 npm i
  ```
 
-### Commande à utiliser
+### Lancer l'application en mode dev
 ```bash
-npm run start
+npm run dev
  ```
+
+### Build l'application
+```bash
+npm run build
+```
 Cela ouvrira automatiquement une page web de l'app
