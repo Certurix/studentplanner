@@ -3,17 +3,8 @@ import { useDropzone } from "react-dropzone";
 import { Card, Button, Form, Tabs, Tab, Row, Col } from "react-bootstrap";
 import { Icon } from "@iconify-icon/react";
 
-export default function UserSettings() {
-  const [key, setKey] = useState("mesInfos");
-
-  const [user, setUser] = useState({
-    firstName: "Marc",
-    lastName: "Dubois",
-    email: "marcdubois@example.com",
-    school: "IPI LYON",
-    class: "BDEV 1",
-    photo: "/user-photo.jpg" // Example placeholder
-  });
+export default function UserSettings({ data }) {
+  const [key, setKey] = useState("userdata");
 
   const { getRootProps, getInputProps } = useDropzone({
     accept: "image/*",
@@ -21,11 +12,66 @@ export default function UserSettings() {
       const file = acceptedFiles[0];
       const reader = new FileReader();
       reader.onload = () => {
-        setUser((prev) => ({ ...prev, photo: reader.result }));
+        data.photo = reader.result;
       };
       reader.readAsDataURL(file);
     }
   });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const formData = {
+      name: form.elements["name"].value,
+      lastname: form.elements["lastname"].value,
+      email: form.elements["email"].value,
+      school: form.elements["school"].value,
+      class: form.elements["class"].value,
+      photo: data.photo
+    };
+
+    try {
+      // Send individual requests to update user data
+      const updateFields = ["name", "lastname", "email", "school", "class"];
+      for (const field of updateFields) {
+        if (formData[field]) {
+          const response = await fetch(`http://localhost:8000/users/1/${field}`, {
+            method: "POST",
+            body: JSON.stringify({
+              [field]: formData[field],
+            }),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error(`Failed to update ${field}`);
+          }
+        }
+      }
+
+      // Update photo if it exists
+      if (formData.photo) {
+        const response = await fetch("http://localhost:8000/users/1/photo", {
+          method: "POST",
+          body: JSON.stringify({ photo: formData.photo }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to update photo");
+        }
+      }
+
+      window.location.reload();
+    } catch (error) {
+      console.error("Error saving settings:", error);
+      return
+    }
+  }
 
   return (
     <div className="container mt-4">
@@ -35,23 +81,23 @@ export default function UserSettings() {
         onSelect={(k) => setKey(k)}
         className="mb-3 custom-tabs"
       >
-        <Tab eventKey="mesInfos" title="Mes infos">
+        <Tab eventKey="userdata" title="Mes infos">
           <Card className="p-4 shadow-sm">
-            <Form>
+            <Form onSubmit={handleSubmit}>
               <Form.Group as={Row} className="mb-3">
                 <Form.Label column sm={2}>Nom</Form.Label>
                 <Col sm={5}>
-                  <Form.Control value={user.firstName} className="rounded" />
+                  <Form.Control name="name" defaultValue={data.name} className="rounded" />
                 </Col>
                 <Col sm={5}>
-                  <Form.Control value={user.lastName} className="rounded" />
+                  <Form.Control name="lastname" defaultValue={data.lastname} className="rounded" />
                 </Col>
               </Form.Group>
               <hr className="mb-2" />
               <Form.Group as={Row} className="mb-3">
                 <Form.Label column sm={2}>Email</Form.Label>
                 <Col sm={10}>
-                  <Form.Control type="email" value={user.email} className="rounded" />
+                  <Form.Control type="email" name="email" defaultValue={data.email} className="rounded" />
                 </Col>
               </Form.Group>
               <hr className="mb-2" />
@@ -60,7 +106,7 @@ export default function UserSettings() {
                 <Col sm={10}>
                   <div className="d-flex align-items-center">
                     <img
-                      src={user.photo}
+                      src={data.photo}
                       alt="User Avatar"
                       className="rounded-circle me-3"
                       width="50"
@@ -91,18 +137,18 @@ export default function UserSettings() {
               <Form.Group as={Row} className="mb-3">
                 <Form.Label column sm={2}>École</Form.Label>
                 <Col sm={10}>
-                  <Form.Control value={user.school} className="rounded" />
+                  <Form.Control name="school" defaultValue={data.school} className="rounded" />
                 </Col>
               </Form.Group>
               <Form.Group as={Row} className="mb-3">
                 <Form.Label column sm={2}>Classe</Form.Label>
                 <Col sm={10}>
-                  <Form.Control value={user.class} className="rounded" />
+                  <Form.Control name="class" defaultValue={data.class} className="rounded" />
                 </Col>
               </Form.Group>
               <div className="d-flex justify-content-end gap-2">
-                <Button variant="outline-secondary">Annuler</Button>
-                <Button variant="primary">Sauvegarder</Button>
+                <Button variant="outline-secondary" type="button">Annuler</Button>
+                <Button variant="primary" type="submit">Sauvegarder</Button>
               </div>
             </Form>
           </Card>
