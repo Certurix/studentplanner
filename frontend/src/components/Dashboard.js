@@ -31,12 +31,16 @@ const Dashboard = () => {
   const [name, setName] = useState("");
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
+  const [school, setSchool] = useState("");
+  const [className, setClassName] = useState("");
   const [error, setError] = useState(null);
 
   useEffect(() => {
     getName();
     getEmail();
     getLastname();
+    getSchool();
+    getClassName();
   }, []);
 
   function getName() {
@@ -92,6 +96,44 @@ const Dashboard = () => {
           return res.json();
         })
         .then((data) => setEmail(data))
+        .catch((error) => setError(error.message));
+    });
+  }
+
+  function getSchool() {
+    startTransition(() => {
+      fetch("http://localhost:8000/users/1/school", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return res.json();
+        })
+        .then((data) => setSchool(data))
+        .catch((error) => setError(error.message));
+    });
+  }
+
+  function getClassName() {
+    startTransition(() => {
+      fetch("http://localhost:8000/users/1/class", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return res.json();
+        })
+        .then((data) => setClassName(data))
         .catch((error) => setError(error.message));
     });
   }
@@ -156,7 +198,7 @@ const Dashboard = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      <Sidebar name={name} lastname={lastname} email={email} />
+      <Sidebar data={{ name, lastname, email }} />
       <div className="flex-1 p-6">
         <Header
           title={headerProps.title}
@@ -169,7 +211,7 @@ const Dashboard = () => {
           <Route path="/plannings/scolaire" element={<Scolaire />} />
           <Route path="/plannings/personnel" element={<Personnel />} />
           <Route path="/plannings/professionnel" element={<Professionnel />} />
-          <Route path="/settings" element={<Settings />} />
+          <Route path="/settings" element={<Settings data={{ name, lastname, email, className, school }} />} />
           <Route path="/search" element={<SearchResults />} />
 
           {/* <Route path="/class/chat" element={<Chat />} />
