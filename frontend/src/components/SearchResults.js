@@ -17,7 +17,7 @@ const SearchResults = () => {
 
   const fetchEvents = async (query) => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/events/search`, {
+      const response = await axios.get(`http://localhost:8000/events/search`, {
         params: { query },
       });
       setEvents(response.data);
