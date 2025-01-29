@@ -28,8 +28,8 @@ const Dashboard = () => {
 
   const [isPending, startTransition] = useTransition();
 
-  const [name, setName] = useState("Sophie");
-  const [lastname, setLastname] = useState("Dupont");
+  const [name, setName] = useState("");
+  const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
   const [error, setError] = useState(null);
 
