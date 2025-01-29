@@ -17,6 +17,7 @@ import Members from "../pages/class/members";
 
 import { Icon } from "@iconify-icon/react";
 import SearchResults from "./SearchResults";
+import Settings from "../pages/Settings";
 
 const Dashboard = () => {
   const location = useLocation();
@@ -136,6 +137,12 @@ const Dashboard = () => {
             },
           ],
         };
+      case "/settings":
+        return {
+          title: "Paramètres",
+          subtitle: "Mettez à jour vos informations personnelles et de sécurité",
+          btnData: [],
+        };
       default:
         return {
           title: `Bonjour, ${name}`,
@@ -162,6 +169,7 @@ const Dashboard = () => {
           <Route path="/plannings/scolaire" element={<Scolaire />} />
           <Route path="/plannings/personnel" element={<Personnel />} />
           <Route path="/plannings/professionnel" element={<Professionnel />} />
+          <Route path="/settings" element={<Settings />} />
           <Route path="/search" element={<SearchResults />} />
 
           {/* <Route path="/class/chat" element={<Chat />} />
