@@ -4,7 +4,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { Nav, Navbar, NavDropdown } from "react-bootstrap";
 import './Sidebar.css';
 
-export default function Sidebar({ name, lastname, email }) {
+export default function Sidebar({ data }) {
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
@@ -145,8 +145,8 @@ export default function Sidebar({ name, lastname, email }) {
               className="rounded-full mr-4 border border-gray-300"
             />
             <div>
-              <p className="font-semibold">{name} {lastname}</p>
-              <p className="text-sm text-gray-500">{email}</p>
+              <p className="font-semibold">{data.name} {data.lastname}</p>
+              <p className="text-sm text-gray-500">{data.email}</p>
             </div>
           </div>
         </div>
