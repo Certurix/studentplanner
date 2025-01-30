@@ -123,6 +123,7 @@ def set_user_name(id, name):
     ''', (name, id))
     connection.commit()
     cursor.close()
+    return True
 
 def set_user_lastname(id, lastname):
     """Update user lastname."""
@@ -135,6 +136,7 @@ def set_user_lastname(id, lastname):
     ''', (lastname, id))
     connection.commit()
     cursor.close()
+    return True
 
 def set_user_email(id, email):
     """Update user email."""
@@ -147,6 +149,7 @@ def set_user_email(id, email):
     ''', (email, id))
     connection.commit()
     cursor.close()
+    return True
 
 def set_user_school(id, school):
     """Update user school."""
@@ -159,6 +162,7 @@ def set_user_school(id, school):
     ''', (school, id))
     connection.commit()
     cursor.close()
+    return True
 
 def set_user_class(id, user_class):
     """Update user class."""
@@ -171,6 +175,7 @@ def set_user_class(id, user_class):
     ''', (user_class, id))
     connection.commit()
     cursor.close()
+    return True
 
 def set_user_avatar(id, avatar):
     """Update user avatar."""
@@ -183,6 +188,7 @@ def set_user_avatar(id, avatar):
     ''', (avatar, id))
     connection.commit()
     cursor.close()
+    return True
 
 def get_events_month(month):
     """Get list of events in given month."""
