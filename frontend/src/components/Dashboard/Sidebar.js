@@ -22,7 +22,7 @@ export default function Sidebar({ data }) {
         <div className="flex items-center mb-6">
           <img
             src={`${process.env.PUBLIC_URL}/logo.svg`}
-            alt="Logo"
+            alt="Logo StudentPlanner"
             className="mr-2"
           />
           <h1 className="text-2xl font-semibold whitespace-nowrap overflow-hidden text-ellipsis">StudentPlanner</h1>
@@ -141,7 +141,7 @@ export default function Sidebar({ data }) {
           <div className="flex items-center">
             <img
               src="https://via.placeholder.com/40"
-              alt="Profile"
+              alt="profil"
               className="rounded-full mr-4 border border-gray-300"
             />
             <div>
