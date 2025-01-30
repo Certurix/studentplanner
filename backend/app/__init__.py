@@ -27,7 +27,7 @@ class UserSchool(BaseModel):
     school: str
 
 class UserClass(BaseModel):
-    className: str
+    classname: str
 
 class UserLastname(BaseModel):
     lastname: str
@@ -73,15 +73,15 @@ def set_user_school(id: int, school: UserSchool):
     """Set user school."""
     return db.set_user_school(id, school.school)
 
-@app.get("/users/{id}/class")
+@app.get("/users/{id}/classname")
 def user_class(id: int):
     """Get user class."""
     return db.get_user_class(id)
 
-@app.post("/users/{id}/class")
+@app.post("/users/{id}/classname")
 def set_user_class(id: int, className: UserClass):
     """Set user class."""
-    return db.set_user_class(id, className.className)
+    return db.set_user_class(id, classname.classname)
 
 @app.get("/users/{id}/lastname")
 def user_lastname(id: int):
