@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages and Backend
+name: Deploy to GitHub Pages and Heroku
 
 on:
   push:
@@ -31,7 +31,7 @@ jobs:
       - name: Deploy frontend to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           publish_dir: frontend/build
 
       - name: Set up Python
