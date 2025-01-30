@@ -12,12 +12,11 @@ import Scolaire from "../pages/plannings/scolaire";
 import Personnel from "../pages/plannings/personnel";
 import Professionnel from "../pages/plannings/professionnel";
 
-import Chat from "../pages/class/chat";
-import Members from "../pages/class/members";
-
 import { Icon } from "@iconify-icon/react";
 import SearchResults from "./SearchResults";
 import Settings from "../pages/Settings";
+import { Alert } from "react-bootstrap";
+import Loader from "./Loader";
 
 const Dashboard = () => {
   const location = useLocation();
@@ -41,6 +40,17 @@ const Dashboard = () => {
     getLastname();
     getSchool();
     getClassName();
+
+    startTransition(() => {
+      setTimeout(() => {
+        fetch("https://google.com", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }).catch((error) => setError(error.message));
+      }, 5000);
+    });
   }, []);
 
   function getName() {
@@ -198,8 +208,16 @@ const Dashboard = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
+      <Loader loading={isPending} />
       <Sidebar data={{ name, lastname, email }} />
       <div className="flex-1 p-6">
+        <Alert variant="danger" show={error !== null}>
+
+          <Alert.Heading>Erreur</Alert.Heading>
+          <p>
+            {error}
+          </p>
+        </Alert>
         <Header
           title={headerProps.title}
           subtitle={headerProps.subtitle}
