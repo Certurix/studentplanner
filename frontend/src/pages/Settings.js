@@ -32,7 +32,7 @@ export default function UserSettings({ data }) {
 
     try {
       // Send individual requests to update user data
-      const updateFields = ["name", "lastname", "email", "school", "class"];
+      const updateFields = ["name", "lastname", "email", "school", "classname"];
       for (const field of updateFields) {
         if (formData[field]) {
           const response = await fetch(`http://localhost:8000/users/1/${field}`, {
@@ -107,7 +107,7 @@ export default function UserSettings({ data }) {
                   <div className="d-flex align-items-center">
                     <img
                       src={data.photo}
-                      alt="User Avatar"
+                      alt="avatar utilisateur"
                       className="rounded-circle me-3"
                       width="50"
                       height="50"
