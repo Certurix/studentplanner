@@ -6,7 +6,7 @@ from . import db
 
 app = FastAPI()
 
-origins = ["http://localhost:3000", "localhost:3000"]
+origins = ["http://localhost:3000", "localhost:3000", "http://localhost:5173", "localhost:5173"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -17,6 +17,12 @@ app.add_middleware(
 )
 
 # Pydantic models for request bodies
+class RegisterUser(BaseModel):
+    name: str
+    lastname: str
+    email: str
+    password: str
+
 class UserEmail(BaseModel):
     email: str
 
@@ -33,6 +39,11 @@ class UserLastname(BaseModel):
     lastname: str
 
 # Simple API entry points
+
+@app.post("/register")
+def register(user: RegisterUser):
+    """Register a new user."""
+    return db.register_user(user.name, user.lastname, user.email, user.password)
 
 @app.get("/users/{id}")
 def users(id: int | None = None):
@@ -93,7 +104,12 @@ def set_user_lastname(id: int, lastname: UserLastname):
     """Set user lastname."""
     return db.set_user_lastname(id, lastname.lastname)
 
-@app.get("/events/month/{month}")
-def events_month(month: int):
+@app.get("/events/{id}/month")
+def events_month(id:int, month: int):
     """Get events for a given month."""
-    return db.get_events_month(month)
+    return db.get_events_month(id, month)
+
+@app.get("/events/{id}/week")
+def events_week(id:int, week: int):
+    """Get events for a given week."""
+    return db.get_events_week(id, week)

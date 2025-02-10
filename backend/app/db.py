@@ -17,6 +17,18 @@ def get_connection():
     )
     return connection
 
+def register_user(name, lastname, email, password):
+    """Register new user."""
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute('''
+        INSERT INTO user (name, lastname, email, password)
+        VALUES (?, ?, ?, ?)
+    ''', (name, lastname, email, password))
+    connection.commit()
+    cursor.close()
+    return True
+
 def get_users(id=None):
     """Get list of users.
 
@@ -190,14 +202,26 @@ def set_user_avatar(id, avatar):
     cursor.close()
     return True
 
-def get_events_month(month):
-    """Get list of events in given month."""
+def get_events_month(id, month):
+    """Get list of events in given month and user ID."""
     cursor = get_connection().cursor(dictionary=True)
     cursor.execute('''
         SELECT ID, title, description, type, priority, startdate, enddate, place
         FROM events
-        WHERE MONTH(startdate) = ? OR MONTH(enddate) = ?
-    ''', (month, month))
+        WHERE (MONTH(startdate) = ? OR MONTH(enddate) = ?) AND id_user = ?
+    ''', (month, month, id))
+    rows = cursor.fetchall()
+    cursor.close()
+    return rows
+
+def get_events_week(id, week):
+    """Get list of events in given week and user ID."""
+    cursor = get_connection().cursor(dictionary=True)
+    cursor.execute('''
+        SELECT ID, title, description, type, priority, startdate, enddate, place
+        FROM events
+        WHERE (WEEK(startdate) = ? OR WEEK(enddate) = ?) AND id_user = ?
+    ''', (week, week, id))
     rows = cursor.fetchall()
     cursor.close()
     return rows
