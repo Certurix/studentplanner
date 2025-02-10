@@ -10,7 +10,7 @@ const SmallCalendar = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/events/month/${new Date().getMonth() + 1}`);
+        const response = await axios.get(`http://localhost:8000/events/1/month/${new Date().getMonth() + 1}`);
         setEvents(response.data);
       } catch (error) {
         console.error("Error fetching events:", error);
