@@ -120,7 +120,7 @@ const Dashboard = () => {
 
   function getClassName() {
     startTransition(() => {
-      fetch("http://localhost:8000/users/1/class", {
+      fetch("http://localhost:8000/users/1/classname", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
