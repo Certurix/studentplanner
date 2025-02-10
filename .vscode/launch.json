@@ -1,0 +1,33 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Python: FastAPI",
+        "type": "python",
+        "request": "launch",
+        "program": "${workspaceFolder}/backend/app/__init__.py",
+        "console": "integratedTerminal",
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/backend"
+        },
+        "args": [
+          "dev",
+          "backend/app"
+        ],
+        "justMyCode": true
+      },
+      {
+        "name": "Node.js: npm run dev",
+        "type": "node",
+        "request": "launch",
+        "runtimeExecutable": "npm",
+        "runtimeArgs": [
+          "run",
+          "dev"
+        ],
+        "cwd": "${workspaceFolder}/frontend",
+        "console": "integratedTerminal",
+        "internalConsoleOptions": "neverOpen"
+      }
+    ]
+  }

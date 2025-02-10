@@ -1,0 +1,24 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "npm",
+            "script": "dev",
+            "path": "frontend",
+            "problemMatcher": [],
+            "label": "npm: dev - frontend"
+        },
+        {
+            "label": "Python: FastAPI",
+            "type": "shell",
+            "command": "venv/Scripts/activate && fastapi dev backend/app",
+            "problemMatcher": []
+        }
+    ],
+    "compounds": [
+        {
+            "label": "Run All",
+            "tasks": ["npm: dev - frontend", "Python: FastAPI"]
+        }
+    ]
+}
