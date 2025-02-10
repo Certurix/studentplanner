@@ -104,12 +104,12 @@ def set_user_lastname(id: int, lastname: UserLastname):
     """Set user lastname."""
     return db.set_user_lastname(id, lastname.lastname)
 
-@app.get("/events/{id}/month")
+@app.get("/events/{id}/month/{month}")
 def events_month(id:int, month: int):
     """Get events for a given month."""
     return db.get_events_month(id, month)
 
-@app.get("/events/{id}/week")
+@app.get("/events/{id}/week/{week}")
 def events_week(id:int, week: int):
     """Get events for a given week."""
     return db.get_events_week(id, week)
