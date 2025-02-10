@@ -40,17 +40,6 @@ const Dashboard = () => {
     getLastname();
     getSchool();
     getClassName();
-
-    startTransition(() => {
-      setTimeout(() => {
-        fetch("https://google.com", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }).catch((error) => setError(error.message));
-      }, 5000);
-    });
   }, []);
 
   function getName() {
