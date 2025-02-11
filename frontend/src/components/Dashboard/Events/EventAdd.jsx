@@ -1,8 +1,9 @@
 import React, { useState } from "react";
+import { Datepicker } from "flowbite-react";
 
 const EventAdd = () => {
   const [title, setTitle] = useState("");
-  const [date, setDate] = useState("");
+  const [date] = useState("");
   const [description, setDescription] = useState("");
   const [eventType, setEventType] = useState("");
   const [priority, setPriority] = useState("");
@@ -41,12 +42,13 @@ const EventAdd = () => {
           >
             Date
           </label>
-          <input
-            id="date"
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          <Datepicker
+            id="modal-eventadd-date"
+            minDate={new Date()}
+            language="fr-FR"
+            labelTodayButton="Aujourd'hui" labelClearButton="Effacer"
+            icon={false}
+            
           />
         </div>
         <div className="mb-4">
@@ -59,13 +61,13 @@ const EventAdd = () => {
           <select
             id="type"
             value={eventType}
-            onChange={(e) => setEventType(e.target.value)}
+            onChange={(e) => setEventType(Number(e.target.value))}
             className="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           >
-            <option value="">Sélectionner un type</option>
-            <option value="perso">Personnel</option>
-            <option value="sco">Scolaire</option>
-            <option value="pro">Professionnel</option>
+            <option value="0">Sélectionner un type</option>
+            <option value="1">Personnel</option>
+            <option value="2">Scolaire</option>
+            <option value="3">Professionnel</option>
           </select>
         </div>
         <div className="mb-4">
@@ -78,13 +80,13 @@ const EventAdd = () => {
           <select
             id="priority"
             value={priority}
-            onChange={(e) => setPriority(e.target.value)}
+            onChange={(e) => setPriority(Number(e.target.value))}
             className="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           >
-            <option value="">Sélectionner une prioritée</option>
-            <option value="low">Basse</option>
-            <option value="medium">Moyenne</option>
-            <option value="high">Haute</option>
+            <option value="0">Sélectionner une prioritée</option>
+            <option value="1">Basse</option>
+            <option value="2">Moyenne</option>
+            <option value="3">Haute</option>
           </select>
         </div>
         <div className="mb-4">
