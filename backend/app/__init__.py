@@ -102,7 +102,7 @@ def user_class(id: int):
 @app.post("/users/{id}/classname")
 def set_user_class(id: int, className: UserClass):
     """Set user class."""
-    return db.set_user_class(id, classname.classname)
+    return db.set_user_class(id, className.classname)
 
 @app.get("/users/{id}/lastname")
 def user_lastname(id: int):
@@ -127,4 +127,4 @@ def events_week(id:int, week: int):
 @app.post("/events/create")
 def create_event(event: Event):
     """Create a new event."""
-    return db.create_event(event.user_id, event.title, event.description, event.date)
+    return db.create_event(event.user_id, event.title, event.description, event.type, event.priority, event.startdate, event.enddate, event.place)
