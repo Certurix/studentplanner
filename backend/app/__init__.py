@@ -38,6 +38,16 @@ class UserClass(BaseModel):
 class UserLastname(BaseModel):
     lastname: str
 
+class Event(BaseModel):
+    user_id: int
+    title: str
+    description: str
+    type: str
+    priority: int
+    startdate: str
+    enddate: str
+    place: str
+    
 # Simple API entry points
 
 @app.post("/register")
@@ -113,3 +123,8 @@ def events_month(id:int, month: int):
 def events_week(id:int, week: int):
     """Get events for a given week."""
     return db.get_events_week(id, week)
+
+@app.post("/events/create")
+def create_event(event: Event):
+    """Create a new event."""
+    return db.create_event(event.user_id, event.title, event.description, event.date)
