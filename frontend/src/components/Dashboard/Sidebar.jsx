@@ -21,7 +21,7 @@ export default function Sidebar({ data }) {
       <div>
         <div className="flex items-center mb-6">
           <img
-            src={`logo.svg`}
+            src={`/logo.svg`}
             alt="Logo StudentPlanner"
             className="mr-2"
           />
