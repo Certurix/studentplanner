@@ -27,6 +27,7 @@ const Dashboard = () => {
 
   const [isPending, startTransition] = useTransition();
 
+  const [userId] = useState(3);
   const [name, setName] = useState("");
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
@@ -44,7 +45,7 @@ const Dashboard = () => {
 
   function getName() {
     startTransition(() => {
-      fetch("http://localhost:8000/users/1/name", {
+      fetch(`http://localhost:8000/users/${userId}/name`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -63,7 +64,7 @@ const Dashboard = () => {
 
   function getLastname() {
     startTransition(() => {
-      fetch("http://localhost:8000/users/1/lastname", {
+      fetch(`http://localhost:8000/users/${userId}/lastname`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -82,7 +83,7 @@ const Dashboard = () => {
 
   function getEmail() {
     startTransition(() => {
-      fetch("http://localhost:8000/users/1/email", {
+      fetch(`http://localhost:8000/users/${userId}/email`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -101,7 +102,7 @@ const Dashboard = () => {
 
   function getSchool() {
     startTransition(() => {
-      fetch("http://localhost:8000/users/1/school", {
+      fetch(`http://localhost:8000/users/${userId}/school`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -120,7 +121,7 @@ const Dashboard = () => {
 
   function getClassName() {
     startTransition(() => {
-      fetch("http://localhost:8000/users/1/classname", {
+      fetch(`http://localhost:8000/users/${userId}/classname`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -218,7 +219,7 @@ const Dashboard = () => {
           <Route path="/plannings/scolaire" element={<Scolaire />} />
           <Route path="/plannings/personnel" element={<Personnel />} />
           <Route path="/plannings/professionnel" element={<Professionnel />} />
-          <Route path="/settings" element={<Settings data={{ name, lastname, email, className, school }} />} />
+          <Route path="/settings" element={<Settings data={{ userId, name, lastname, email, className, school }} />} />
           <Route path="/search" element={<SearchResults />} />
 
           {/* <Route path="/class/chat" element={<Chat />} />
