@@ -124,7 +124,7 @@ const PlanningScolaire = () => {
         fullscreen
       >
         <Modal.Header closeButton>
-          <Modal.Title>Fullscreen Calendar</Modal.Title>
+          <Modal.Title>Planning scolaire</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className="calendar-container">
