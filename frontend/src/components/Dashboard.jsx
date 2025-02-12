@@ -17,17 +17,18 @@ import SearchResults from "./SearchResults";
 import Settings from "../pages/Settings";
 import { Alert } from "react-bootstrap";
 import Loader from "./Loader";
+import useUser from "../hooks/useUser";
 
 const Dashboard = () => {
   const location = useLocation();
   const [show, setShow] = useState(false);
+  const userId = useUser();
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   const [isPending, startTransition] = useTransition();
 
-  const [userId] = useState(3);
   const [name, setName] = useState("");
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
