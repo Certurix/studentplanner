@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from datetime import datetime
 
 from . import db
 
@@ -42,7 +43,7 @@ class Event(BaseModel):
     userId: int
     title: str
     description: str
-    type: str
+    type: int
     priority: int
     startdate: str
     enddate: str
@@ -137,4 +138,6 @@ def events_week(id:int, week: int):
 @app.post("/events/create")
 def create_event(event: Event):
     """Create a new event."""
+    event.startdate = datetime.fromisoformat(event.startdate.replace("Z", "")).strftime('%Y-%m-%d %H:%M:%S')
+    event.enddate = datetime.fromisoformat(event.enddate.replace("Z", "")).strftime('%Y-%m-%d %H:%M:%S')
     return db.set_event(event.userId, event.title, event.description, event.type, event.priority, event.startdate, event.enddate, event.place)
