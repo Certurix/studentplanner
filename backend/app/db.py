@@ -17,6 +17,18 @@ def get_connection():
     )
     return connection
 
+def verify_user(email, password):
+    """Verify user credentials."""
+    cursor = get_connection().cursor()
+    cursor.execute('''
+        SELECT id
+        FROM user
+        WHERE email = ? AND password = ?
+    ''', (email, password))
+    row = cursor.fetchone()
+    cursor.close()
+    return row[0] if row else None
+
 def register_user(name, lastname, email, password):
     """Register new user."""
     connection = get_connection()

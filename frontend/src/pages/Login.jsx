@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import {jwtDecode} from 'jwt-decode';
-
 import Alert from '../components/Alert';
 
 const Login = () => {
@@ -20,22 +18,25 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post(`http://localhost:8000/auth`, {
+      const response = await axios.post(`http://localhost:8000/login`, {
         email,
         password,
       });
 
-      const { token } = response.data;
-      const decodedToken = jwtDecode(token);
+      const userId = response.data;
 
-      // Handle successful login
-      console.log('Login successful:', decodedToken);
+      if (typeof userId === 'number') {
+        // Simulate successful login
+        console.log('Login successful:', userId);
 
-      // Store the token in localStorage or sessionStorage
-      localStorage.setItem('token', token);
+        // Store the userId in localStorage or sessionStorage
+        localStorage.setItem('userId', userId);
 
-      // Redirect to the dashboard or another page
-      window.location.href = '/';
+        // Redirect to the dashboard or another page
+        window.location.href = '/';
+      } else {
+        throw new Error('Invalid login response');
+      }
     } catch (error) {
       console.error('Error:', error);
       setAlertMessage(error?.message);

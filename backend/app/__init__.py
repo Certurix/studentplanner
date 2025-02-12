@@ -18,6 +18,9 @@ app.add_middleware(
 )
 
 # Pydantic models for request bodies
+class LoginUser(BaseModel):
+    email: str
+    password: str
 class RegisterUser(BaseModel):
     name: str
     lastname: str
@@ -50,6 +53,14 @@ class Event(BaseModel):
     place: str
     
 # Simple API entry points
+
+@app.post("/login")
+def login(user: LoginUser):
+    """Login user."""
+    user_id = db.verify_user(user.email, user.password)
+    if user_id is None:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    return user_id
 
 @app.post("/register")
 def register(user: RegisterUser):
