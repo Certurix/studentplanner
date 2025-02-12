@@ -7,10 +7,10 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Inter"', ...defaultTheme.fontFamily.sans],
+        inter: ['"Inter"', ...defaultTheme.fontFamily.sans],
       },
       colors: {
-        primary: "#6C6FD7",
+        accent: "#6C6FD7",
         primary_hover: "#3F43CA"
       },
       animation:{
