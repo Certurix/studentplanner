@@ -1,16 +1,29 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import useUser from "../../hooks/useUser";
 
 const SmallCalendar = () => {
   const [events, setEvents] = useState([]);
   const daysOfWeek = ["LUN", "MAR", "MER", "JEU", "VEN", "SAM", "DIM"];
-  const currentMonth = new Date().toLocaleString('fr-FR', { month: 'long' }).toUpperCase();
-  const daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
+  const currentMonth = new Date()
+    .toLocaleString("fr-FR", { month: "long" })
+    .toUpperCase();
+  const daysInMonth = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth() + 1,
+    0
+  ).getDate();
+
+  const userId = useUser();
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/events/1/month/${new Date().getMonth() + 1}`);
+        const response = await axios.get(
+          `http://localhost:8000/events/${userId}/month/${
+            new Date().getMonth() + 1
+          }`
+        );
         setEvents(response.data);
       } catch (error) {
         console.error("Error fetching events:", error);
@@ -21,7 +34,7 @@ const SmallCalendar = () => {
   }, []);
 
   const getEventForDay = (day) => {
-    return events.find(event => new Date(event.startdate).getDate() === day);
+    return events.find((event) => new Date(event.startdate).getDate() === day);
   };
 
   return (
@@ -45,7 +58,9 @@ const SmallCalendar = () => {
           return (
             <div
               key={i}
-              className={`p-2 rounded-full text-sm ${event ? "bg-indigo-200 text-indigo-700" : "text-gray-700"}`}
+              className={`p-2 rounded-full text-sm ${
+                event ? "bg-indigo-200 text-indigo-700" : "text-gray-700"
+              }`}
               style={{ width: "30px", height: "30px", lineHeight: "15px" }}
             >
               {day}

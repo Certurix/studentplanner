@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import useUser from "../../../hooks/useUser";
 
 const EventItem = ({ color, title, date }) => (
   <div className="flex items-center justify-between mb-4 p-4 bg-white rounded-lg shadow-md">
@@ -29,40 +31,83 @@ const EventItem = ({ color, title, date }) => (
 );
 
 const EventsList = () => {
-  const events = [
-    {
-      color: "bg-red-500",
-      title: "RDV médecin",
-      date: "04.04 | 14:00 - 15:00",
-    },
-    {
-      color: "bg-yellow-500",
-      title: "Remplir le contrat d’étude",
-      date: "04.07 | 14:00 - 15:00",
-    },
-    {
-      color: "bg-purple-500",
-      title: "Reviser Algèbre de BOOLE",
-      date: "04.08 | 14:00 - 15:00",
-    },
-    {
-      color: "bg-blue-500",
-      title: "Soutenance",
-      date: "04.11 | 13:00 - 17:00",
-    },
-    {
-      color: "bg-green-500",
-      title: "Entretien stage",
-      date: "04.13 | 10:00 - 13:00",
-    },
-  ];
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const userId = useUser();
+  const currentMonth = new Date().getMonth() + 1;
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8000/events/${userId}/month/${currentMonth}`
+        );
+        const fetchedEvents = response.data.map((event) => ({
+          color: getColorByType(event.type),
+          title: event.title,
+          date: formatDate(event.startdate, event.enddate),
+        }));
+        setEvents(fetchedEvents);
+        setLoading(false);
+      } catch (error) {
+        setError(error.message);
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, [userId, currentMonth]);
+
+  const getColorByType = (type) => {
+    switch (type) {
+      case 1:
+        return "bg-red-500";
+      case 2:
+        return "bg-yellow-500";
+      case 3:
+        return "bg-purple-500";
+      case 4:
+        return "bg-blue-500";
+      case 5:
+        return "bg-green-500";
+      default:
+        return "bg-gray-500";
+    }
+  };
+
+  const formatDate = (start, end) => {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    return `${startDate.toLocaleDateString(
+      "fr-FR"
+    )} | ${startDate.toLocaleTimeString("fr-FR", {
+      hour: "2-digit",
+      minute: "2-digit",
+    })} - ${endDate.toLocaleTimeString("fr-FR", {
+      hour: "2-digit",
+      minute: "2-digit",
+    })}`;
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-xl font-semibold mb-4">ÉVÉNEMENTS À VENIR</h2>
-      {events.map((event, index) => (
-        <EventItem key={index} {...event} />
-      ))}
+      <h2 className="text-2xl font-bold mb-4 text-accent">
+        ÉVÉNEMENTS À VENIR
+      </h2>
+      {events.length > 0 ? (
+        events.map((event, index) => <EventItem key={index} {...event} />)
+      ) : (
+        <p>Aucun événement à venir ce mois-ci.</p>
+      )}
     </div>
   );
 };

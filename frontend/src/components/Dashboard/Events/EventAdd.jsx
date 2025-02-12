@@ -13,36 +13,62 @@ const EventAdd = () => {
 
   const userId = useUser();
 
+  const addEventForm = document.getElementById("event-add-form");
+  const datepickerStartDate = document.getElementById(
+    "modal-eventadd-startdate"
+  );
+  const datepickerEndDate = document.getElementById("modal-eventadd-enddate");
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log({ userId, title, startDate, endDate, description, type, priority, place });
+    console.log({
+      userId,
+      title,
+      startDate,
+      endDate,
+      description,
+      type,
+      priority,
+      place,
+    });
 
     // Envoi de la requête au serveur backend
     fetch("http://localhost:8000/events/create", {
       method: "POST",
       headers: {
-      "Content-Type": "application/json",
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ userId, title, startdate: startDate, enddate: endDate, description, type, priority, place }),
+      body: JSON.stringify({
+        userId,
+        title,
+        startdate: startDate,
+        enddate: endDate,
+        description,
+        type,
+        priority,
+        place,
+      }),
     })
       .then((res) => {
-      if (!res.ok) {
-        throw Error("Erreur lors de la requête");
-      }
-      return res.json();
+        if (!res.ok) {
+          throw Error("Erreur lors de la requête");
+        }
+        return res.json();
       })
       .then((data) => {
-      // 
+        addEventForm.reset();
+        datepickerStartDate.clear();
+        datepickerEndDate.clear();
       })
       .catch((err) => {
-      console.log(err.message);
+        console.log(err.message);
       });
   };
 
   return (
     <div className="max-w-md mx-auto mt-10">
       <h2 className="text-2xl font-bold mb-5">Ajouter un événement</h2>
-      <form onSubmit={handleSubmit} className="">
+      <form onSubmit={handleSubmit} className="" id="event-add-form">
         <div className="mb-4">
           <label
             className="block text-gray-700 text-sm font-bold mb-2"
@@ -70,8 +96,9 @@ const EventAdd = () => {
             id="modal-eventadd-startdate"
             minDate={new Date()}
             language="fr-FR"
-            labelTodayButton="Aujourd'hui" labelClearButton="Effacer"
-            onChange={(date) => setStartDate(date.toJSON())}
+            labelTodayButton="Aujourd'hui"
+            labelClearButton="Effacer"
+            onChange={(date) => setStartDate(date ? date.toJSON() : "")}
             icon={false}
           />
         </div>
@@ -84,10 +111,11 @@ const EventAdd = () => {
           </label>
           <Datepicker
             id="modal-eventadd-enddate"
-            minDate={new Date()}
+            minDate={new Date(new Date().setDate(new Date().getDate() + 1))}
             language="fr-FR"
-            labelTodayButton="Aujourd'hui" labelClearButton="Effacer"
-            onChange={(date) => setEndDate(date.toJSON())}
+            labelTodayButton="Aujourd'hui"
+            labelClearButton="Effacer"
+            onChange={(date) => setEndDate(date ? date.toJSON() : "")}
             icon={false}
           />
         </div>
