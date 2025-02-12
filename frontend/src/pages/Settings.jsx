@@ -12,7 +12,7 @@ export default function UserSettings({ data }) {
       const file = acceptedFiles[0];
       const reader = new FileReader();
       reader.onload = () => {
-        data.photo = reader.result;
+        data.avatar = reader.result;
       };
       reader.readAsDataURL(file);
     }
@@ -27,15 +27,15 @@ export default function UserSettings({ data }) {
       email: form.elements["email"].value,
       school: form.elements["school"].value,
       class: form.elements["class"].value,
-      photo: data.photo
+      avatar: data.avatar
     };
 
     try {
       // Send individual requests to update user data
-      const updateFields = ["name", "lastname", "email", "school", "classname"];
+      const updateFields = ["name", "lastname", "email", "school", "classname", "avatar"];
       for (const field of updateFields) {
         if (formData[field]) {
-          const response = await fetch(`http://localhost:8000/users/1/${field}`, {
+          const response = await fetch(`http://localhost:8000/users/${data.userId}/${field}`, {
             method: "POST",
             body: JSON.stringify({
               [field]: formData[field],
@@ -51,18 +51,18 @@ export default function UserSettings({ data }) {
         }
       }
 
-      // Update photo if it exists
-      if (formData.photo) {
-        const response = await fetch("http://localhost:8000/users/1/photo", {
+      // Update avatar if it exists
+      if (formData.avatar) {
+        const response = await fetch(`http://localhost:8000/users/${data.userId}/avatar`, {
           method: "POST",
-          body: JSON.stringify({ photo: formData.photo }),
+          body: JSON.stringify({ avatar: formData.avatar }),
           headers: {
             "Content-Type": "application/json",
           },
         });
 
         if (!response.ok) {
-          throw new Error("Failed to update photo");
+          throw new Error("Failed to update avatar");
         }
       }
 
@@ -106,7 +106,7 @@ export default function UserSettings({ data }) {
                 <Col sm={10}>
                   <div className="d-flex align-items-center">
                     <img
-                      src={data.photo}
+                      src={data.avatar}
                       alt="avatar utilisateur"
                       className="rounded-circle me-3"
                       width="50"
