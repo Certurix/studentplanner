@@ -1,18 +1,41 @@
 import React, { useState } from "react";
 import { Datepicker } from "flowbite-react";
+import useUser from "../../../hooks/useUser";
 
 const EventAdd = () => {
   const [title, setTitle] = useState("");
-  const [date] = useState("");
+  const [date, setDate] = useState("");
   const [description, setDescription] = useState("");
   const [eventType, setEventType] = useState("");
   const [priority, setPriority] = useState("");
   const [place, setPlace] = useState("");
 
+  const userId = useUser();
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission logic here
-    console.log({ title, date, description, eventType, priority, place });
+    console.log({ userId, title, date, description, eventType, priority, place });
+
+    // Envoi de la requête au serveur backend
+    fetch("http://localhost:8000/events/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userId, title, date, description, eventType, priority, place }),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw Error("Erreur lors de la requête");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        // 
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
   };
 
   return (
@@ -47,6 +70,7 @@ const EventAdd = () => {
             minDate={new Date()}
             language="fr-FR"
             labelTodayButton="Aujourd'hui" labelClearButton="Effacer"
+            onChange={(date) => setDate(date.toJSON())}
             icon={false}
             
           />
