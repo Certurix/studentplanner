@@ -114,6 +114,16 @@ def set_user_lastname(id: int, lastname: UserLastname):
     """Set user lastname."""
     return db.set_user_lastname(id, lastname.lastname)
 
+@app.get("/users/{id}/avatar")
+def user_avatar(id: int):
+    """Get user avatar."""
+    return db.get_user_avatar(id)
+
+@app.post("/users/{id}/avatar")
+def set_user_avatar(id: int, avatar: str):
+    """Set user avatar."""
+    return db.set_user_avatar(id, avatar)
+
 @app.get("/events/{id}/month/{month}")
 def events_month(id:int, month: int):
     """Get events for a given month."""
