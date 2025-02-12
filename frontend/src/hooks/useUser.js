@@ -1,7 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const useUser = () => {
-  const [userId] = useState(3);
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    const storedUserId = localStorage.getItem("userId");
+    if (storedUserId) {
+      setUserId(Number(storedUserId));
+    }
+  }, []);
+
   return userId;
 };
 

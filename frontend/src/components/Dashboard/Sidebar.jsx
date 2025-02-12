@@ -44,6 +44,10 @@ export default function Sidebar({ data }) {
       .catch((error) => setError(error.message));
   }
 
+  const handleLogout = () => {
+    navigate("/login");
+  };
+
   return (
     <aside className="w-full md:w-1/5 bg-gray-50 p-6 flex flex-col justify-between shadow-lg min-h-screen">
       <div>
@@ -201,22 +205,27 @@ export default function Sidebar({ data }) {
         </Nav.Link>
         <hr />
         <div className="px-4 py-2">
-          <div className="flex items-center">
-            {avatar ? (
-              <img
-                src={avatar}
-                alt="profil"
-                className="w-10 h-10 rounded-full mr-4 border border-gray-300 bg-gray-200"
-              />
-            ) : (
-              <div className="w-10 h-10 rounded-full mr-4 border border-gray-300 bg-gray-200" />
-            )}
-            <div>
-              <p className="font-semibold">
-                {data.name} {data.lastname}
-              </p>
-              <p className="text-sm text-gray-500">{data.email}</p>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              {avatar ? (
+                <img
+                  src={avatar}
+                  alt="profil"
+                  className="w-10 h-10 rounded-full mr-4 border border-gray-300 bg-gray-200"
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-full mr-4 border border-gray-300 bg-gray-200" />
+              )}
+              <div>
+                <p className="font-semibold">
+                  {data.name} {data.lastname}
+                </p>
+                <p className="text-sm text-gray-500">{data.email}</p>
+              </div>
             </div>
+            <button onClick={handleLogout} className="text-gray-500">
+              <Icon icon="tabler:logout" width="20" height="20" />
+            </button>
           </div>
         </div>
       </div>

@@ -38,25 +38,27 @@ const EventsList = () => {
   const currentMonth = new Date().getMonth() + 1;
 
   useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:8000/events/${userId}/month/${currentMonth}`
-        );
-        const fetchedEvents = response.data.map((event) => ({
-          color: getColorByType(event.type),
-          title: event.title,
-          date: formatDate(event.startdate, event.enddate),
-        }));
-        setEvents(fetchedEvents);
-        setLoading(false);
-      } catch (error) {
-        setError(error.message);
-        setLoading(false);
-      }
-    };
+    if (userId !== null) {
+      const fetchEvents = async () => {
+        try {
+          const response = await axios.get(
+            `http://localhost:8000/events/${userId}/month/${currentMonth}`
+          );
+          const fetchedEvents = response.data.map((event) => ({
+            color: getColorByType(event.type),
+            title: event.title,
+            date: formatDate(event.startdate, event.enddate),
+          }));
+          setEvents(fetchedEvents);
+          setLoading(false);
+        } catch (error) {
+          setError(error.message);
+          setLoading(false);
+        }
+      };
 
-    fetchEvents();
+      fetchEvents();
+    }
   }, [userId, currentMonth]);
 
   const getColorByType = (type) => {

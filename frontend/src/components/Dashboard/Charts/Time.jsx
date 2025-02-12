@@ -10,54 +10,56 @@ const TimeDistribution = () => {
   const currentMonth = new Date().getMonth() + 1;
 
   useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:8000/events/${userId}/month/${currentMonth}`
-        );
-        const events = response.data;
-        const totalEvents = events.length;
+    if (userId !== null) {
+      const fetchEvents = async () => {
+        try {
+          const response = await axios.get(
+            `http://localhost:8000/events/${userId}/month/${currentMonth}`
+          );
+          const events = response.data;
+          const totalEvents = events.length;
 
-        const eventTypes = {
-          Personnel: { count: 0, color: "bg-orange-500" },
-          Professionnel: { count: 0, color: "bg-yellow-500" },
-          Scolaire: { count: 0, color: "bg-blue-500" },
-        };
+          const eventTypes = {
+            Personnel: { count: 0, color: "bg-orange-500" },
+            Professionnel: { count: 0, color: "bg-yellow-500" },
+            Scolaire: { count: 0, color: "bg-blue-500" },
+          };
 
-        events.forEach((event) => {
-          switch (event.type) {
-            case "Personnel":
-              eventTypes.Personnel.count++;
-              break;
-            case "Scolaire":
-              eventTypes.Scolaire.count++;
-              break;
-            case "Professionnel":
-              eventTypes.Professionnel.count++;
-              break;
-            default:
-              break;
-          }
-        });
+          events.forEach((event) => {
+            switch (event.type) {
+              case "Personnel":
+                eventTypes.Personnel.count++;
+                break;
+              case "Scolaire":
+                eventTypes.Scolaire.count++;
+                break;
+              case "Professionnel":
+                eventTypes.Professionnel.count++;
+                break;
+              default:
+                break;
+            }
+          });
 
-        const eventData = Object.keys(eventTypes).map((key) => ({
-          label: key,
-          value:
-            totalEvents > 0
-              ? ((eventTypes[key].count / totalEvents) * 100).toFixed(2)
-              : 0,
-          color: eventTypes[key].color,
-        }));
+          const eventData = Object.keys(eventTypes).map((key) => ({
+            label: key,
+            value:
+              totalEvents > 0
+                ? ((eventTypes[key].count / totalEvents) * 100).toFixed(2)
+                : 0,
+            color: eventTypes[key].color,
+          }));
 
-        setData(eventData);
-        setLoading(false);
-      } catch (error) {
-        setError(error.message);
-        setLoading(false);
-      }
-    };
+          setData(eventData);
+          setLoading(false);
+        } catch (error) {
+          setError(error.message);
+          setLoading(false);
+        }
+      };
 
-    fetchEvents();
+      fetchEvents();
+    }
   }, [userId, currentMonth]);
 
   if (loading) {

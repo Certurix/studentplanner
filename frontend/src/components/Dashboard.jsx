@@ -37,12 +37,14 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    getUserData("name", setName);
-    getUserData("lastname", setLastname);
-    getUserData("email", setEmail);
-    getUserData("school", setSchool);
-    getUserData("classname", setClassName);
-  }, []);
+    if (userId !== null) {
+      getUserData("name", setName);
+      getUserData("lastname", setLastname);
+      getUserData("email", setEmail);
+      getUserData("school", setSchool);
+      getUserData("classname", setClassName);
+    }
+  }, [userId]);
 
   function getUserData(field, setter) {
     startTransition(() => {
@@ -50,7 +52,7 @@ const Dashboard = () => {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       })
-        .then((res) => res.ok ? res.json() : Promise.reject("Network response was not ok"))
+        .then((res) => (res.ok ? res.json() : Promise.reject("Network response was not ok")))
         .then(setter)
         .catch(setError);
     });
@@ -61,8 +63,7 @@ const Dashboard = () => {
       case "/plannings/scolaire":
         return {
           title: "Planning scolaire",
-          subtitle:
-            "Consultez votre planning scolaire et modifiez vos événements",
+          subtitle: "Consultez votre planning scolaire et modifiez vos événements",
           btnData: [
             {
               text: "Nouveau",
@@ -74,8 +75,7 @@ const Dashboard = () => {
       case "/plannings/personnel":
         return {
           title: "Planning personnel",
-          subtitle:
-            "Consultez votre planning personnel et modifiez vos événements",
+          subtitle: "Consultez votre planning personnel et modifiez vos événements",
           btnData: [
             {
               text: "Nouveau",
@@ -87,8 +87,7 @@ const Dashboard = () => {
       case "/plannings/professionnel":
         return {
           title: "Planning professionnel",
-          subtitle:
-            "Consultez votre planning professionnel et modifiez vos événements",
+          subtitle: "Consultez votre planning professionnel et modifiez vos événements",
           btnData: [
             {
               text: "Nouveau",
@@ -114,17 +113,18 @@ const Dashboard = () => {
 
   const headerProps = getHeaderProps();
 
+  if (userId === null) {
+    return <Loader loading={true} />;
+  }
+
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Loader loading={isPending} />
       <Sidebar data={{ name, lastname, email }} />
       <div className="flex-1 p-6">
         <Alert variant="danger" show={error !== null}>
-
           <Alert.Heading>Erreur</Alert.Heading>
-          <p>
-            {error}
-          </p>
+          <p>{error}</p>
         </Alert>
         <Header
           title={headerProps.title}
@@ -139,7 +139,6 @@ const Dashboard = () => {
           <Route path="/plannings/professionnel" element={<Professionnel />} />
           <Route path="/settings" element={<Settings data={{ userId, name, lastname, email, className, school }} />} />
           <Route path="/search" element={<SearchResults />} />
-
           {/* <Route path="/class/chat" element={<Chat />} />
           <Route path="/class/members" element={<Members />} /> */}
         </Routes>

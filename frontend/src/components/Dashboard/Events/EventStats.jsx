@@ -10,24 +10,28 @@ export default function EventStats() {
   const currentMonth = new Date().getMonth() + 1;
 
   useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:8000/events/${userId}/month/${currentMonth}`
-        );
-        setEvents(response.data);
-        setLoading(false);
-      } catch (error) {
-        setError(error.message);
-        setLoading(false);
-      }
-    };
+    if (userId !== null) {
+      const fetchEvents = async () => {
+        try {
+          const response = await axios.get(
+            `http://localhost:8000/events/${userId}/month/${currentMonth}`
+          );
+          setEvents(response.data);
+          setLoading(false);
+        } catch (error) {
+          setError(error.message);
+          setLoading(false);
+        }
+      };
 
-    fetchEvents();
+      fetchEvents();
+    }
   }, [userId, currentMonth]);
 
   const currentDate = new Date();
-  const achievedEvents = events.filter(event => new Date(event.enddate) < currentDate).length;
+  const achievedEvents = events.filter(
+    (event) => new Date(event.enddate) < currentDate
+  ).length;
   const upcomingEvents = events.length - achievedEvents;
   const totalEvents = events.length;
 
@@ -41,7 +45,9 @@ export default function EventStats() {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold mb-4 text-accent">Événements Du Mois</h2>
+      <h2 className="text-2xl font-bold mb-4 text-accent">
+        Événements Du Mois
+      </h2>
       <div className="flex flex-col md:flex-row items-center justify-between mb-6">
         <div>
           <p className="text-xl font-semibold">Achevés</p>
