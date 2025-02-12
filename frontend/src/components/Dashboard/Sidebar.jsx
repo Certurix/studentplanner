@@ -45,14 +45,11 @@ export default function Sidebar({ data }) {
   }
 
   return (
-    <aside
-      className="w-full md:w-1/5 bg-gray-50 p-6 flex flex-col justify-between shadow-lg"
-      style={{ minHeight: "100vh" }}
-    >
+    <aside className="w-full md:w-1/5 bg-gray-50 p-6 flex flex-col justify-between shadow-lg min-h-screen">
       <div>
         <div className="flex items-center mb-6">
           <img src={`/logo.svg`} alt="Logo StudentPlanner" className="mr-2" />
-          <h1 className="text-2xl font-semibold whitespace-nowrap overflow-hidden text-ellipsis">
+          <h1 className="text-xl font-semibold whitespace-nowrap overflow-hidden text-ellipsis font-inter">
             StudentPlanner
           </h1>
         </div>
@@ -90,7 +87,7 @@ export default function Sidebar({ data }) {
 
         <Navbar expand="lg" className="flex-column p-0">
           <Nav className="flex-column w-full">
-            <Nav.Link as={NavLink} to="/" className="flex items-center mb-4">
+            <Nav.Link as={NavLink} to="/" className="flex items-center mb-2">
               <Icon
                 icon="tabler:home"
                 width="20"
@@ -114,7 +111,7 @@ export default function Sidebar({ data }) {
                 </div>
               }
               id="nav-dropdown"
-              className="w-full text-left mb-4"
+              className="w-full text-left mb-2"
             >
               <NavDropdown.Item
                 as={NavLink}
@@ -153,7 +150,6 @@ export default function Sidebar({ data }) {
                 </div>
               }
               id="nav-dropdown-class"
-              className="w-full text-left mb-4"
             >
               <NavDropdown.Item
                 as={NavLink}
