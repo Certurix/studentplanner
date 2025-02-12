@@ -37,105 +37,22 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    getName();
-    getEmail();
-    getLastname();
-    getSchool();
-    getClassName();
+    getUserData("name", setName);
+    getUserData("lastname", setLastname);
+    getUserData("email", setEmail);
+    getUserData("school", setSchool);
+    getUserData("classname", setClassName);
   }, []);
 
-  function getName() {
+  function getUserData(field, setter) {
     startTransition(() => {
-      fetch(`http://localhost:8000/users/${userId}/name`, {
+      fetch(`http://localhost:8000/users/${userId}/${field}`, {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
       })
-        .then((res) => {
-          if (!res.ok) {
-            throw new Error("Network response was not ok");
-          }
-          return res.json();
-        })
-        .then((data) => setName(data))
-        .catch((error) => setError(error.message));
-    });
-  }
-
-  function getLastname() {
-    startTransition(() => {
-      fetch(`http://localhost:8000/users/${userId}/lastname`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then((res) => {
-          if (!res.ok) {
-            throw new Error("Network response was not ok");
-          }
-          return res.json();
-        })
-        .then((data) => setLastname(data))
-        .catch((error) => setError(error.message));
-    });
-  }
-
-  function getEmail() {
-    startTransition(() => {
-      fetch(`http://localhost:8000/users/${userId}/email`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then((res) => {
-          if (!res.ok) {
-            throw new Error("Network response was not ok");
-          }
-          return res.json();
-        })
-        .then((data) => setEmail(data))
-        .catch((error) => setError(error.message));
-    });
-  }
-
-  function getSchool() {
-    startTransition(() => {
-      fetch(`http://localhost:8000/users/${userId}/school`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then((res) => {
-          if (!res.ok) {
-            throw new Error("Network response was not ok");
-          }
-          return res.json();
-        })
-        .then((data) => setSchool(data))
-        .catch((error) => setError(error.message));
-    });
-  }
-
-  function getClassName() {
-    startTransition(() => {
-      fetch(`http://localhost:8000/users/${userId}/classname`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then((res) => {
-          if (!res.ok) {
-            throw new Error("Network response was not ok");
-          }
-          return res.json();
-        })
-        .then((data) => setClassName(data))
-        .catch((error) => setError(error.message));
+        .then((res) => res.ok ? res.json() : Promise.reject("Network response was not ok"))
+        .then(setter)
+        .catch(setError);
     });
   }
 
