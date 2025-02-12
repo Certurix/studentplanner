@@ -4,7 +4,7 @@ import axios from "axios";
 const SmallCalendar = () => {
   const [events, setEvents] = useState([]);
   const daysOfWeek = ["LUN", "MAR", "MER", "JEU", "VEN", "SAM", "DIM"];
-  const currentMonth = new Date().toLocaleString('default', { month: 'long' }).toUpperCase();
+  const currentMonth = new Date().toLocaleString('fr-FR', { month: 'long' }).toUpperCase();
   const daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
 
   useEffect(() => {
