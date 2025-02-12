@@ -7,7 +7,9 @@ export default function UserSettings({ data }) {
   const [key, setKey] = useState("userdata");
 
   const { getRootProps, getInputProps } = useDropzone({
-    accept: "image/*",
+    accept: {
+      'image/*': ['.jpeg', '.jpg', '.png', '.gif', '.svg']
+    },
     onDrop: (acceptedFiles) => {
       const file = acceptedFiles[0];
       const reader = new FileReader();
