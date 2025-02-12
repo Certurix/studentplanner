@@ -39,7 +39,7 @@ class UserLastname(BaseModel):
     lastname: str
 
 class Event(BaseModel):
-    user_id: int
+    userId: int
     title: str
     description: str
     type: str
@@ -100,9 +100,9 @@ def user_class(id: int):
     return db.get_user_class(id)
 
 @app.post("/users/{id}/classname")
-def set_user_class(id: int, className: UserClass):
+def set_user_class(id: int, classname: UserClass):
     """Set user class."""
-    return db.set_user_class(id, className.classname)
+    return db.set_user_class(id, classname.classname)
 
 @app.get("/users/{id}/lastname")
 def user_lastname(id: int):
@@ -137,4 +137,4 @@ def events_week(id:int, week: int):
 @app.post("/events/create")
 def create_event(event: Event):
     """Create a new event."""
-    return db.create_event(event.user_id, event.title, event.description, event.type, event.priority, event.startdate, event.enddate, event.place)
+    return db.set_event(event.userId, event.title, event.description, event.type, event.priority, event.startdate, event.enddate, event.place)

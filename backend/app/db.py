@@ -226,14 +226,14 @@ def get_events_week(id, week):
     cursor.close()
     return rows
 
-def set_event(id, title, description, type, priority, startdate, enddate, place):
+def set_event(userId, title, description, type, priority, startdate, enddate, place):
     """Set event."""
     connection = get_connection()
     cursor = connection.cursor()
     cursor.execute('''
         INSERT INTO events (id_user, title, description, type, priority, startdate, enddate, place)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    ''', (id, title, description, type, priority, startdate, enddate, place))
+    ''', (userId, title, description, type, priority, startdate, enddate, place))
     connection.commit()
     cursor.close()
     return True
