@@ -8,7 +8,7 @@ export default function UserSettings({ data }) {
 
   const { getRootProps, getInputProps } = useDropzone({
     accept: {
-      'image/*': ['.jpeg', '.jpg', '.png', '.gif', '.svg']
+      "image/*": [".jpeg", ".jpg", ".png", ".gif", ".svg"],
     },
     onDrop: (acceptedFiles) => {
       const file = acceptedFiles[0];
@@ -17,7 +17,7 @@ export default function UserSettings({ data }) {
         data.avatar = reader.result;
       };
       reader.readAsDataURL(file);
-    }
+    },
   });
 
   const handleSubmit = async (e) => {
@@ -29,23 +29,33 @@ export default function UserSettings({ data }) {
       email: form.elements["email"].value,
       school: form.elements["school"].value,
       class: form.elements["class"].value,
-      avatar: data.avatar
+      avatar: data.avatar,
     };
 
     try {
       // Send individual requests to update user data
-      const updateFields = ["name", "lastname", "email", "school", "classname", "avatar"];
+      const updateFields = [
+        "name",
+        "lastname",
+        "email",
+        "school",
+        "classname",
+        "avatar",
+      ];
       for (const field of updateFields) {
         if (formData[field]) {
-          const response = await fetch(`http://localhost:8000/users/${data.userId}/${field}`, {
-            method: "POST",
-            body: JSON.stringify({
-              [field]: formData[field],
-            }),
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
+          const response = await fetch(
+            `http://localhost:8000/users/${data.userId}/${field}`,
+            {
+              method: "POST",
+              body: JSON.stringify({
+                [field]: formData[field],
+              }),
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
 
           if (!response.ok) {
             throw new Error(`Failed to update ${field}`);
@@ -55,13 +65,16 @@ export default function UserSettings({ data }) {
 
       // Update avatar if it exists
       if (formData.avatar) {
-        const response = await fetch(`http://localhost:8000/users/${data.userId}/avatar`, {
-          method: "POST",
-          body: JSON.stringify({ avatar: formData.avatar }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          `http://localhost:8000/users/${data.userId}/avatar`,
+          {
+            method: "POST",
+            body: JSON.stringify({ avatar: formData.avatar }),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
         if (!response.ok) {
           throw new Error("Failed to update avatar");
@@ -71,9 +84,9 @@ export default function UserSettings({ data }) {
       window.location.reload();
     } catch (error) {
       console.error("Error saving settings:", error);
-      return
+      return;
     }
-  }
+  };
 
   return (
     <div className="container mt-4">
@@ -87,24 +100,43 @@ export default function UserSettings({ data }) {
           <Card className="p-4 shadow-sm">
             <Form onSubmit={handleSubmit}>
               <Form.Group as={Row} className="mb-3">
-                <Form.Label column sm={2}>Nom</Form.Label>
+                <Form.Label column sm={2}>
+                  Nom
+                </Form.Label>
                 <Col sm={5}>
-                  <Form.Control name="name" defaultValue={data.name} className="rounded" />
+                  <Form.Control
+                    name="name"
+                    defaultValue={data.name}
+                    className="rounded"
+                  />
                 </Col>
                 <Col sm={5}>
-                  <Form.Control name="lastname" defaultValue={data.lastname} className="rounded" />
+                  <Form.Control
+                    name="lastname"
+                    defaultValue={data.lastname}
+                    className="rounded"
+                  />
                 </Col>
               </Form.Group>
               <hr className="mb-2" />
               <Form.Group as={Row} className="mb-3">
-                <Form.Label column sm={2}>Email</Form.Label>
+                <Form.Label column sm={2}>
+                  Email
+                </Form.Label>
                 <Col sm={10}>
-                  <Form.Control type="email" name="email" defaultValue={data.email} className="rounded" />
+                  <Form.Control
+                    type="email"
+                    name="email"
+                    defaultValue={data.email}
+                    className="rounded"
+                  />
                 </Col>
               </Form.Group>
               <hr className="mb-2" />
               <Form.Group as={Row} className="mb-3">
-                <Form.Label column sm={2}>Votre photo</Form.Label>
+                <Form.Label column sm={2}>
+                  Votre photo
+                </Form.Label>
                 <Col sm={10}>
                   <div className="d-flex align-items-center">
                     <img
@@ -137,20 +169,36 @@ export default function UserSettings({ data }) {
               </Form.Group>
               <hr className="mb-2" />
               <Form.Group as={Row} className="mb-3">
-                <Form.Label column sm={2}>École</Form.Label>
+                <Form.Label column sm={2}>
+                  École
+                </Form.Label>
                 <Col sm={10}>
-                  <Form.Control name="school" defaultValue={data.school} className="rounded" />
+                  <Form.Control
+                    name="school"
+                    defaultValue={data.school}
+                    className="rounded"
+                  />
                 </Col>
               </Form.Group>
               <Form.Group as={Row} className="mb-3">
-                <Form.Label column sm={2}>Classe</Form.Label>
+                <Form.Label column sm={2}>
+                  Classe
+                </Form.Label>
                 <Col sm={10}>
-                  <Form.Control name="class" defaultValue={data.class} className="rounded" />
+                  <Form.Control
+                    name="class"
+                    defaultValue={data.class}
+                    className="rounded"
+                  />
                 </Col>
               </Form.Group>
               <div className="d-flex justify-content-end gap-2">
-                <Button variant="outline-secondary" type="button">Annuler</Button>
-                <Button variant="primary" type="submit">Sauvegarder</Button>
+                <Button variant="outline-secondary" type="button">
+                  Annuler
+                </Button>
+                <Button variant="primary" type="submit">
+                  Sauvegarder
+                </Button>
               </div>
             </Form>
           </Card>
