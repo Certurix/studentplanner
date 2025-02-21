@@ -50,6 +50,10 @@ jobs:
           source venv/bin/activate
           pip install -r backend/requirements.txt
 
+      - name: Install Heroku CLI
+        run: |
+          curl https://cli-assets.heroku.com/install.sh | sh
+
       - name: Deploy backend to Heroku
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
