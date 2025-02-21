@@ -41,6 +41,9 @@ jobs:
         with:
           python-version: "3.9"
 
+      - name: Install MariaDB development libraries
+        run: sudo apt-get install libmariadb-dev
+
       - name: Install backend dependencies
         run: |
           python -m venv venv
