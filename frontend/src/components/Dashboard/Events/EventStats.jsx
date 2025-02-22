@@ -6,7 +6,7 @@ export default function EventStats() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const userId = useUser();
+  const {userId} = useUser();
   const currentMonth = new Date().getMonth() + 1;
 
   useEffect(() => {
