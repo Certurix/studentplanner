@@ -42,7 +42,9 @@ jobs:
           python-version: "3.9"
 
       - name: Install MariaDB development libraries
-        run: sudo apt-get install libmariadb-dev
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y libmariadb-dev
 
       - name: Install backend dependencies
         run: |
