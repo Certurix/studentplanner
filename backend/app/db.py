@@ -218,26 +218,40 @@ def set_user_avatar(id, avatar):
     cursor.close()
     return True
 
-def get_events_month(id, month):
-    """Get list of events in given month and user ID."""
+def get_events_month(id, month, future=False):
+    """Get list of events in given month and user ID. Optionally, only return future events."""
     cursor = get_connection().cursor(dictionary=True)
-    cursor.execute('''
-        SELECT ID, title, description, type, priority, startdate, enddate, place
-        FROM events
-        WHERE (MONTH(startdate) = ? OR MONTH(enddate) = ?) AND id_user = ?
-    ''', (month, month, id))
+    if future:
+        cursor.execute('''
+            SELECT ID, title, description, type, priority, startdate, enddate, place
+            FROM events
+            WHERE (MONTH(startdate) = ? OR MONTH(enddate) = ?) AND id_user = ? AND (startdate >= CURDATE() OR enddate >= CURDATE())
+        ''', (month, month, id))
+    else:
+        cursor.execute('''
+            SELECT ID, title, description, type, priority, startdate, enddate, place
+            FROM events
+            WHERE (MONTH(startdate) = ? OR MONTH(enddate) = ?) AND id_user = ?
+        ''', (month, month, id))
     rows = cursor.fetchall()
     cursor.close()
     return rows
 
-def get_events_week(id, week):
-    """Get list of events in given week and user ID."""
+def get_events_week(id, week, future=False):
+    """Get list of events in given week and user ID. Optionally, only return future events."""
     cursor = get_connection().cursor(dictionary=True)
-    cursor.execute('''
-        SELECT ID, title, description, type, priority, startdate, enddate, place
-        FROM events
-        WHERE (WEEK(startdate) = ? OR WEEK(enddate) = ?) AND id_user = ?
-    ''', (week, week, id))
+    if future:
+        cursor.execute('''
+            SELECT ID, title, description, type, priority, startdate, enddate, place
+            FROM events
+            WHERE (WEEK(startdate) = ? OR WEEK(enddate) = ?) AND id_user = ? AND (startdate >= CURDATE() OR enddate >= CURDATE())
+        ''', (week, week, id))
+    else:
+        cursor.execute('''
+            SELECT ID, title, description, type, priority, startdate, enddate, place
+            FROM events
+            WHERE (WEEK(startdate) = ? OR WEEK(enddate) = ?) AND id_user = ?
+        ''', (week, week, id))
     rows = cursor.fetchall()
     cursor.close()
     return rows

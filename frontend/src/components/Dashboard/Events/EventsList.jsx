@@ -42,7 +42,7 @@ const EventsList = () => {
       const fetchEvents = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:8000/events/${userId}/month/${currentMonth}`
+            `http://localhost:8000/events/${userId}/month/${currentMonth}?future=true`
           );
           const fetchedEvents = response.data.map((event) => ({
             color: getColorByType(event.type),
