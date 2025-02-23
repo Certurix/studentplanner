@@ -6,12 +6,12 @@
             "script": "dev",
             "path": "frontend",
             "problemMatcher": [],
-            "label": "npm: dev - frontend"
+            "label": "Start Frontend"
         },
         {
-            "label": "Python: FastAPI",
+            "label": "Start Backend",
             "type": "shell",
-            "command": "venv/Scripts/activate && fastapi dev backend/app",
+            "command": "pwsh -Command \"| { . venv/Scripts/Activate.ps1; fastapi dev backend/app }\"",
             "problemMatcher": []
         }
     ],
