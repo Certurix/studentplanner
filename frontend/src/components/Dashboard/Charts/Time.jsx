@@ -18,7 +18,6 @@ const TimeDistribution = () => {
           );
           const events = response.data;
           const totalEvents = events.length;
-
           const eventTypes = {
             Personnel: { count: 0, color: "bg-orange-500" },
             Professionnel: { count: 0, color: "bg-yellow-500" },
@@ -27,13 +26,13 @@ const TimeDistribution = () => {
 
           events.forEach((event) => {
             switch (event.type) {
-              case "Personnel":
+              case "1":
                 eventTypes.Personnel.count++;
                 break;
-              case "Scolaire":
+              case "2":
                 eventTypes.Scolaire.count++;
                 break;
-              case "Professionnel":
+              case "3":
                 eventTypes.Professionnel.count++;
                 break;
               default:
