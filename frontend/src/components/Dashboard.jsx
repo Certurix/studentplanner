@@ -1,5 +1,5 @@
 import React, { useState, useTransition, useEffect } from "react";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "./Dashboard/Sidebar";
 import Header from "./Dashboard/Header";
 import Calendar from "./Dashboard/SmallCalendar";
@@ -18,12 +18,11 @@ import Settings from "../pages/Settings";
 import { Alert } from "react-bootstrap";
 import Loader from "./Loader";
 import useUser from "../hooks/useUser";
-import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const location = useLocation();
-  const { userId, loading } = useUser();
   const navigate = useNavigate();
+  const { userId, loading } = useUser();
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
@@ -53,7 +52,8 @@ const Dashboard = () => {
   }
 
   if (userId === null) {
-    navigate("/login?message=Veuillez vous connecter pour accéder au dashboard");
+    sessionStorage.setItem("loginMessage", "Veuillez vous connecter pour accéder au dashboard");
+    navigate("/login");
     return null;
   }
 

@@ -1,18 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Alert from "../components/Alert";
 import useUser from "../hooks/useUser";
 
 const Login = () => {
-  const reqMessage = new URLSearchParams(window.location.search);
-  const message = reqMessage.get("message");
   const { updateUserId } = useUser();
-  const [alertMessage, setAlertMessage] = useState(message || "");
+  const [alertMessage, setAlertMessage] = useState("");
+  const [warnMessage, setWarnMessage] = useState("");
+
+  useEffect(() => {
+    const message = sessionStorage.getItem("loginMessage");
+    if (message) {
+      setWarnMessage(message);
+      sessionStorage.removeItem("loginMessage"); // Clear the message after retrieving it
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     setAlertMessage("");
+    setWarnMessage("");
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
 
@@ -59,6 +67,7 @@ const Login = () => {
         }`}
       >
         {alertMessage && <Alert title="Erreur" message={alertMessage} />}
+        {warnMessage && <Alert title="Attention" message={warnMessage} />}
         <h2 className="text-2xl font-bold text-center">Se connecter</h2>
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="form-group">
