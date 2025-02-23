@@ -18,9 +18,9 @@ const Register = () => {
       setAlertMessage("Veuillez remplir tous les champs");
       return;
     }
-
+    console.log(import.meta.env.VITE_API_URL)
     try {
-      const response = await axios.post(`http://localhost:8000/register`, {
+      const response = await axios.post(`/api/register`, {
         name,
         lastname,
         email,
