@@ -8,13 +8,17 @@ load_dotenv()
 
 def get_connection():
     """Get connection to database."""
-    connection = mariadb.connect(
-        user ="root",
-        password ="123456789",
-        host ="127.0.0.1",
-        port =3306,
-        database = "studentplanner"
-    )
+    try:
+        connection = mariadb.connect(
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
+            host=os.getenv("DB_HOST"),
+            port=int(os.getenv("DB_PORT")),
+            database=os.getenv("DB_NAME")
+        )
+    except mariadb.OperationalError as e:
+        print(f"Error connecting to MariaDB Platform: {e}")
+        return None
     return connection
 
 def verify_user(email, password):

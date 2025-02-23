@@ -7,7 +7,7 @@ from . import db
 
 app = FastAPI()
 
-origins = ["http://localhost:3000", "localhost:3000", "http://localhost:5173", "localhost:5173"]
+origins = ["http://localhost:3000", "localhost:3000", "http://localhost:5173", "localhost:5173", "http://localhost:5174", "localhost:5174"]
 
 app.add_middleware(
     CORSMiddleware,
