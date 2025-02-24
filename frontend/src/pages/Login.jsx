@@ -12,7 +12,7 @@ const Login = () => {
     const message = sessionStorage.getItem("loginMessage");
     if (message) {
       setWarnMessage(message);
-      sessionStorage.removeItem("loginMessage"); // Clear the message after retrieving it
+      sessionStorage.removeItem("loginMessage");
     }
   }, []);
 
@@ -39,7 +39,6 @@ const Login = () => {
 
       if (typeof userId === "number") {
         // Simulate successful login
-        console.log("Login successful:", userId);
 
         // Store the userId in localStorage
         updateUserId(userId);
@@ -66,8 +65,12 @@ const Login = () => {
           alertMessage ? "animate-shake" : ""
         }`}
       >
-        {alertMessage && <Alert title="Erreur" message={alertMessage} />}
-        {warnMessage && <Alert title="Attention" message={warnMessage} />}
+        {alertMessage && (
+          <Alert title="Erreur" message={alertMessage} type="error" />
+        )}
+        {warnMessage && (
+          <Alert title="Avertissement" message={warnMessage} type="warning" />
+        )}
         <h2 className="text-2xl font-bold text-center">Se connecter</h2>
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="form-group">
