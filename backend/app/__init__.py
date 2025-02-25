@@ -137,14 +137,14 @@ def set_user_avatar(id: int, avatar: str):
     return db.set_user_avatar(id, avatar)
 
 @app.get("/events/{id}/month/{month}")
-def events_month(id: int, month: int, future: bool = False):
-    """Get events for a given month. If future is True, only return future events."""
-    return db.get_events_month(id, month, future)
+def events_month(id: int, month: int, future: bool = False, type: int | None = None):
+    """Get events for a given month. If future is True, only return future events. If event_type is provided, filter by event type."""
+    return db.get_events_month(id, month, future, type)
 
 @app.get("/events/{id}/week/{week}")
-def events_week(id: int, week: int, future: bool = False):
-    """Get events for a given week. If future is True, only return future events."""
-    return db.get_events_week(id, week, future)
+def events_week(id: int, week: int, future: bool = False, type: int | None = None):
+    """Get events for a given week. If future is True, only return future events. If event_type is provided, filter by event type."""
+    return db.get_events_week(id, week, future, type)
 
 @app.post("/events/create")
 def create_event(event: Event):
