@@ -15,8 +15,8 @@ import Professionnel from "../pages/plannings/professionnel";
 import { Icon } from "@iconify-icon/react";
 import SearchResults from "./SearchResults";
 import Settings from "../pages/Settings";
-import { Alert } from "react-bootstrap";
-import Loader from "./Loader";
+import Alert from "@/components/ui/Alert";
+import Loader from "@/components/ui/Loader";
 import useUser from "../hooks/useUser";
 
 const Dashboard = () => {
@@ -156,10 +156,7 @@ const Dashboard = () => {
       <Loader loading={isPending} />
       <Sidebar data={{ name, lastname, email }} />
       <div className="flex-1 p-6">
-        <Alert variant="danger" show={error !== null}>
-          <Alert.Heading>Erreur</Alert.Heading>
-          <p>{error}</p>
-        </Alert>
+        {error && <Alert type="error" message={error} title="Erreur" />}
         <Header
           title={headerProps.title}
           subtitle={headerProps.subtitle}
