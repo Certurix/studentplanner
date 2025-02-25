@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Alert from "../components/Alert";
+import Alert from "@/components/ui/Alert";
 import useUser from "../hooks/useUser";
 
 const Login = () => {

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import Alert from "../components/Alert";
+import Alert from "@/components/ui/Alert";
 
 const Register = () => {
   const [alertMessage, setAlertMessage] = useState("");
