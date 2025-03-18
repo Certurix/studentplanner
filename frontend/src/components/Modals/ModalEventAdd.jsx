@@ -1,19 +1,16 @@
-// frontend/src/components/Modals/ModalEventAdd.js
-
 import React from "react";
-import Button from "react-bootstrap/Button";
-import Modal from "react-bootstrap/Modal";
+import { Modal, Button } from "flowbite-react";
 import EventAdd from "../Dashboard/Events/EventAdd";
 
 const ModalEventAdd = ({ show, handleClose }) => {
   return (
-    <Modal show={show} size={"lg"} onHide={handleClose} fullscreen={false}>
+    <Modal show={show} onClose={handleClose} size="2xl">
       <Modal.Body>
         <EventAdd />
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
-          Close
+        <Button color="gray" onClick={handleClose}>
+          Fermer
         </Button>
       </Modal.Footer>
     </Modal>

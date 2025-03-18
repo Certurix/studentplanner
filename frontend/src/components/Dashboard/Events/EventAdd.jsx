@@ -1,38 +1,43 @@
 import React, { useState } from "react";
-import { Datepicker } from "flowbite-react";
+import { RangePicker } from "react-minimal-datetime-range";
+import "react-minimal-datetime-range/lib/react-minimal-datetime-range.css";
 import useUser from "../../../hooks/useUser";
 
 const EventAdd = () => {
-  const [title, setTitle] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [description, setDescription] = useState("");
-  const [type, setType] = useState("");
-  const [priority, setPriority] = useState("");
-  const [place, setPlace] = useState("");
+  const [formData, setFormData] = useState({
+    title: "",
+    startDate: "",
+    endDate: "",
+    description: "",
+    type: "",
+    priority: "",
+    place: "",
+  });
 
-  const userId = useUser();
+  const { userId } = useUser();
 
-  const addEventForm = document.getElementById("event-add-form");
-  const datepickerStartDate = document.getElementById(
-    "modal-eventadd-startdate"
-  );
-  const datepickerEndDate = document.getElementById("modal-eventadd-enddate");
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [id]: value,
+    }));
+  };
+
+  const handleDateChange = (dates) => {
+    console.log(dates);
+    setFormData((prevData) => ({
+      ...prevData,
+      startDate: dates[0],
+      endDate: dates[1],
+    }));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log({
-      userId,
-      title,
-      startDate,
-      endDate,
-      description,
-      type,
-      priority,
-      place,
-    });
+    const { title, startDate, endDate, description, type, priority, place } =
+      formData;
 
-    // Envoi de la requête au serveur backend
     fetch("http://localhost:8000/events/create", {
       method: "POST",
       headers: {
@@ -55,10 +60,16 @@ const EventAdd = () => {
         }
         return res.json();
       })
-      .then((data) => {
-        addEventForm.reset();
-        datepickerStartDate.clear();
-        datepickerEndDate.clear();
+      .then(() => {
+        setFormData({
+          title: "",
+          startDate: "",
+          endDate: "",
+          description: "",
+          type: "",
+          priority: "",
+          place: "",
+        });
       })
       .catch((err) => {
         console.log(err.message);
@@ -68,111 +79,87 @@ const EventAdd = () => {
   return (
     <div className="max-w-md mx-auto mt-10">
       <h2 className="text-2xl font-bold mb-5">Ajouter un événement</h2>
-      <form onSubmit={handleSubmit} className="" id="event-add-form">
+      <form onSubmit={handleSubmit} id="event-add-form">
+        {[
+          { id: "title", label: "Titre", type: "text", placeholder: "Titre" },
+          { id: "place", label: "Lieu", type: "text", placeholder: "Lieu" },
+        ].map(({ id, label, type, placeholder }) => (
+          <div className="mb-4" key={id}>
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor={id}
+            >
+              {label}
+            </label>
+            <input
+              id={id}
+              type={type}
+              value={formData[id]}
+              onChange={handleChange}
+              className="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder={placeholder}
+            />
+          </div>
+        ))}
         <div className="mb-4">
           <label
             className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="title"
+            htmlFor="date-range"
           >
-            Titre
+            Date
           </label>
-          <input
-            id="title"
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Titre"
+          <RangePicker
+            locale="fr"
+            allowPageClickToClose={true}
+            placeholder={["Date de début", "Date de fin"]}
+            defaultDates={[formData.startDate, formData.endDate]}
+            onConfirm={handleDateChange}
+            style={{ width: "100%", margin: "0 auto"}}
           />
         </div>
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="startDate"
-          >
-            Date de début
-          </label>
-          <Datepicker
-            id="modal-eventadd-startdate"
-            minDate={new Date()}
-            language="fr-FR"
-            labelTodayButton="Aujourd'hui"
-            labelClearButton="Effacer"
-            onChange={(date) => setStartDate(date ? date.toJSON() : "")}
-            icon={false}
-          />
-        </div>
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="endDate"
-          >
-            Date de fin
-          </label>
-          <Datepicker
-            id="modal-eventadd-enddate"
-            minDate={new Date(new Date().setDate(new Date().getDate() + 1))}
-            language="fr-FR"
-            labelTodayButton="Aujourd'hui"
-            labelClearButton="Effacer"
-            onChange={(date) => setEndDate(date ? date.toJSON() : "")}
-            icon={false}
-          />
-        </div>
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="eventType"
-          >
-            Type
-          </label>
-          <select
-            id="type"
-            value={type}
-            onChange={(e) => setType(Number(e.target.value))}
-            className="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          >
-            <option value="0">Sélectionner un type</option>
-            <option value="1">Personnel</option>
-            <option value="2">Scolaire</option>
-            <option value="3">Professionnel</option>
-          </select>
-        </div>
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="priority"
-          >
-            Prioritée
-          </label>
-          <select
-            id="priority"
-            value={priority}
-            onChange={(e) => setPriority(Number(e.target.value))}
-            className="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          >
-            <option value="0">Sélectionner une prioritée</option>
-            <option value="1">Basse</option>
-            <option value="2">Moyenne</option>
-            <option value="3">Haute</option>
-          </select>
-        </div>
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="place"
-          >
-            Lieu
-          </label>
-          <input
-            id="place"
-            type="text"
-            value={place}
-            onChange={(e) => setPlace(e.target.value)}
-            className="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Place"
-          />
-        </div>
+        {[
+          {
+            id: "type",
+            label: "Type",
+            options: [
+              "Sélectionner un type",
+              "Personnel",
+              "Scolaire",
+              "Professionnel",
+            ],
+          },
+          {
+            id: "priority",
+            label: "Prioritée",
+            options: [
+              "Sélectionner une prioritée",
+              "Basse",
+              "Moyenne",
+              "Haute",
+            ],
+          },
+        ].map(({ id, label, options }) => (
+          <div className="mb-4" key={id}>
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor={id}
+            >
+              {label}
+            </label>
+            <select
+              id={id}
+              value={formData[id]}
+              onChange={handleChange}
+              className="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            >
+              {options.map((option, index) => (
+                <option key={index} value={index}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
+        ))}
         <div className="mb-6">
           <label
             className="block text-gray-700 text-sm font-bold mb-2"
@@ -182,8 +169,8 @@ const EventAdd = () => {
           </label>
           <textarea
             id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            value={formData.description}
+            onChange={handleChange}
             className="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             placeholder="Event Description"
           />

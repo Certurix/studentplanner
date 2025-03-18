@@ -1,16 +1,24 @@
-import { useState, useEffect } from "react";
+import { useContext, useState, useEffect } from "react";
+import UserContext from "../context/UserContext";
 
 const useUser = () => {
-  const [userId, setUserId] = useState(null);
+  const { userId, updateUserId } = useContext(UserContext);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
     if (storedUserId) {
-      setUserId(Number(storedUserId));
+      updateUserId(Number(storedUserId));
     }
-  }, []);
+    setLoading(false);
+  }, [updateUserId]);
 
-  return userId;
+  const clearUserId = () => {
+    updateUserId(null);
+    localStorage.removeItem("userId");
+  };
+
+  return { userId, updateUserId, clearUserId, loading };
 };
 
 export default useUser;

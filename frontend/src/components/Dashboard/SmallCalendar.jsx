@@ -14,7 +14,7 @@ const SmallCalendar = () => {
     0
   ).getDate();
 
-  const userId = useUser();
+  const {userId} = useUser();
 
   useEffect(() => {
     const fetchEvents = async () => {

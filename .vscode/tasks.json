@@ -1,24 +1,22 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "type": "npm",
-            "script": "dev",
-            "path": "frontend",
-            "problemMatcher": [],
-            "label": "npm: dev - frontend"
-        },
-        {
-            "label": "Python: FastAPI",
-            "type": "shell",
-            "command": "venv/Scripts/activate && fastapi dev backend/app",
-            "problemMatcher": []
-        }
-    ],
-    "compounds": [
-        {
-            "label": "Run All",
-            "tasks": ["npm: dev - frontend", "Python: FastAPI"]
-        }
-    ]
+  "version": "2.0.0",
+  "tasks": [
+      {
+          "type": "npm",
+          "script": "dev",
+          "path": "frontend",
+          "problemMatcher": [],
+          "label": "Start Frontend"
+      },
+      {
+          "label": "Start Backend",
+          "type": "shell",
+          "command": "bash -c 'if [ ! -d \"backend/venv\" ]; then python -m venv backend/venv && source backend/venv/Scripts/activate && pip install -r backend/requirements.txt; fi && source backend/venv/Scripts/activate && pip install -r backend/requirements.txt && fastapi dev backend/app'",
+          "problemMatcher": []
+      },
+      {
+          "label": "Start All",
+          "dependsOn": ["Start Frontend", "Start Backend"]
+      }
+  ]
 }

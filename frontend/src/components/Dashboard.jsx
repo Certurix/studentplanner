@@ -1,5 +1,5 @@
 import React, { useState, useTransition, useEffect } from "react";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "./Dashboard/Sidebar";
 import Header from "./Dashboard/Header";
 import Calendar from "./Dashboard/SmallCalendar";
@@ -15,14 +15,15 @@ import Professionnel from "../pages/plannings/professionnel";
 import { Icon } from "@iconify-icon/react";
 import SearchResults from "./SearchResults";
 import Settings from "../pages/Settings";
-import { Alert } from "react-bootstrap";
-import Loader from "./Loader";
+import Alert from "@/components/ui/Alert";
+import Loader from "@/components/ui/Loader";
 import useUser from "../hooks/useUser";
 
 const Dashboard = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { userId, loading } = useUser();
   const [show, setShow] = useState(false);
-  const userId = useUser();
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -46,13 +47,25 @@ const Dashboard = () => {
     }
   }, [userId]);
 
+  if (loading) {
+    return <Loader loading={true} />;
+  }
+
+  if (userId === null) {
+    sessionStorage.setItem("loginMessage", "Veuillez vous connecter pour accéder au dashboard");
+    navigate("/login");
+    return null;
+  }
+
   function getUserData(field, setter) {
     startTransition(() => {
       fetch(`http://localhost:8000/users/${userId}/${field}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       })
-        .then((res) => (res.ok ? res.json() : Promise.reject("Network response was not ok")))
+        .then((res) =>
+          res.ok ? res.json() : Promise.reject("Network response was not ok")
+        )
         .then(setter)
         .catch(setError);
     });
@@ -63,11 +76,19 @@ const Dashboard = () => {
       case "/plannings/scolaire":
         return {
           title: "Planning scolaire",
-          subtitle: "Consultez votre planning scolaire et modifiez vos événements",
+          subtitle:
+            "Consultez votre planning scolaire et modifiez vos événements",
           btnData: [
             {
               text: "Nouveau",
-              icon: <Icon icon="tabler:plus" width="20" height="20" style={{ display: 'block' }} />,
+              icon: (
+                <Icon
+                  icon="tabler:plus"
+                  width="20"
+                  height="20"
+                  style={{ display: "block" }}
+                />
+              ),
               onClick: handleShow,
             },
           ],
@@ -75,11 +96,19 @@ const Dashboard = () => {
       case "/plannings/personnel":
         return {
           title: "Planning personnel",
-          subtitle: "Consultez votre planning personnel et modifiez vos événements",
+          subtitle:
+            "Consultez votre planning personnel et modifiez vos événements",
           btnData: [
             {
               text: "Nouveau",
-              icon: <Icon icon="tabler:plus" width="20" height="20" style={{ display: 'block' }} />,
+              icon: (
+                <Icon
+                  icon="tabler:plus"
+                  width="20"
+                  height="20"
+                  style={{ display: "block" }}
+                />
+              ),
               onClick: handleShow,
             },
           ],
@@ -87,11 +116,19 @@ const Dashboard = () => {
       case "/plannings/professionnel":
         return {
           title: "Planning professionnel",
-          subtitle: "Consultez votre planning professionnel et modifiez vos événements",
+          subtitle:
+            "Consultez votre planning professionnel et modifiez vos événements",
           btnData: [
             {
               text: "Nouveau",
-              icon: <Icon icon="tabler:plus" width="20" height="20" style={{ display: 'block' }} />,
+              icon: (
+                <Icon
+                  icon="tabler:plus"
+                  width="20"
+                  height="20"
+                  style={{ display: "block" }}
+                />
+              ),
               onClick: handleShow,
             },
           ],
@@ -99,7 +136,8 @@ const Dashboard = () => {
       case "/settings":
         return {
           title: "Paramètres",
-          subtitle: "Mettez à jour vos informations personnelles et de sécurité",
+          subtitle:
+            "Mettez à jour vos informations personnelles et de sécurité",
           btnData: [],
         };
       default:
@@ -113,19 +151,12 @@ const Dashboard = () => {
 
   const headerProps = getHeaderProps();
 
-  if (userId === null) {
-    return <Loader loading={true} />;
-  }
-
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Loader loading={isPending} />
       <Sidebar data={{ name, lastname, email }} />
       <div className="flex-1 p-6">
-        <Alert variant="danger" show={error !== null}>
-          <Alert.Heading>Erreur</Alert.Heading>
-          <p>{error}</p>
-        </Alert>
+        {error && <Alert type="error" message={error} title="Erreur" />}
         <Header
           title={headerProps.title}
           subtitle={headerProps.subtitle}
@@ -137,7 +168,14 @@ const Dashboard = () => {
           <Route path="/plannings/scolaire" element={<Scolaire />} />
           <Route path="/plannings/personnel" element={<Personnel />} />
           <Route path="/plannings/professionnel" element={<Professionnel />} />
-          <Route path="/settings" element={<Settings data={{ userId, name, lastname, email, className, school }} />} />
+          <Route
+            path="/settings"
+            element={
+              <Settings
+                data={{ userId, name, lastname, email, className, school }}
+              />
+            }
+          />
           <Route path="/search" element={<SearchResults />} />
           {/* <Route path="/class/chat" element={<Chat />} />
           <Route path="/class/members" element={<Members />} /> */}

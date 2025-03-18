@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Icon } from "@iconify-icon/react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Nav, Navbar, NavDropdown } from "react-bootstrap";
+import useUser from "../../hooks/useUser";
 import "./Sidebar.css";
 
 export default function Sidebar({ data }) {
@@ -9,6 +10,7 @@ export default function Sidebar({ data }) {
   const [avatar, setAvatar] = useState(null);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const { clearUserId } = useUser();
 
   useEffect(() => {
     if (data && data.name && data.lastname) {
@@ -45,6 +47,7 @@ export default function Sidebar({ data }) {
   }
 
   const handleLogout = () => {
+    clearUserId();
     navigate("/login");
   };
 

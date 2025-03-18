@@ -8,13 +8,17 @@ load_dotenv()
 
 def get_connection():
     """Get connection to database."""
-    connection = mariadb.connect(
-        user ="root",
-        password ="123456789",
-        host ="127.0.0.1",
-        port =3306,
-        database = "studentplanner"
-    )
+    try:
+        connection = mariadb.connect(
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
+            host=os.getenv("DB_HOST"),
+            port=int(os.getenv("DB_PORT")),
+            database=os.getenv("DB_NAME")
+        )
+    except mariadb.OperationalError as e:
+        print(f"Error connecting to MariaDB Platform: {e}")
+        return None
     return connection
 
 def verify_user(email, password):
@@ -214,26 +218,40 @@ def set_user_avatar(id, avatar):
     cursor.close()
     return True
 
-def get_events_month(id, month):
-    """Get list of events in given month and user ID."""
+def get_events_month(id, month, future=False, type=None):
+    """Get list of events in given month and user ID. Optionally, only return future events and filter by event type."""
     cursor = get_connection().cursor(dictionary=True)
-    cursor.execute('''
+    query = '''
         SELECT ID, title, description, type, priority, startdate, enddate, place
         FROM events
         WHERE (MONTH(startdate) = ? OR MONTH(enddate) = ?) AND id_user = ?
-    ''', (month, month, id))
+    '''
+    params = [month, month, id]
+    if future:
+        query += ' AND (startdate >= CURDATE() OR enddate >= CURDATE())'
+    if type:
+        query += ' AND type = ?'
+        params.append(type)
+    cursor.execute(query, params)
     rows = cursor.fetchall()
     cursor.close()
     return rows
 
-def get_events_week(id, week):
-    """Get list of events in given week and user ID."""
+def get_events_week(id, week, future=False, type=None):
+    """Get list of events in given week and user ID. Optionally, only return future events and filter by event type."""
     cursor = get_connection().cursor(dictionary=True)
-    cursor.execute('''
+    query = '''
         SELECT ID, title, description, type, priority, startdate, enddate, place
         FROM events
         WHERE (WEEK(startdate) = ? OR WEEK(enddate) = ?) AND id_user = ?
-    ''', (week, week, id))
+    '''
+    params = [week, week, id]
+    if future:
+        query += ' AND (startdate >= CURDATE() OR enddate >= CURDATE())'
+    if type:
+        query += ' AND type = ?'
+        params.append(type)
+    cursor.execute(query, params)
     rows = cursor.fetchall()
     cursor.close()
     return rows
