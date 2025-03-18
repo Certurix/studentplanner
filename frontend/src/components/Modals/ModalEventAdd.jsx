@@ -6,13 +6,8 @@ const ModalEventAdd = ({ show, handleClose }) => {
   return (
     <Modal show={show} onClose={handleClose} size="2xl">
       <Modal.Body>
-        <EventAdd />
+        <EventAdd close={handleClose} />
       </Modal.Body>
-      <Modal.Footer>
-        <Button color="gray" onClick={handleClose}>
-          Fermer
-        </Button>
-      </Modal.Footer>
     </Modal>
   );
 };
