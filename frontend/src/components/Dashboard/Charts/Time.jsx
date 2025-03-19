@@ -71,7 +71,9 @@ const TimeDistribution = () => {
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-xl font-semibold mb-4">RÉPARTITION PLANNINGS</h2>
+      <h2 className="text-2xl font-bold mb-4 text-accent">
+        ÉVÉNEMENTS À VENIR
+      </h2>
       {data.map((item, index) => (
         <div key={index} className="mb-4">
           <p className="mb-1">{item.label}</p>
