@@ -1,6 +1,0 @@
-.custom-dropdown .dropdown-toggle::after {
-    margin-left: auto;
-    right: .125rem;
-    position: absolute;
-    top: 50%;
-  }
