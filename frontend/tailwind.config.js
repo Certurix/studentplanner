@@ -3,7 +3,7 @@ const flowbite = require("flowbite-react/tailwind");
 
 
 module.exports = {
-  content: ["./src/**/*.{js,jsx,ts,tsx}", flowbite.content()],
+  content: ["./src/**/*.{js,jsx,ts,tsx}", flowbite.content(), './node_modules/react-tailwindcss-datetimepicker/dist/react-tailwindcss-datetimepicker.js'],
   theme: {
     extend: {
       fontFamily: {
