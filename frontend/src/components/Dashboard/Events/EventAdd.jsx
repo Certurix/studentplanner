@@ -1,18 +1,47 @@
 import React, { useState } from "react";
-import { RangePicker } from "react-minimal-datetime-range";
-import "react-minimal-datetime-range/lib/react-minimal-datetime-range.css";
+import DateTimePicker from "react-tailwindcss-datetimepicker";
+import { Label, TextInput, Select, Textarea } from "flowbite-react";
 import useUser from "../../../hooks/useUser";
 
 const EventAdd = ({ close }) => {
   const [formData, setFormData] = useState({
     title: "",
-    startDate: "",
-    endDate: "",
+    startDate: new Date(),
+    endDate: new Date(),
     description: "",
     type: "",
     priority: "",
     place: "",
   });
+
+  const locale = {
+    format: "dd-MM-yyyy HH:mm", // Voir: https://date-fns.org/v2.16.1/docs/format
+    sundayFirst: false,
+    days: ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"],
+    months: [
+      "Janvier",
+      "Février",
+      "Mars",
+      "Avril",
+      "Mai",
+      "Juin",
+      "Juillet",
+      "Août",
+      "Septembre",
+      "Octobre",
+      "Novembre",
+      "Décembre",
+    ],
+    fromDate: "De",
+    toDate: "Jusqu'à",
+    selectingFrom: "Sélection de",
+    selectingTo: "Sélection jusqu'à",
+    minDate: "Date min",
+    maxDate: "Date max",
+    close: "Fermer",
+    apply: "Appliquer",
+    cancel: "Annuler",
+  };
 
   const { userId } = useUser();
 
@@ -24,12 +53,11 @@ const EventAdd = ({ close }) => {
     }));
   };
 
-  const handleDateChange = (dates) => {
-    console.log(dates);
+  const handleDateChange = (startDate, endDate) => {
     setFormData((prevData) => ({
       ...prevData,
-      startDate: dates[0],
-      endDate: dates[1],
+      startDate,
+      endDate,
     }));
   };
 
@@ -63,13 +91,14 @@ const EventAdd = ({ close }) => {
       .then(() => {
         setFormData({
           title: "",
-          startDate: "",
-          endDate: "",
+          startDate: new Date(),
+          endDate: new Date(),
           description: "",
           type: "",
           priority: "",
           place: "",
         });
+        close(); // Close modal after successful submission
       })
       .catch((err) => {
         console.log(err.message);
@@ -98,42 +127,56 @@ const EventAdd = ({ close }) => {
         </button>
       </div>
       <form onSubmit={handleSubmit} id="event-add-form">
-        {[
-          { id: "title", label: "Titre", type: "text", placeholder: "Titre" },
-          { id: "place", label: "Lieu", type: "text", placeholder: "Lieu" },
-        ].map(({ id, label, type, placeholder }) => (
-          <div className="mb-4" key={id}>
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor={id}
-            >
-              {label}
-            </label>
-            <input
-              id={id}
-              type={type}
-              value={formData[id]}
-              onChange={handleChange}
-              className="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              placeholder={placeholder}
-            />
-          </div>
-        ))}
         <div className="mb-4">
-          <label
+          <div className="block">
+            <Label htmlFor="title" value="Titre" />
+          </div>
+          <TextInput
+            id="title"
+            value={formData.title}
+            onChange={handleChange}
+            className="shadow-sm w-full"
+            required
+          />
+        </div>
+        
+        <div className="mb-4">
+          <div className="block">
+            <Label htmlFor="place" value="Lieu" />
+          </div>
+          <TextInput
+            id="place"
+            value={formData.place}
+            onChange={handleChange}
+            className="shadow-sm w-full"
+          />
+        </div>
+        
+        <div className="mb-4">
+          <Label
             className="block text-gray-700 text-sm font-bold mb-2"
             htmlFor="date-range"
-          >
-            Date
-          </label>
-          <RangePicker
-            locale="fr"
-            allowPageClickToClose={true}
-            placeholder={["Date de début", "Date de fin"]}
-            defaultDates={[formData.startDate, formData.endDate]}
-            onConfirm={handleDateChange}
-            style={{ width: "100%", margin: "0 auto"}}
+            value="Date"
           />
+          <DateTimePicker
+            locale={locale}
+            leftMode={true}
+            forceMobileMode={true}
+            start={formData.startDate}
+            end={formData.endDate}
+            applyCallback={handleDateChange}
+            ranges={{
+              "Aujourd'hui": [new Date().setHours(0, 0, 0, 0), new Date()],
+              "30 derniers jours": [
+                new Date(new Date().setDate(new Date().getDate() - 30)),
+                new Date(),
+              ],
+            }}
+          >
+            <div className="w-full p-2 border border-gray-300 rounded text-left">
+              {`${formData.startDate.toLocaleDateString('fr-FR')} - ${formData.endDate.toLocaleDateString('fr-FR')}`}
+            </div>
+          </DateTimePicker>
         </div>
         {[
           {
@@ -158,45 +201,39 @@ const EventAdd = ({ close }) => {
           },
         ].map(({ id, label, options }) => (
           <div className="mb-4" key={id}>
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor={id}
-            >
-              {label}
-            </label>
-            <select
+            <div className="block">
+              <Label htmlFor={id} value={label} />
+            </div>
+            <Select
               id={id}
               value={formData[id]}
               onChange={handleChange}
-              className="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow-sm w-full"
             >
               {options.map((option, index) => (
                 <option key={index} value={index}>
                   {option}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
         ))}
         <div className="mb-6">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="description"
-          >
-            Description
-          </label>
-          <textarea
+          <div className="block">
+            <Label htmlFor="description" value="Description" />
+          </div>
+          <Textarea
             id="description"
             value={formData.description}
             onChange={handleChange}
-            className="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Event Description"
+            className="shadow-sm w-full"
+            rows={4}
           />
         </div>
         <div className="flex items-center justify-between">
           <button
             type="submit"
-            className="bg-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           >
             Ajouter
           </button>

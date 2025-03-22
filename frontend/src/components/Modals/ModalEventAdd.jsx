@@ -4,7 +4,7 @@ import EventAdd from "../Dashboard/Events/EventAdd";
 
 const ModalEventAdd = ({ show, handleClose }) => {
   return (
-    <Modal show={show} onClose={handleClose} size="2xl">
+    <Modal show={show} onClose={handleClose} size="6xl">
       <Modal.Body>
         <EventAdd close={handleClose} />
       </Modal.Body>

@@ -4,20 +4,41 @@ import { UserProvider } from "./context/UserContext";
 import Dashboard from "./components/Dashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import { Flowbite } from "flowbite-react"; // Add this import
 
-import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
+
+// Define custom theme (optional)
+const flowbiteTheme = {
+  floatingLabel: {
+    base: "relative",
+    input: {
+      default: {
+        filled: {
+          input: "border-gray-300 focus:border-blue-500",
+          floating: "text-gray-500 peer-focus:text-blue-500"
+        },
+        outlined: {
+          input: "border-gray-300 focus:border-blue-500",
+          floating: "text-gray-500 peer-focus:text-blue-500"
+        }
+      }
+    }
+  }
+};
 
 function App() {
   return (
     <UserProvider>
-      <Router>
-        <Routes>
-          <Route path="*" element={<Dashboard />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-        </Routes>
-      </Router>
+      <Flowbite theme={{ theme: flowbiteTheme }}>
+        <Router>
+          <Routes>
+            <Route path="*" element={<Dashboard />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+          </Routes>
+        </Router>
+      </Flowbite>
     </UserProvider>
   );
 }
