@@ -1,8 +1,10 @@
 CREATE DATABASE IF NOT EXISTS studentplanner;
+CREATE USER 'studentplanner_user'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON studentplanner.* TO 'studentplanner_user'@'localhost';
 
 USE studentplanner;
 
-CREATE TABLE USER (
+CREATE TABLE user (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     lastname VARCHAR(50) NOT NULL,
@@ -12,7 +14,7 @@ CREATE TABLE USER (
     school VARCHAR(50),
     class VARCHAR(50)
 );
-CREATE TABLE EVENTS (
+CREATE TABLE events (
     ID INT AUTO_INCREMENT PRIMARY KEY,
     id_user INT,
     title VARCHAR(255) NOT NULL,
@@ -22,5 +24,5 @@ CREATE TABLE EVENTS (
     startdate DATETIME,
     enddate DATETIME,
     place VARCHAR(255),
-    FOREIGN KEY (id_user) REFERENCES USER(id)
+    FOREIGN KEY (id_user) REFERENCES user(id)
 );
