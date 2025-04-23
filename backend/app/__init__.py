@@ -5,9 +5,17 @@ from datetime import datetime
 
 from . import db
 
-app = FastAPI()
+app = FastAPI(root_path="/api")
 
-origins = ["http://localhost:3000", "localhost:3000", "http://localhost:5173", "localhost:5173", "http://localhost:5174", "localhost:5174"]
+origins = [
+    "http://localhost:3000", 
+    "localhost:3000", 
+    "http://localhost:5173", 
+    "localhost:5173", 
+    "http://localhost:5174", 
+    "localhost:5174",
+    "http://157.90.111.60"  # Add your production server IP
+]
 
 app.add_middleware(
     CORSMiddleware,
