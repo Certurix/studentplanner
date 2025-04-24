@@ -14,9 +14,10 @@ const TimeDistribution = () => {
       const fetchEvents = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:8000/events/${userId}/month/${currentMonth}`
+            `${import.meta.env.VITE_API_URL}/api/events/${userId}/month/${currentMonth}`
           );
-          const events = response.data;
+          // Ensure events is an array before processing
+          const events = Array.isArray(response.data) ? response.data : [];
           const totalEvents = events.length;
           const eventTypes = {
             Personnel: { count: 0, color: "bg-orange-500" },
@@ -24,6 +25,7 @@ const TimeDistribution = () => {
             Scolaire: { count: 0, color: "bg-blue-500" },
           };
 
+          // Safe to use forEach now that we've verified events is an array
           events.forEach((event) => {
             switch (event.type) {
               case "1":

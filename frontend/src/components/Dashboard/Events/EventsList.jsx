@@ -42,9 +42,11 @@ const EventsList = () => {
       const fetchEvents = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:8000/events/${userId}/month/${currentMonth}?future=true`
+            `${import.meta.env.VITE_API_URL}/api/events/${userId}/month/${currentMonth}?future=true`
           );
-          const fetchedEvents = response.data.map((event) => ({
+          // Ensure response.data is an array before using map
+          const responseData = Array.isArray(response.data) ? response.data : [];
+          const fetchedEvents = responseData.map((event) => ({
             color: getColorByType(event.type),
             title: event.title,
             date: formatDate(event.startdate, event.enddate),

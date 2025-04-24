@@ -14,7 +14,7 @@ export default function EventStats() {
       const fetchEvents = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:8000/events/${userId}/month/${currentMonth}`
+            `${import.meta.env.VITE_API_URL}/api/events/${userId}/month/${currentMonth}`
           );
           setEvents(response.data);
           setLoading(false);
@@ -28,12 +28,14 @@ export default function EventStats() {
     }
   }, [userId, currentMonth]);
 
+  // Ensure events is an array and calculate stats
   const currentDate = new Date();
-  const achievedEvents = events.filter(
+  const safeEvents = Array.isArray(events) ? events : [];
+  const achievedEvents = safeEvents.filter(
     (event) => new Date(event.enddate) < currentDate
   ).length;
-  const upcomingEvents = events.length - achievedEvents;
-  const totalEvents = events.length;
+  const upcomingEvents = safeEvents.length - achievedEvents;
+  const totalEvents = safeEvents.length;
 
   if (loading) {
     return <div>Loading...</div>;

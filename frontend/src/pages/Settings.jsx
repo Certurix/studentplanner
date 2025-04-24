@@ -5,6 +5,7 @@ import { Icon } from "@iconify-icon/react";
 
 export default function UserSettings({ data }) {
   const [key, setKey] = useState("userdata");
+  const baseUrl = import.meta.env.VITE_API_URL || "";
 
   const { getRootProps, getInputProps } = useDropzone({
     accept: {
@@ -45,7 +46,7 @@ export default function UserSettings({ data }) {
       for (const field of updateFields) {
         if (formData[field]) {
           const response = await fetch(
-            `http://localhost:8000/users/${data.userId}/${field}`,
+            `${baseUrl}/api/users/${data.userId}/${field}`,
             {
               method: "POST",
               body: JSON.stringify({
@@ -66,7 +67,7 @@ export default function UserSettings({ data }) {
       // Update avatar if it exists
       if (formData.avatar) {
         const response = await fetch(
-          `http://localhost:8000/users/${data.userId}/avatar`,
+          `${baseUrl}/api/users/${data.userId}/avatar`,
           {
             method: "POST",
             body: JSON.stringify({ avatar: formData.avatar }),

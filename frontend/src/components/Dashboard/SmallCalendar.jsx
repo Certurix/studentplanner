@@ -17,24 +17,29 @@ const SmallCalendar = () => {
   const {userId} = useUser();
 
   useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:8000/events/${userId}/month/${
-            new Date().getMonth() + 1
-          }`
-        );
-        setEvents(response.data);
-      } catch (error) {
-        console.error("Error fetching events:", error);
-      }
-    };
+    if (userId !== null) {
+      const fetchEvents = async () => {
+        try {
+          const response = await axios.get(
+            `/api/events/${userId}/month/${
+              new Date().getMonth() + 1
+            }`
+          );
+          setEvents(response.data);
+        } catch (error) {
+          console.error("Error fetching events:", error);
+        }
+      };
 
-    fetchEvents();
-  }, []);
+      fetchEvents();
+    }
+  }, [userId]);
 
   const getEventForDay = (day) => {
-    return events.find((event) => new Date(event.startdate).getDate() === day);
+    // Ensure events is an array before using find
+    return Array.isArray(events) 
+      ? events.find((event) => new Date(event.startdate).getDate() === day)
+      : undefined;
   };
 
   return (

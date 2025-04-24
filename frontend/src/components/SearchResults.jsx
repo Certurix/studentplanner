@@ -17,7 +17,7 @@ const SearchResults = () => {
 
   const fetchEvents = async (query) => {
     try {
-      const response = await axios.get(`http://localhost:8000/events/search`, {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/events/search`, {
         params: { query },
       });
       setEvents(response.data);

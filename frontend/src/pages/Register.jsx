@@ -20,7 +20,7 @@ const Register = () => {
     }
     console.log(import.meta.env.VITE_API_URL)
     try {
-      const response = await axios.post(`/api/register`, {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL || ''}/api/register`, {
         name,
         lastname,
         email,
@@ -59,7 +59,7 @@ const Register = () => {
               type="text"
               id="name"
               className="form-control mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              placeholder="Nom"
+              placeholder="Prénom"
             />
           </div>
           <div className="form-group">
@@ -73,7 +73,7 @@ const Register = () => {
               type="text"
               id="lastname"
               className="form-control mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              placeholder="Prénom"
+              placeholder="Nom"
             />
           </div>
           <div className="form-group">
