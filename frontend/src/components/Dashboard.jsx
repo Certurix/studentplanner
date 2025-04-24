@@ -1,12 +1,13 @@
-import React, { useState, useTransition, useEffect } from "react";
+import React, { useState, useTransition, useEffect, useCallback } from "react";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
+
 import Sidebar from "./Dashboard/Sidebar";
 import Header from "./Dashboard/Header";
 import Calendar from "./Dashboard/SmallCalendar";
 import EventsList from "./Dashboard/Events/EventsList";
 import EventStats from "./Dashboard/Events/EventStats";
 import TimeDistribution from "./Dashboard/Charts/Time";
-import ModalEventAdd from "./Modals/ModalEventAdd";
 
 import Scolaire from "../pages/plannings/scolaire";
 import Personnel from "../pages/plannings/personnel";
@@ -18,12 +19,23 @@ import Settings from "../pages/Settings";
 import Alert from "@/components/ui/Alert";
 import Loader from "@/components/ui/Loader";
 import useUser from "../hooks/useUser";
+import EventModal from "./Dashboard/Events/EventModal";
 
 const Dashboard = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { userId, loading } = useUser();
   const [show, setShow] = useState(false);
+
+  const [selectedEvent, setSelectedEvent] = useState({
+    title: "",
+    start: new Date(),
+    end: new Date(),
+    description: "",
+    type: 1,
+    priority: 1,
+    place: "",
+  });
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -37,6 +49,19 @@ const Dashboard = () => {
   const [className, setClassName] = useState("");
   const [error, setError] = useState(null);
 
+  const baseUrl = import.meta.env.VITE_API_URL || "";
+
+  const getUserData = useCallback((field, setter) => {
+    startTransition(() => {
+      axios
+        .get(`${baseUrl}/api/users/${userId}/${field}`)
+        .then((response) => setter(response.data))
+        .catch((error) =>
+          setError(error.message || "Network response was not ok")
+        );
+    });
+  }, [baseUrl, userId, startTransition]);
+
   useEffect(() => {
     if (userId !== null) {
       getUserData("name", setName);
@@ -45,31 +70,57 @@ const Dashboard = () => {
       getUserData("school", setSchool);
       getUserData("classname", setClassName);
     }
-  }, [userId]);
+  }, [userId, getUserData]);
 
   if (loading) {
     return <Loader loading={true} />;
   }
 
   if (userId === null) {
-    sessionStorage.setItem("loginMessage", "Veuillez vous connecter pour accéder au dashboard");
+    sessionStorage.setItem(
+      "loginMessage",
+      "Veuillez vous connecter pour accéder au dashboard"
+    );
     navigate("/login");
     return null;
   }
 
-  function getUserData(field, setter) {
+  const handleCreateEvent = (eventData) => {
     startTransition(() => {
-      fetch(`http://localhost:8000/users/${userId}/${field}`, {
-        method: "GET",
+      fetch(`${baseUrl}/api/events/create`, {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId,
+          title: eventData.title,
+          startdate: eventData.start,
+          enddate: eventData.end,
+          description: eventData.description || "",
+          type: eventData.type || 1,
+          priority: eventData.priority || 1,
+          place: eventData.place || "",
+        }),
       })
-        .then((res) =>
-          res.ok ? res.json() : Promise.reject("Network response was not ok")
-        )
-        .then(setter)
+        .then((res) => {
+          if (!res.ok) throw new Error("Network response was not ok");
+          return res.json();
+        })
+        .then(() => {
+          handleClose();
+        })
         .catch(setError);
     });
-  }
+  };
+
+  const handleUpdateEvent = (eventData) => {
+    console.log("Update event:", eventData);
+    handleClose();
+  };
+
+  const handleDeleteEvent = () => {
+    console.log("Delete event");
+    handleClose();
+  };
 
   const getHeaderProps = () => {
     switch (location.pathname) {
@@ -151,6 +202,14 @@ const Dashboard = () => {
 
   const headerProps = getHeaderProps();
 
+  const getPlanningTitle = () => {
+    if (location.pathname.includes("scolaire")) return "Planning scolaire";
+    if (location.pathname.includes("personnel")) return "Planning personnel";
+    if (location.pathname.includes("professionnel"))
+      return "Planning professionnel";
+    return "Planning";
+  };
+
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Loader loading={isPending} />
@@ -177,10 +236,17 @@ const Dashboard = () => {
             }
           />
           <Route path="/search" element={<SearchResults />} />
-          {/* <Route path="/class/chat" element={<Chat />} />
-          <Route path="/class/members" element={<Members />} /> */}
         </Routes>
-        <ModalEventAdd show={show} handleClose={handleClose} />
+        <EventModal
+          show={show}
+          onHide={handleClose}
+          event={selectedEvent}
+          isEdit={false}
+          onCreateEvent={handleCreateEvent}
+          onUpdateEvent={handleUpdateEvent}
+          onDeleteEvent={handleDeleteEvent}
+          planningTitle={getPlanningTitle()}
+        />
       </div>
     </div>
   );

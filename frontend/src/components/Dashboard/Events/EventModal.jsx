@@ -1,0 +1,211 @@
+import React, { useState, useEffect } from "react";
+import {
+  Modal,
+  Button,
+  Label,
+  TextInput,
+  Textarea,
+  Select,
+} from "flowbite-react";
+import { Icon } from "@iconify-icon/react";
+import moment from "moment";
+
+const EventModal = ({
+  show,
+  onHide,
+  event,
+  isEdit,
+  onCreateEvent,
+  onUpdateEvent,
+  onDeleteEvent,
+  planningTitle,
+}) => {
+  const [formData, setFormData] = useState({
+    title: "",
+    start: new Date(),
+    end: new Date(),
+    description: "",
+    type: 1,
+    priority: 1,
+    place: "",
+  });
+
+  useEffect(() => {
+    if (event) {
+      setFormData({
+        title: event.title || "",
+        start: event.start || new Date(),
+        end: event.end || new Date(),
+        description: event.description || "",
+        type:
+          event.type ||
+          (planningTitle.includes("personnel")
+            ? 1
+            : planningTitle.includes("scolaire")
+            ? 2
+            : 3),
+        priority: event.priority || 1,
+        place: event.place || "",
+      });
+    }
+  }, [event, planningTitle]);
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [id]: value,
+    }));
+  };
+
+  const handleSelectChange = (id, value) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [id]: value,
+    }));
+  };
+
+  const handleDateChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [id]: new Date(value),
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (isEdit) {
+      onUpdateEvent(formData);
+    } else {
+      onCreateEvent(formData);
+    }
+  };
+
+  return (
+    <Modal show={show} onClose={onHide} popup>
+      <Modal.Header className="mx-2 my-2">
+        {isEdit ? "Modifier l'événement" : "Ajouter un événement"}
+      </Modal.Header>
+      <Modal.Body>
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          <div>
+            <div className="mb-2 block">
+              <Label htmlFor="title" value="Titre" />
+            </div>
+            <TextInput
+              id="title"
+              value={formData.title}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div>
+            <div className="mb-2 block">
+              <Label htmlFor="place" value="Lieu" />
+            </div>
+            <TextInput
+              id="place"
+              value={formData.place}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <div className="mb-2 block">
+                <Label htmlFor="start" value="Début" />
+              </div>
+              <TextInput
+                type="datetime-local"
+                id="start"
+                value={moment(formData.start).format("YYYY-MM-DDTHH:mm")}
+                onChange={handleDateChange}
+                required
+              />
+            </div>
+            <div>
+              <div className="mb-2 block">
+                <Label htmlFor="end" value="Fin" />
+              </div>
+              <TextInput
+                type="datetime-local"
+                id="end"
+                value={moment(formData.end).format("YYYY-MM-DDTHH:mm")}
+                onChange={handleDateChange}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <div className="mb-2 block">
+                <Label htmlFor="type" value="Type" />
+              </div>
+              <Select
+                id="type"
+                value={formData.type}
+                onChange={(e) => handleSelectChange("type", e.target.value)}
+              >
+                <option value="1">Personnel</option>
+                <option value="2">Scolaire</option>
+                <option value="3">Professionnel</option>
+              </Select>
+            </div>
+            <div>
+              <div className="mb-2 block">
+                <Label htmlFor="priority" value="Priorité" />
+              </div>
+              <Select
+                id="priority"
+                value={formData.priority}
+                onChange={(e) => handleSelectChange("priority", e.target.value)}
+              >
+                <option value="1">Basse</option>
+                <option value="2">Moyenne</option>
+                <option value="3">Haute</option>
+              </Select>
+            </div>
+          </div>
+
+          <div>
+            <div className="mb-2 block">
+              <Label htmlFor="description" value="Description" />
+            </div>
+            <Textarea
+              id="description"
+              rows={3}
+              value={formData.description}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="flex justify-between">
+            <Button color="blue" type="submit">
+              {isEdit ? (
+                <>
+                  <Icon icon="fa6-solid:pen-to-square" className="mr-2" />{" "}
+                  Mettre à jour
+                </>
+              ) : (
+                <>
+                  <Icon icon="fa6-solid:plus" className="mr-2" /> Ajouter
+                </>
+              )}
+            </Button>
+
+            {isEdit && (
+              <Button color="failure" onClick={() => onDeleteEvent()}>
+                <Icon icon="fa6-solid:trash" className="mr-2" /> Supprimer
+              </Button>
+            )}
+          </div>
+        </form>
+      </Modal.Body>
+    </Modal>
+  );
+};
+
+export default EventModal;
