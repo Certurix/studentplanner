@@ -158,30 +158,36 @@ export default function SidebarComponent({ data }) {
 
   // Render user profile section
   const renderUserProfile = () => (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center space-x-3 overflow-hidden">
-        {avatar ? (
-          <img
-            src={avatar}
-            alt={`Avatar de ${data.name} ${data.lastname}`}
-            className="w-10 h-10 rounded-full flex-shrink-0 border border-gray-300 bg-gray-200"
-          />
-        ) : (
-          <div
-            className="w-10 h-10 rounded-full flex-shrink-0 border border-gray-300 bg-gray-200"
-            aria-label="Avatar par défaut"
-          />
-        )}
-        <div className="overflow-hidden">
-          <p className="font-semibold truncate">
-            {data.name} {data.lastname}
-          </p>
-          <p className="text-sm text-gray-500 truncate">{data.email}</p>
-        </div>
+    <div className="flex items-center space-x-2">
+      {avatar ? (
+        <img
+          src={avatar}
+          alt={`Avatar de ${data.name} ${data.lastname}`}
+          className="w-10 h-10 rounded-full flex-shrink-0 border border-gray-300 bg-gray-200"
+        />
+      ) : (
+        <div
+          className="w-10 h-10 rounded-full flex-shrink-0 border border-gray-300 bg-gray-200"
+          aria-label="Avatar par défaut"
+        />
+      )}
+      <div className="min-w-0 flex-1 overflow-hidden">
+        <p 
+          className="font-semibold truncate"
+          title={`${data.name} ${data.lastname}`}
+        >
+          {data.name} {data.lastname}
+        </p>
+        <p 
+          className="text-sm text-gray-500 truncate"
+          title={data.email}
+        >
+          {data.email}
+        </p>
       </div>
       <button
         onClick={handleLogout}
-        className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full flex-shrink-0 transition-colors duration-200"
+        className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full flex-shrink-0 transition-colors duration-200 ml-1"
         aria-label="Déconnexion"
       >
         <Icon icon="tabler:logout" width="20" height="20" />
