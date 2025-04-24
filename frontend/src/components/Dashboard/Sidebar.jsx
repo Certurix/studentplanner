@@ -227,7 +227,7 @@ export default function SidebarComponent({ data }) {
         } w-64 md:w-1/6 flex-shrink-0`}
       >
         <Sidebar
-          className="h-screen w-full min-h-screen shadow-lg flex flex-col overflow-y-auto"
+          className="h-full min-h-screen shadow-lg flex flex-col overflow-visible"
           aria-label="Navigation principale"
         >
           <div className="flex flex-col h-full justify-between">
