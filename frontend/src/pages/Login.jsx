@@ -30,10 +30,13 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL || ''}/api/login`, {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL || ""}/api/login`,
+        {
+          email,
+          password,
+        }
+      );
 
       const userId = response.data;
 
@@ -131,6 +134,17 @@ const Login = () => {
             Se connecter
           </button>
         </form>
+        <div className="text-sm text-center mt-4">
+          <p className="text-gray-600">
+            Pas encore de compte ?{" "}
+            <a
+              href="/register"
+              className="font-medium text-indigo-600 hover:text-indigo-500"
+            >
+              S'inscrire
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   );

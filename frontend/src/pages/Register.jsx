@@ -18,14 +18,17 @@ const Register = () => {
       setAlertMessage("Veuillez remplir tous les champs");
       return;
     }
-    console.log(import.meta.env.VITE_API_URL)
+    console.log(import.meta.env.VITE_API_URL);
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL || ''}/api/register`, {
-        name,
-        lastname,
-        email,
-        password,
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL || ""}/api/register`,
+        {
+          name,
+          lastname,
+          email,
+          password,
+        }
+      );
 
       // Handle successful registration
       console.log("Registration successful:", response.data);
@@ -111,6 +114,17 @@ const Register = () => {
             S'inscrire
           </button>
         </form>
+        <div className="text-sm text-center mt-4">
+          <p className="text-gray-600">
+            Déjà inscrit ?{" "}
+            <a
+              href="/login"
+              className="font-medium text-indigo-600 hover:text-indigo-500"
+            >
+              Se connecter
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   );
