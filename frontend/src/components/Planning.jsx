@@ -394,15 +394,11 @@ const Planning = ({ title, initialEvents }) => {
   };
 
   const handleUpdateEvent = async (eventData) => {
-    if (!userId || !selectedEvent?.id) return;
-
+    if (!userId || !selectedEvent?.ID) return;
     try {
       // API base URL with fallback to relative path
       const baseUrl = import.meta.env.VITE_API_URL || "";
-      const apiUrl = `${baseUrl}/api/events/${selectedEvent.id}`;
-      
-      console.log("Updating event at:", apiUrl);
-      
+      const apiUrl = `${baseUrl}/api/events/update/${selectedEvent.ID}`;      
       await axios.put(apiUrl, {
         userId,
         title: eventData.title,
@@ -446,13 +442,13 @@ const Planning = ({ title, initialEvents }) => {
   };
 
   const handleDeleteEvent = async () => {
-    if (!userId || !selectedEvent?.id) return;
+    if (!userId || !selectedEvent?.ID) return;
 
     try {
       // API base URL with fallback to relative path
       const baseUrl = import.meta.env.VITE_API_URL || "";
-      const apiUrl = `${baseUrl}/api/events/${selectedEvent.id}`;
-      
+      const apiUrl = `${baseUrl}/api/events/delete/${selectedEvent.ID}`;
+
       console.log("Deleting event at:", apiUrl);
       
       await axios.delete(apiUrl, {
@@ -515,6 +511,7 @@ const Planning = ({ title, initialEvents }) => {
 
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);
+    console.log("Selected event:", event);
     setShowEditModal(true);
   };
 
