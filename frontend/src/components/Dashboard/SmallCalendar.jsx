@@ -14,14 +14,26 @@ const SmallCalendar = () => {
     0
   ).getDate();
 
-  const {userId} = useUser();
+  const { userId } = useUser();
+
+  // Define the color scheme for different event types
+  const EVENT_TYPE_COLORS = {
+    1: "bg-orange-500 text-white", // Personal (Green)
+    2: "bg-blue-500 text-white", // Academic (Purple)
+    3: "bg-yellow-500 text-white", // Professional (Orange)
+    default: "bg-indigo-200 text-indigo-700" // Default
+  };
 
   useEffect(() => {
     if (userId !== null) {
       const fetchEvents = async () => {
         try {
+          // Get the base URL from environment variables or use an empty string as fallback
+          const baseUrl = import.meta.env.VITE_API_URL || "";
+          
+          // Fetch all events for the current month
           const response = await axios.get(
-            `/api/events/${userId}/month/${
+            `${baseUrl}/api/events/${userId}/month/${
               new Date().getMonth() + 1
             }`
           );
@@ -35,11 +47,61 @@ const SmallCalendar = () => {
     }
   }, [userId]);
 
-  const getEventForDay = (day) => {
-    // Ensure events is an array before using find
-    return Array.isArray(events) 
-      ? events.find((event) => new Date(event.startdate).getDate() === day)
-      : undefined;
+  /**
+   * Get events for a specific day
+   * @param {number} day - The day of the month
+   * @returns {Array} - Array of events for that day
+   */
+  const getEventsForDay = (day) => {
+    // Ensure events is an array before filtering
+    if (!Array.isArray(events)) return [];
+    
+    // Filter events that occur on the specified day
+    return events.filter((event) => {
+      const eventDate = new Date(event.startdate);
+      return eventDate.getDate() === day;
+    });
+  };
+
+  /**
+   * Determine the style class for a day based on its events
+   * @param {number} day - The day of the month
+   * @returns {string} - CSS class string
+   */
+  const getDayStyle = (day) => {
+    const dayEvents = getEventsForDay(day);
+    
+    if (dayEvents.length === 0) {
+      return "text-gray-700"; // No events
+    }
+    
+    // If we have multiple events with different types, prioritize them
+    // Personal > Professional > Academic
+    const eventTypes = dayEvents.map(event => parseInt(event.type));
+    
+    if (eventTypes.includes(1)) {
+      return EVENT_TYPE_COLORS[1]; // Personal has highest priority
+    } else if (eventTypes.includes(3)) {
+      return EVENT_TYPE_COLORS[3]; // Professional has second priority
+    } else if (eventTypes.includes(2)) {
+      return EVENT_TYPE_COLORS[2]; // Academic has third priority
+    }
+    
+    // Fallback to the type of the first event
+    const firstEventType = parseInt(dayEvents[0].type);
+    return EVENT_TYPE_COLORS[firstEventType] || EVENT_TYPE_COLORS.default;
+  };
+
+  /**
+   * Get a tooltip message for the events on a day
+   * @param {number} day - The day of the month
+   * @returns {string} - Tooltip message listing all events
+   */
+  const getTooltipText = (day) => {
+    const dayEvents = getEventsForDay(day);
+    if (dayEvents.length === 0) return "";
+    
+    return dayEvents.map(event => event.title).join(", ");
   };
 
   return (
@@ -59,16 +121,21 @@ const SmallCalendar = () => {
       <div className="grid grid-cols-7 gap-2 text-center">
         {[...Array(daysInMonth)].map((_, i) => {
           const day = i + 1;
-          const event = getEventForDay(day);
+          const dayEventStyle = getDayStyle(day);
+          const tooltipText = getTooltipText(day);
+          const hasEvents = getEventsForDay(day).length > 0;
+          
           return (
             <div
               key={i}
-              className={`p-2 rounded-full text-sm ${
-                event ? "bg-indigo-200 text-indigo-700" : "text-gray-700"
-              }`}
-              style={{ width: "30px", height: "30px", lineHeight: "15px" }}
+              className={`p-2 rounded-full text-sm ${dayEventStyle} flex items-center justify-center`}
+              style={{ width: "30px", height: "30px" }}
+              title={tooltipText}
             >
               {day}
+              {hasEvents && dayEventStyle === "text-gray-700" && (
+                <span className="absolute w-1 h-1 bg-blue-500 rounded-full" style={{ bottom: "2px" }}></span>
+              )}
             </div>
           );
         })}
