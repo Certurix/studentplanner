@@ -267,3 +267,28 @@ def set_event(userId, title, description, type, priority, startdate, enddate, pl
     connection.commit()
     cursor.close()
     return True
+
+def delete_event(event_id):
+    """Delete event by ID."""
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute('''
+        DELETE FROM events
+        WHERE ID = ?
+    ''', (event_id,))
+    connection.commit()
+    cursor.close()
+    return True
+
+def update_event(event_id, title, description, type, priority, startdate, enddate, place):
+    """Update event by ID."""
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute('''
+        UPDATE events
+        SET title = ?, description = ?, type = ?, priority = ?, startdate = ?, enddate = ?, place = ?
+        WHERE ID = ?
+    ''', (title, description, type, priority, startdate, enddate, place, event_id))
+    connection.commit()
+    cursor.close()
+    return True

@@ -160,3 +160,15 @@ def create_event(event: Event):
     event.startdate = datetime.fromisoformat(event.startdate.replace("Z", "")).strftime('%Y-%m-%d %H:%M:%S')
     event.enddate = datetime.fromisoformat(event.enddate.replace("Z", "")).strftime('%Y-%m-%d %H:%M:%S')
     return db.set_event(event.userId, event.title, event.description, event.type, event.priority, event.startdate, event.enddate, event.place)
+
+@app.delete("/events/delete/{id}")
+def delete_event(id: int):
+    """Delete an event by ID."""
+    return db.delete_event(id)
+
+@app.patch("/events/update/{id}")
+def update_event(id: int, event: Event):
+    """Update an existing event by ID."""
+    event.startdate = datetime.fromisoformat(event.startdate.replace("Z", "")).strftime('%Y-%m-%d %H:%M:%S')
+    event.enddate = datetime.fromisoformat(event.enddate.replace("Z", "")).strftime('%Y-%m-%d %H:%M:%S')
+    return db.update_event(id, event.userId, event.title, event.description, event.type, event.priority, event.startdate, event.enddate, event.place)
