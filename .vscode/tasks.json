@@ -1,22 +1,24 @@
 {
-  "version": "2.0.0",
-  "tasks": [
-      {
-          "type": "npm",
-          "script": "dev",
-          "path": "frontend",
-          "problemMatcher": [],
-          "label": "Start Frontend"
-      },
-      {
-          "label": "Start Backend",
-          "type": "shell",
-          "command": "bash -c 'if [ ! -d \"backend/venv\" ]; then python -m venv backend/venv && source backend/venv/Scripts/activate && pip install -r backend/requirements.txt; fi && source backend/venv/Scripts/activate && pip install -r backend/requirements.txt && fastapi dev backend/app'",
-          "problemMatcher": []
-      },
-      {
-          "label": "Start All",
-          "dependsOn": ["Start Frontend", "Start Backend"]
-      }
-  ]
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "command": "bash -c 'if [ -d \"frontend\" ]; then cd frontend; fi; if [ ! -d \"node_modules\" ]; then npm install; fi && npm run dev'",
+            "problemMatcher": [],
+            "label": "Start Frontend (Dev)"
+        },
+        {
+            "label": "Start Backend",
+            "type": "shell",
+            "command": "bash -c 'if [ ! -d \"backend/venv\" ]; then python -m venv backend/venv && source backend/venv/Scripts/activate && pip install -r backend/requirements.txt; fi && source backend/venv/Scripts/activate && pip install -r backend/requirements.txt && fastapi dev backend/app'",
+            "problemMatcher": []
+        },
+        {
+            "label": "Start All",
+            "dependsOn": [
+                "Start Frontend (Dev)",
+                "Start Backend"
+            ]
+        }
+    ]
 }
