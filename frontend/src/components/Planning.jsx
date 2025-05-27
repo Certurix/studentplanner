@@ -3,11 +3,10 @@ import React, { useState, useRef, useEffect } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import axios from "axios";
-import { Button, Modal } from "react-bootstrap";
+import { Button, Modal } from "flowbite-react";
 import { FaCompress, FaExpand } from "react-icons/fa";
 
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import "bootstrap/dist/css/bootstrap.min.css";
 import "./Dashboard/Calendar.css";
 
 import CustomToolbar from "./CustomToolbar";
@@ -574,9 +573,10 @@ const Planning = ({ title, initialEvents }) => {
 
       <div className="flex justify-end mt-3">
         <Button
-          variant="primary"
+          color="blue"
           onClick={toggleFullscreen}
           className="w-10 h-9 flex items-center justify-center"
+          aria-label={isFullscreen ? "Réduire" : "Agrandir"}
         >
           {isFullscreen ? <FaCompress /> : <FaExpand />}
         </Button>
@@ -585,23 +585,22 @@ const Planning = ({ title, initialEvents }) => {
       {/* Fullscreen Modal */}
       <Modal
         show={isFullscreen}
-        onHide={toggleFullscreen}
-        size="lg"
-        aria-labelledby="contained-modal-title-vcenter"
-        centered
-        fullscreen
+        onClose={toggleFullscreen}
+        size="7xl"
+        position="center"
       >
-        <Modal.Header closeButton>
-          <Modal.Title>{title}</Modal.Title>
+        <Modal.Header>
+          {title}
         </Modal.Header>
         <Modal.Body>
           <div className="calendar-container">{renderCalendar("100vh")}</div>
         </Modal.Body>
         <Modal.Footer>
           <Button
-            variant="secondary"
+            color="blue"
             onClick={toggleFullscreen}
             className="w-10 h-10 flex items-center justify-center"
+            aria-label="Réduire"
           >
             <FaCompress />
           </Button>
