@@ -166,7 +166,7 @@ def delete_event(id: int):
     """Delete an event by ID."""
     return db.delete_event(id)
 
-@app.patch("/events/update/{id}")
+@app.put("/events/update/{id}")
 def update_event(id: int, event: Event):
     """Update an existing event by ID."""
     event.startdate = datetime.fromisoformat(event.startdate.replace("Z", "")).strftime('%Y-%m-%d %H:%M:%S')
