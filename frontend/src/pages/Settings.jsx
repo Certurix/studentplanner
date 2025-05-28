@@ -186,10 +186,10 @@ export default function UserSettings({ data }) {
 								/>
 							</div>
 							<div className="flex justify-end gap-2">
-								<Button color="gray" type="button">
+								<Button color="red" type="button">
 									Annuler
 								</Button>
-								<Button color="primary" type="submit">
+								<Button color="blue" type="submit">
 									Sauvegarder
 								</Button>
 							</div>

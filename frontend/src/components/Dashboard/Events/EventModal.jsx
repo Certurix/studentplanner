@@ -191,7 +191,7 @@ const EventModal = ({
                 </>
               ) : (
                 <>
-                  <Icon icon="fa6-solid:plus" className="mr-2" /> Ajouter
+                  <Icon icon="fa6-solid:plus" width="16" height="16" className="mr-2 content-center" /> Ajouter
                 </>
               )}
             </Button>
