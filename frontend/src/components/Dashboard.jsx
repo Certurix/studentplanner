@@ -211,7 +211,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex min-h-screen bg-gray-100 font-inter">
       <Loader loading={isPending} />
       <Sidebar data={{ name, lastname, email }} />
       <div className="flex-1 p-6">
