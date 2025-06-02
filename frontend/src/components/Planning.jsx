@@ -570,9 +570,8 @@ const Planning = ({ title, initialEvents }) => {
 
       <div className="flex justify-end mt-3">
         <Button
-          color="blue"
           onClick={toggleFullscreen}
-          className="w-10 h-9 flex items-center justify-center"
+          className="w-10 h-9 flex items-center justify-center bg-accent"
           aria-label={isFullscreen ? "Réduire" : "Agrandir"}
         >
           {isFullscreen ? <FaCompress /> : <FaExpand />}
@@ -583,7 +582,7 @@ const Planning = ({ title, initialEvents }) => {
       <Modal
         show={isFullscreen}
         onClose={toggleFullscreen}
-        size="7xl"
+        size="full"
         position="center"
       >
         <Modal.Header>
@@ -594,9 +593,8 @@ const Planning = ({ title, initialEvents }) => {
         </Modal.Body>
         <Modal.Footer>
           <Button
-            color="blue"
             onClick={toggleFullscreen}
-            className="w-10 h-10 flex items-center justify-center"
+            className="w-10 h-10 flex items-center justify-center bg-accent"
             aria-label="Réduire"
           >
             <FaCompress />
