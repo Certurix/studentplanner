@@ -22,34 +22,34 @@ const CustomToolbar = ({ label, onNavigate, onView, view }) => {
 		<nav className="flex flex-col md:flex-row justify-between items-center mb-3" aria-label="Calendar toolbar">
 			<span className="rbc-toolbar-label mb-2 md:mb-0">{label}</span>
 			<div className="flex flex-row gap-2">
-				<ButtonGroup className="" aria-label="Navigation">
-					<Button color="blue" onClick={goToBack}>
+				<ButtonGroup aria-label="Navigation">
+					<Button className="bg-accent hover:bg-primary_hover" onClick={goToBack}>
 						Précédent
 					</Button>
-					<Button color="blue" onClick={goToCurrent}>
+					<Button className="bg-accent" onClick={goToCurrent}>
 						Aujourd&apos;hui
 					</Button>
-					<Button color="blue" onClick={goToNext}>
+					<Button className="bg-accent" onClick={goToNext}>
 						Suivant
 					</Button>
 				</ButtonGroup>
-				<ButtonGroup className="" aria-label="View">
+				<ButtonGroup aria-label="View">
 					<Button
-						color={view === "month" ? "blue" : "gray"}
+						className={view === "month" ? "bg-accent" : ""}
 						onClick={() => onView("month")}
 						aria-pressed={view === "month"}
 					>
 						Mois
 					</Button>
 					<Button
-						color={view === "week" ? "blue" : "gray"}
+						className={view === "week" ? "bg-accent" : ""}
 						onClick={() => onView("week")}
 						aria-pressed={view === "week"}
 					>
 						Semaine
 					</Button>
 					<Button
-						color={view === "day" ? "blue" : "gray"}
+						className={view === "day" ? "bg-accent" : ""}
 						onClick={() => onView("day")}
 						aria-pressed={view === "day"}
 					>
