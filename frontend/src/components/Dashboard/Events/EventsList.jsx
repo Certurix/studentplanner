@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import useUser from "../../../hooks/useUser";
+import { getEventTypeColor } from "@/utils/constants";
 
 const EventItem = ({ color, title, date }) => (
   <div className="flex items-center justify-between mb-4 p-4 bg-white rounded-lg shadow-md">
@@ -47,7 +48,7 @@ const EventsList = () => {
           // Ensure response.data is an array before using map
           const responseData = Array.isArray(response.data) ? response.data : [];
           const fetchedEvents = responseData.map((event) => ({
-            color: getColorByType(event.type),
+            color: getEventTypeColor(event.type),
             title: event.title,
             date: formatDate(event.startdate, event.enddate),
           }));
@@ -62,23 +63,6 @@ const EventsList = () => {
       fetchEvents();
     }
   }, [userId, currentMonth]);
-
-  const getColorByType = (type) => {
-    switch (type) {
-      case 1:
-        return "bg-red-500";
-      case 2:
-        return "bg-yellow-500";
-      case 3:
-        return "bg-purple-500";
-      case 4:
-        return "bg-blue-500";
-      case 5:
-        return "bg-green-500";
-      default:
-        return "bg-gray-500";
-    }
-  };
 
   const formatDate = (start, end) => {
     const startDate = new Date(start);

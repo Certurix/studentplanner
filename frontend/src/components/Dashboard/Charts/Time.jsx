@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import useUser from "../../../hooks/useUser";
+import { getEventTypeLabel, getEventTypeColor } from "@/utils/eventTypes";
 
 const TimeDistribution = () => {
   const [data, setData] = useState([]);
@@ -19,36 +20,20 @@ const TimeDistribution = () => {
           // Ensure events is an array before processing
           const events = Array.isArray(response.data) ? response.data : [];
           const totalEvents = events.length;
-          const eventTypes = {
-            Personnel: { count: 0, color: "bg-orange-500" },
-            Professionnel: { count: 0, color: "bg-yellow-500" },
-            Scolaire: { count: 0, color: "bg-blue-500" },
-          };
-
-          // Safe to use forEach now that we've verified events is an array
+          // Check for events types
+          const eventTypeCounts = {};
           events.forEach((event) => {
-            switch (event.type) {
-              case "1":
-                eventTypes.Personnel.count++;
-                break;
-              case "2":
-                eventTypes.Scolaire.count++;
-                break;
-              case "3":
-                eventTypes.Professionnel.count++;
-                break;
-              default:
-                break;
-            }
+            const label = getEventTypeLabel(event.type);
+            if (!eventTypeCounts[label]) eventTypeCounts[label] = { count: 0, color: getEventTypeColor(event.type) };
+            eventTypeCounts[label].count++;
           });
-
-          const eventData = Object.keys(eventTypes).map((key) => ({
+          const eventData = Object.keys(eventTypeCounts).map((key) => ({
             label: key,
             value:
               totalEvents > 0
-                ? ((eventTypes[key].count / totalEvents) * 100).toFixed(2)
+                ? ((eventTypeCounts[key].count / totalEvents) * 100).toFixed(2)
                 : 0,
-            color: eventTypes[key].color,
+            color: eventTypeCounts[key].color,
           }));
 
           setData(eventData);
@@ -74,7 +59,7 @@ const TimeDistribution = () => {
   return (
     <div className="p-6 bg-white rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-4 text-accent">
-        ÉVÉNEMENTS À VENIR
+        RÉPARTITION TYPE D'ÉVÉNEMENT
       </h2>
       {data.map((item, index) => (
         <div key={index} className="mb-4">
