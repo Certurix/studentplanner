@@ -83,7 +83,7 @@ const EventModal = ({
   };
 
   return (
-    <Modal show={show} onClose={onHide} popup>
+    <Modal show={show} onClose={onHide} popup className="font-inter">
       <Modal.Header className="mx-2 my-2">
         {isEdit ? "Modifier l'événement" : "Ajouter un événement"}
       </Modal.Header>
