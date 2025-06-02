@@ -1,0 +1,27 @@
+version: "3.9"
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: studentplanner-backend
+    environment:
+      - PYTHONUNBUFFERED=1
+    ports:
+      - "8000:8000"
+    networks:
+      - studentplanner
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: studentplanner-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - studentplanner
+networks:
+  studentplanner:
+    driver: bridge
