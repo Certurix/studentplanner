@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import useUser from "../../../hooks/useUser";
+import EventsMonth from "../Charts/EventsMonth";
 
 export default function EventStats() {
   const [events, setEvents] = useState([]);
@@ -69,6 +70,7 @@ export default function EventStats() {
           </div>
         </div>
       </div>
+          <EventsMonth />
     </div>
   );
 }
