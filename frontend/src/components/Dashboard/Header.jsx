@@ -12,9 +12,8 @@ const Header = ({ title, subtitle, btnData, onClick }) => {
 				{btnData.map((btn, index) => (
 					<Button
 						key={index}
-						color="blue"
 						onClick={btn.onClick || onClick}
-						className="flex items-center"
+						className="flex items-center bg-accent"
 					>
 						{btn.icon && <span className="mr-2">{btn.icon}</span>}
 						{btn.text}
