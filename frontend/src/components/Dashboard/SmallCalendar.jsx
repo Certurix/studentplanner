@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import useUser from "@/hooks/useUser";
+import { getEventTypeColor } from "@/utils/constants";
 
 const SmallCalendar = () => {
   const [events, setEvents] = useState([]);
@@ -15,14 +16,6 @@ const SmallCalendar = () => {
   ).getDate();
 
   const { userId } = useUser();
-
-  // Define the color scheme for different event types
-  const EVENT_TYPE_COLORS = {
-    1: "bg-orange-500 text-white", // Personal (Green)
-    2: "bg-blue-500 text-white", // Academic (Purple)
-    3: "bg-yellow-500 text-white", // Professional (Orange)
-    default: "bg-indigo-200 text-indigo-700" // Default
-  };
 
   useEffect(() => {
     if (userId !== null) {
@@ -70,26 +63,21 @@ const SmallCalendar = () => {
    */
   const getDayStyle = (day) => {
     const dayEvents = getEventsForDay(day);
-    
     if (dayEvents.length === 0) {
       return "text-gray-700"; // No events
     }
-    
     // If we have multiple events with different types, prioritize them
     // Personal > Professional > Academic
-    const eventTypes = dayEvents.map(event => parseInt(event.type));
-    
-    if (eventTypes.includes(1)) {
-      return EVENT_TYPE_COLORS[1]; // Personal has highest priority
-    } else if (eventTypes.includes(3)) {
-      return EVENT_TYPE_COLORS[3]; // Professional has second priority
-    } else if (eventTypes.includes(2)) {
-      return EVENT_TYPE_COLORS[2]; // Academic has third priority
+    const eventTypes = dayEvents.map(event => event.type);
+    if (eventTypes.includes("1") || eventTypes.includes(1)) {
+      return getEventTypeColor(1);
+    } else if (eventTypes.includes("3") || eventTypes.includes(3)) {
+      return getEventTypeColor(3);
+    } else if (eventTypes.includes("2") || eventTypes.includes(2)) {
+      return getEventTypeColor(2);
     }
-    
     // Fallback to the type of the first event
-    const firstEventType = parseInt(dayEvents[0].type);
-    return EVENT_TYPE_COLORS[firstEventType] || EVENT_TYPE_COLORS.default;
+    return getEventTypeColor(dayEvents[0].type);
   };
 
   /**
