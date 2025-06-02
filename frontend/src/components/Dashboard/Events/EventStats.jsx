@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import useUser from "../../../hooks/useUser";
-import EventsMonth from "../Charts/EventsMonth";
+import useUser from "@/hooks/useUser";
+import EventsMonth from "@/components/Dashboard/Charts/EventsMonth";
 
 export default function EventStats() {
   const [events, setEvents] = useState([]);

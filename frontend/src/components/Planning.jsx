@@ -3,15 +3,18 @@ import React, { useState, useRef, useEffect } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import axios from "axios";
-import { Button, Modal } from "flowbite-react";
 import { FaCompress, FaExpand } from "react-icons/fa";
 
+// Custom styles
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./Dashboard/Calendar.css";
 
+import { Button, Modal } from "flowbite-react";
 import CustomToolbar from "./CustomToolbar";
 import EventModal from "./Dashboard/Events/EventModal";
-import useUser from "../hooks/useUser";
+
+// Hooks
+import useUser from "@/hooks/useUser";
 
 moment.locale("fr");
 const localizer = momentLocalizer(moment);

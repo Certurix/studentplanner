@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import useUser from "../../../hooks/useUser";
+import useUser from "@/hooks/useUser";
 import { getEventTypeLabel, getEventTypeColor } from "@/utils/constants";
 
 const TimeDistribution = () => {

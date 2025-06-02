@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import Planning from "../../components/Planning";
+import Planning from "@/components/Planning";
 import axios from "axios";
-import useUser from "../../hooks/useUser";
+import useUser from "@/hooks/useUser";
 
 const PlanningPro = () => {
   const [events, setEvents] = useState([]);

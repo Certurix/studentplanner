@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { Icon } from "@iconify-icon/react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Sidebar, Button } from "flowbite-react";
-import useUser from "../../hooks/useUser";
-import Avatar from "../ui/Avatar";
+import useUser from "@/hooks/useUser";
+import Avatar from "@/components/ui/Avatar";
 
 export default function SidebarComponent({ data }) {
 	// State for search and mobile sidebar

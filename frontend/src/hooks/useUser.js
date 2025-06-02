@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect } from "react";
-import UserContext from "../context/UserContext";
+import UserContext from "@/context/UserContext";
 
 const useUser = () => {
   const { userId, updateUserId } = useContext(UserContext);

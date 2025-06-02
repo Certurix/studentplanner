@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Chart from "react-apexcharts";
 import axios from "axios";
-import useUser from "../../../hooks/useUser";
+import useUser from "@/hooks/useUser";
 import { getEventTypeLabel } from "@/utils/constants";
 
 // Donut chart to show the percentage of events per type in the current month

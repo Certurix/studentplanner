@@ -1,25 +1,30 @@
 import React, { useState, useTransition, useEffect, useCallback } from "react";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Icon } from "@iconify-icon/react";
 
+// Components
+import SearchResults from "./SearchResults";
 import Sidebar from "./Dashboard/Sidebar";
 import Header from "./Dashboard/Header";
 import Calendar from "./Dashboard/SmallCalendar";
 import EventsList from "./Dashboard/Events/EventsList";
 import EventStats from "./Dashboard/Events/EventStats";
 import TimeDistribution from "./Dashboard/Charts/Time";
+import EventModal from "./Dashboard/Events/EventModal";
 
-import Scolaire from "../pages/plannings/scolaire";
-import Personnel from "../pages/plannings/personnel";
-import Professionnel from "../pages/plannings/professionnel";
-
-import { Icon } from "@iconify-icon/react";
-import SearchResults from "./SearchResults";
-import Settings from "../pages/Settings";
+// UI components
 import Alert from "@/components/ui/Alert";
 import Loader from "@/components/ui/Loader";
-import useUser from "../hooks/useUser";
-import EventModal from "./Dashboard/Events/EventModal";
+
+// Pages
+import Scolaire from "@/pages/plannings/scolaire";
+import Personnel from "@/pages/plannings/personnel";
+import Professionnel from "@/pages/plannings/professionnel";
+import Settings from "@/pages/Settings";
+
+// Hooks
+import useUser from "@/hooks/useUser";
 
 const Dashboard = () => {
   const location = useLocation();
