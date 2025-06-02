@@ -1,4 +1,4 @@
-import { useDropzone } from "react-dropzone";
+import { useRef } from "react";
 import {
 	Tabs,
 	TabItem,
@@ -6,26 +6,25 @@ import {
 	Button,
 	Label,
 	TextInput,
+	FileInput,
 } from "flowbite-react";
 import { Icon } from "@iconify-icon/react";
+import Avatar from "@/components/ui/Avatar";
 
 // This component uses flowbite-react Tabs and TabItem for accessible tab navigation.
 export default function UserSettings({ data }) {
 	const baseUrl = import.meta.env.VITE_API_URL || "";
+	const fileInputRef = useRef(null);
 
-	const { getRootProps, getInputProps } = useDropzone({
-		accept: {
-			"image/*": [".jpeg", ".jpg", ".png", ".gif", ".svg"],
-		},
-		onDrop: (acceptedFiles) => {
-			const file = acceptedFiles[0];
-			const reader = new FileReader();
-			reader.onload = () => {
-				data.avatar = reader.result;
-			};
-			reader.readAsDataURL(file);
-		},
-	});
+	const handleAvatarChange = (e) => {
+		const file = e.target.files[0];
+		if (!file) return;
+		const reader = new FileReader();
+		reader.onload = () => {
+			data.avatar = reader.result;
+		};
+		reader.readAsDataURL(file);
+	};
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -104,23 +103,24 @@ export default function UserSettings({ data }) {
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
 								<div>
 									<Label htmlFor="name" value="Nom" />
-									<TextInput
-										id="name"
-										name="name"
-										defaultValue={data.name}
-										className="rounded"
-										required
-									/>
-								</div>
-								<div>
-									<Label htmlFor="lastname" value="Prénom" />
-									<TextInput
-										id="lastname"
-										name="lastname"
-										defaultValue={data.lastname}
-										className="rounded"
-										required
-									/>
+									<div className="flex gap-4">
+										<TextInput
+											id="name"
+											name="name"
+											placeholder="Nom"
+											defaultValue={data.name}
+											className="rounded w-1/2"
+											required
+										/>
+										<TextInput
+											id="lastname"
+											name="lastname"
+											placeholder="Prénom"
+											defaultValue={data.lastname}
+											className="rounded w-1/2"
+											required
+										/>
+									</div>
 								</div>
 							</div>
 							<div>
@@ -135,35 +135,41 @@ export default function UserSettings({ data }) {
 								/>
 							</div>
 							<div>
-								<Label htmlFor="avatar" value="Votre photo" />
+								<Label htmlFor="avatar" value="Avatar" />
 								<div className="flex items-center gap-4 mt-2">
-									<img
-										src={data.avatar}
-										alt="avatar utilisateur"
-										className="rounded-full"
-										width="50"
-										height="50"
+									<Avatar
+										name={data.name}
+										lastname={data.lastname}
+										alt={`Avatar de ${data.name} ${data.lastname}`}
+										className="w-16 h-16"
 									/>
-									<div
-										{...getRootProps()}
-										className="border-2 border-dashed p-3 rounded text-center w-1/2 cursor-pointer"
-										tabIndex={0}
-										role="button"
-										aria-label="Uploader une photo"
-									>
-										<input {...getInputProps()} />
-										<Icon
-											icon="tabler:upload"
-											className="text-secondary mx-auto"
-											width="24"
-											height="24"
-										/>
-										<p className="text-primary text-sm">
-											Cliquez pour envoyer ou glissez-déposez
-										</p>
-										<p className="text-gray-500 text-xs">
-											SVG, PNG, JPG ou GIF (max. 800×400px)
-										</p>
+									<div className="flex w-1/2 items-center justify-center">
+										<Label
+											htmlFor="dropzone-file"
+											className="flex flex-col items-center justify-center w-full p-3 border-2 border-dashed rounded cursor-pointer text-center bg-gray-50 hover:bg-gray-100 border-gray-300"
+										>
+											<div className="flex flex-col items-center justify-center pb-2 pt-2">
+												<Icon
+													icon="tabler:upload"
+													className="text-secondary mx-auto"
+													width="24"
+													height="24"
+												/>
+												<p className="text-primary text-sm">
+													Cliquez pour envoyer ou glissez-déposez
+												</p>
+												<p className="text-gray-500 text-xs">
+													SVG, PNG, JPG ou GIF (max. 800×400px)
+												</p>
+											</div>
+											<FileInput
+												id="dropzone-file"
+												accept="image/*"
+												className="hidden"
+												onChange={handleAvatarChange}
+												ref={fileInputRef}
+											/>
+										</Label>
 									</div>
 								</div>
 							</div>
