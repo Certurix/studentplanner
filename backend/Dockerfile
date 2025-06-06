@@ -5,6 +5,13 @@ FROM python:3.12-slim
 # Set work directory
 WORKDIR /app
 
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    python3-dev \
+    libmariadb-dev
+
 # Install dependencies
 COPY requirements.txt /app
 RUN pip install --no-cache-dir -r requirements.txt
