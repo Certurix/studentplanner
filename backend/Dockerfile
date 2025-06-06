@@ -24,4 +24,4 @@ COPY model.sql ./app/model.sql
 EXPOSE 8888
 
 # Run FastAPI app
-CMD ["fastapi", "run", "app/__init__.py", "--port", "8888"]
+CMD ["fastapi", "run", "app", "--port", "8888"]
