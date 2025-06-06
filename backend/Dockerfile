@@ -14,7 +14,7 @@ COPY backend/app ./app
 COPY backend/model.sql ./model.sql
 
 # Expose FastAPI port
-EXPOSE 8000
+EXPOSE 8888
 
 # Run FastAPI app
-CMD ["uvicorn", "app.__init__:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["fastapi", "run", "app/__init__.py", "--port", "8888"]
