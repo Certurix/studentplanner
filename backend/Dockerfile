@@ -21,7 +21,7 @@ COPY . /app
 COPY model.sql ./app/model.sql
 
 # Expose FastAPI port
-EXPOSE 8888
+EXPOSE 4444
 
 # Run FastAPI app
-CMD ["fastapi", "run", "app", "--port", "8888"]
+CMD ["fastapi", "run", "app", "--port", "4444"]
