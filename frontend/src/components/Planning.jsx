@@ -12,6 +12,7 @@ import "./Dashboard/Calendar.css";
 import { Button, Modal } from "flowbite-react";
 import CustomToolbar from "./CustomToolbar";
 import EventModal from "./Dashboard/Events/EventModal";
+import { validateResponse } from "@/utils/helpers";
 
 // Hooks
 import useUser from "@/hooks/useUser";
@@ -109,6 +110,7 @@ const Planning = ({ title, initialEvents }) => {
     if (title.includes("personnel")) return EVENT_TYPES.PERSONAL;
     if (title.includes("scolaire")) return EVENT_TYPES.ACADEMIC;
     if (title.includes("professionnel")) return EVENT_TYPES.PROFESSIONAL;
+    if (title.includes("Tous")) return EVENT_TYPES.PERSONAL; // Default to personal for "all" view
     return EVENT_TYPES.PERSONAL; // Default
   };
 
@@ -213,7 +215,6 @@ const Planning = ({ title, initialEvents }) => {
       isMounted = false;
     };
   }, [userId, currentDate, currentView, refreshTrigger]);
-
   // API functions
   const fetchEvents = async (start, end, viewType) => {
     if (!userId) return;
@@ -223,106 +224,165 @@ const Planning = ({ title, initialEvents }) => {
       const eventType = getTypeFromTitle();
       const startMonth = start.getMonth() + 1;
       const endMonth = end.getMonth() + 1;
+      const isAllPlannings = title.includes("Tous");
 
       let fetchedEvents = [];
-      
-      /**
-       * Helper function to validate API response
-       * @param {Object} response - Axios response object
-       * @returns {Array} - Valid array of events or empty array
-       */
-      const validateResponse = (response) => {
-        // Check if response has the expected Content-Type
-        const contentType = response.headers["content-type"] || "";
-        if (!contentType.includes("application/json")) {
-          console.error(
-            "API returned non-JSON content type:", 
-            contentType,
-            "Status:", response.status
-          );
-          return [];
-        }
-        
-        // Validate that data is an array
-        if (!Array.isArray(response.data)) {
-          console.error("API response is not an array:", typeof response.data);
-          return [];
-        }
-        
-        return response.data;
-      };
 
       // API base URL with fallback to relative path
       const baseUrl = import.meta.env.VITE_API_URL || "";
-      
+
       // If viewing a single month or less
       if (startMonth === endMonth || viewType !== "month") {
         try {
-          const apiUrl = `${baseUrl}/api/events/${userId}/month/${startMonth}?type=${eventType}`;
-          console.log("Fetching events from:", apiUrl);
-          
-          const response = await axios.get(apiUrl, {
-            // Set timeout to prevent long waiting
-            timeout: 10000,
-            // Ensure we receive JSON response
-            headers: {
-              "Accept": "application/json"
-            },
-            // Validate status is 2xx
-            validateStatus: (status) => status >= 200 && status < 300
-          });
-          
-          fetchedEvents = validateResponse(response);
+          if (isAllPlannings) {
+            // fetch events from all types
+            const eventPromises = [1, 2, 3].map((type) => {
+              const apiUrl = `${baseUrl}/api/events/${userId}/month/${startMonth}?type=${type}`;
+              console.log("Fetching events from:", apiUrl);
+
+              return axios.get(apiUrl, {
+                timeout: 10000,
+                headers: { Accept: "application/json" },
+                validateStatus: (status) => status >= 200 && status < 300,
+              });
+            });
+
+            const responses = await Promise.all(eventPromises);
+            fetchedEvents = [];
+
+            responses.forEach((response) => {
+              const events = validateResponse(response);
+              fetchedEvents.push(...events);
+            });
+
+            // Sort events by start date
+            fetchedEvents.sort(
+              (a, b) => new Date(a.startdate) - new Date(b.startdate)
+            );
+          } else {
+            // For specific planning types, fetch only that type
+            const apiUrl = `${baseUrl}/api/events/${userId}/month/${startMonth}?type=${eventType}`;
+            console.log("Fetching events from:", apiUrl);
+
+            const response = await axios.get(apiUrl, {
+              // Set timeout to prevent long waiting
+              timeout: 10000,
+              // Ensure we receive JSON response
+              headers: {
+                Accept: "application/json",
+              },
+              // Validate status is 2xx
+              validateStatus: (status) => status >= 200 && status < 300,
+            });
+
+            fetchedEvents = validateResponse(response);
+          }
         } catch (requestError) {
           // Handle specific request errors
           if (requestError.response) {
             // The request was made and the server responded with a status code
             // that falls out of the range of 2xx
             console.error(
-              "API error:", 
+              "API error:",
               requestError.response.status,
               requestError.response.statusText
             );
           } else if (requestError.request) {
             // The request was made but no response was received
-            console.error("No response received from API:", requestError.message);
+            console.error(
+              "No response received from API:",
+              requestError.message
+            );
           } else {
             // Something happened in setting up the request
-            console.error("Error setting up API request:", requestError.message);
+            console.error(
+              "Error setting up API request:",
+              requestError.message
+            );
           }
           fetchedEvents = [];
         }
       } else {
         // If view spans multiple months (like year view), fetch both months
         try {
-          const responses = await Promise.all([
-            axios.get(`${baseUrl}/api/events/${userId}/month/${startMonth}?type=${eventType}`, {
-              timeout: 10000,
-              headers: { "Accept": "application/json" },
-              validateStatus: (status) => status >= 200 && status < 300
-            }),
-            axios.get(`${baseUrl}/api/events/${userId}/month/${endMonth}?type=${eventType}`, {
-              timeout: 10000,
-              headers: { "Accept": "application/json" },
-              validateStatus: (status) => status >= 200 && status < 300
-            })
-          ]);
+          if (isAllPlannings) {
+            // For "all" plannings, fetch from all types for both months
+            const allResponses = await Promise.all([
+              // First month - all types
+              ...[1, 2, 3].map((type) =>
+                axios.get(
+                  `${baseUrl}/api/events/${userId}/month/${startMonth}?type=${type}`,
+                  {
+                    timeout: 10000,
+                    headers: { Accept: "application/json" },
+                    validateStatus: (status) => status >= 200 && status < 300,
+                  }
+                )
+              ),
+              // Second month - all types
+              ...[1, 2, 3].map((type) =>
+                axios.get(
+                  `${baseUrl}/api/events/${userId}/month/${endMonth}?type=${type}`,
+                  {
+                    timeout: 10000,
+                    headers: { Accept: "application/json" },
+                    validateStatus: (status) => status >= 200 && status < 300,
+                  }
+                )
+              ),
+            ]);
 
-          const data1 = validateResponse(responses[0]);
-          const data2 = validateResponse(responses[1]);
-          
-          fetchedEvents = [...data1, ...data2];
+            fetchedEvents = [];
+            allResponses.forEach((response) => {
+              const events = validateResponse(response);
+              fetchedEvents.push(...events);
+            });
+
+            // Sort events by start date
+            fetchedEvents.sort(
+              (a, b) => new Date(a.startdate) - new Date(b.startdate)
+            );
+          } else {
+            // For specific planning types, fetch only that type for both months
+            const responses = await Promise.all([
+              axios.get(
+                `${baseUrl}/api/events/${userId}/month/${startMonth}?type=${eventType}`,
+                {
+                  timeout: 10000,
+                  headers: { Accept: "application/json" },
+                  validateStatus: (status) => status >= 200 && status < 300,
+                }
+              ),
+              axios.get(
+                `${baseUrl}/api/events/${userId}/month/${endMonth}?type=${eventType}`,
+                {
+                  timeout: 10000,
+                  headers: { Accept: "application/json" },
+                  validateStatus: (status) => status >= 200 && status < 300,
+                }
+              ),
+            ]);
+
+            const data1 = validateResponse(responses[0]);
+            const data2 = validateResponse(responses[1]);
+
+            fetchedEvents = [...data1, ...data2];
+          }
         } catch (requestError) {
-          console.error("Error fetching events from multiple months:", requestError);
+          console.error(
+            "Error fetching events from multiple months:",
+            requestError
+          );
           fetchedEvents = [];
         }
       }
 
       // Double check that fetchedEvents is an array before using map
       if (!Array.isArray(fetchedEvents)) {
-        console.error("Fetched events is not an array:", 
-          typeof fetchedEvents === "string" && fetchedEvents.length > 100 
-            ? fetchedEvents.substring(0, 100) + "..." 
+        console.error(
+          "Fetched events is not an array:",
+          typeof fetchedEvents === "string" && fetchedEvents.length > 100
+            ? fetchedEvents.substring(0, 100) + "..."
             : fetchedEvents
         );
         fetchedEvents = [];
@@ -351,46 +411,50 @@ const Planning = ({ title, initialEvents }) => {
       // API base URL with fallback to relative path
       const baseUrl = import.meta.env.VITE_API_URL || "";
       const apiUrl = `${baseUrl}/api/events/create`;
-      
+
       console.log("Creating event at:", apiUrl);
-      
-      await axios.post(apiUrl, {
-        userId,
-        title: eventData.title,
-        startdate: eventData.start,
-        enddate: eventData.end,
-        description: eventData.description || "",
-        type: eventData.type || getTypeFromTitle(),
-        priority: eventData.priority || 1,
-        place: eventData.place || "",
-      }, {
-        // Set timeout to prevent long waiting
-        timeout: 10000,
-        // Ensure we send and receive JSON
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json"
+
+      await axios.post(
+        apiUrl,
+        {
+          userId,
+          title: eventData.title,
+          startdate: eventData.start,
+          enddate: eventData.end,
+          description: eventData.description || "",
+          type: eventData.type || getTypeFromTitle(),
+          priority: eventData.priority || 1,
+          place: eventData.place || "",
         },
-        // Validate status is 2xx
-        validateStatus: (status) => status >= 200 && status < 300
-      });
+        {
+          // Set timeout to prevent long waiting
+          timeout: 10000,
+          // Ensure we send and receive JSON
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          // Validate status is 2xx
+          validateStatus: (status) => status >= 200 && status < 300,
+        }
+      );
 
       setShowEventModal(false);
       refreshEvents();
     } catch (error) {
       console.error("Error creating event:", error);
-      
+
       // Log more detailed error information
       if (error.response) {
         console.error(
-          "API error response:", 
+          "API error response:",
           error.response.status,
           error.response.statusText
         );
       } else if (error.request) {
         console.error("No response received from API");
       }
-      
+
       // Consider adding user-friendly error notification here
       // e.g. setCreateError("Impossible de créer l'événement. Veuillez réessayer.");
     }
@@ -401,44 +465,48 @@ const Planning = ({ title, initialEvents }) => {
     try {
       // API base URL with fallback to relative path
       const baseUrl = import.meta.env.VITE_API_URL || "";
-      const apiUrl = `${baseUrl}/api/events/update/${selectedEvent.ID}`;      
-      await axios.put(apiUrl, {
-        userId,
-        title: eventData.title,
-        startdate: eventData.start,
-        enddate: eventData.end,
-        description: eventData.description || "",
-        type: eventData.type || selectedEvent.type,
-        priority: eventData.priority || selectedEvent.priority,
-        place: eventData.place || selectedEvent.place,
-      }, {
-        // Set timeout to prevent long waiting
-        timeout: 10000,
-        // Ensure we send and receive JSON
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json"
+      const apiUrl = `${baseUrl}/api/events/update/${selectedEvent.ID}`;
+      await axios.put(
+        apiUrl,
+        {
+          userId,
+          title: eventData.title,
+          startdate: eventData.start,
+          enddate: eventData.end,
+          description: eventData.description || "",
+          type: eventData.type || selectedEvent.type,
+          priority: eventData.priority || selectedEvent.priority,
+          place: eventData.place || selectedEvent.place,
         },
-        // Validate status is 2xx
-        validateStatus: (status) => status >= 200 && status < 300
-      });
+        {
+          // Set timeout to prevent long waiting
+          timeout: 10000,
+          // Ensure we send and receive JSON
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          // Validate status is 2xx
+          validateStatus: (status) => status >= 200 && status < 300,
+        }
+      );
 
       setShowEditModal(false);
       refreshEvents();
     } catch (error) {
       console.error("Error updating event:", error);
-      
+
       // Log more detailed error information
       if (error.response) {
         console.error(
-          "API error response:", 
+          "API error response:",
           error.response.status,
           error.response.statusText
         );
       } else if (error.request) {
         console.error("No response received from API");
       }
-      
+
       // Consider adding user-friendly error notification here
       // e.g. setUpdateError("Impossible de mettre à jour l'événement. Veuillez réessayer.");
     }
@@ -453,7 +521,7 @@ const Planning = ({ title, initialEvents }) => {
       const apiUrl = `${baseUrl}/api/events/delete/${selectedEvent.ID}`;
 
       console.log("Deleting event at:", apiUrl);
-      
+
       await axios.delete(apiUrl, {
         // Include userId in the request data
         data: { userId },
@@ -461,22 +529,22 @@ const Planning = ({ title, initialEvents }) => {
         timeout: 10000,
         // Ensure we receive JSON
         headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json"
+          Accept: "application/json",
+          "Content-Type": "application/json",
         },
         // Validate status is 2xx
-        validateStatus: (status) => status >= 200 && status < 300
+        validateStatus: (status) => status >= 200 && status < 300,
       });
-      
+
       setShowEditModal(false);
       refreshEvents();
     } catch (error) {
       console.error("Error deleting event:", error);
-      
+
       // Log more detailed error information
       if (error.response) {
         console.error(
-          "API error response:", 
+          "API error response:",
           error.response.status,
           error.response.statusText
         );
@@ -588,9 +656,7 @@ const Planning = ({ title, initialEvents }) => {
         size="full"
         position="center"
       >
-        <Modal.Header>
-          {title}
-        </Modal.Header>
+        <Modal.Header>{title}</Modal.Header>
         <Modal.Body>
           <div className="calendar-container">{renderCalendar("100vh")}</div>
         </Modal.Body>
