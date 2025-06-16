@@ -21,6 +21,7 @@ import Loader from "@/components/ui/Loader";
 import Scolaire from "@/pages/plannings/scolaire";
 import Personnel from "@/pages/plannings/personnel";
 import Professionnel from "@/pages/plannings/professionnel";
+import AllPlannings from "@/pages/plannings/all";
 import Settings from "@/pages/Settings";
 
 // Hooks
@@ -129,6 +130,26 @@ const Dashboard = () => {
 
   const getHeaderProps = () => {
     switch (location.pathname) {
+      case "/plannings/all":
+        return {
+          title: "Tous les plannings",
+          subtitle:
+            "Vue d'ensemble de tous vos événements personnels, scolaires et professionnels",
+          btnData: [
+            {
+              text: "Nouveau",
+              icon: (
+                <Icon
+                  icon="tabler:plus"
+                  width="20"
+                  height="20"
+                  style={{ display: "block" }}
+                />
+              ),
+              onClick: handleShow,
+            },
+          ],
+        };
       case "/plannings/scolaire":
         return {
           title: "Planning scolaire",
@@ -208,6 +229,7 @@ const Dashboard = () => {
   const headerProps = getHeaderProps();
 
   const getPlanningTitle = () => {
+    if (location.pathname.includes("all")) return "Tous les plannings";
     if (location.pathname.includes("scolaire")) return "Planning scolaire";
     if (location.pathname.includes("personnel")) return "Planning personnel";
     if (location.pathname.includes("professionnel"))
@@ -229,6 +251,7 @@ const Dashboard = () => {
         />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/plannings/all" element={<AllPlannings />} />
           <Route path="/plannings/scolaire" element={<Scolaire />} />
           <Route path="/plannings/personnel" element={<Personnel />} />
           <Route path="/plannings/professionnel" element={<Professionnel />} />

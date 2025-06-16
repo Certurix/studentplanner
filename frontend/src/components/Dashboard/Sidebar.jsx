@@ -177,6 +177,15 @@ export default function SidebarComponent({ data }) {
 									>
 										<Sidebar.Item
 											as={NavLink}
+											to="/plannings/all"
+											icon={() => <Icon icon="tabler:calendar" width="20" height="20" />}
+											className={({ isActive }) => getSubNavLinkClass({ isActive })}
+											onClick={handleNavigation}
+										>
+											<span className="ml-3">Tous</span>
+										</Sidebar.Item>
+										<Sidebar.Item
+											as={NavLink}
 											to="/plannings/scolaire"
 											icon={() => <Icon icon="tabler:school" width="20" height="20" />}
 											className={({ isActive }) => getSubNavLinkClass({ isActive })}
