@@ -412,15 +412,25 @@ const Planning = ({ title, initialEvents }) => {
       const baseUrl = import.meta.env.VITE_API_URL || "";
       const apiUrl = `${baseUrl}/api/events/create`;
 
-      console.log("Creating event at:", apiUrl);
+      const adjustedStartDate = new Date(eventData.start);
+      const adjustedEndDate = new Date(eventData.end);
+
+      const timezoneOffsetInHours =
+        Math.abs(new Date().getTimezoneOffset()) / 60;
+      adjustedStartDate.setHours(
+        adjustedStartDate.getHours() + timezoneOffsetInHours
+      );
+      adjustedEndDate.setHours(
+        adjustedEndDate.getHours() + timezoneOffsetInHours
+      );
 
       await axios.post(
         apiUrl,
         {
           userId,
           title: eventData.title,
-          startdate: eventData.start,
-          enddate: eventData.end,
+          startdate: adjustedStartDate.toISOString(),
+          enddate: adjustedEndDate.toISOString(),
           description: eventData.description || "",
           type: eventData.type || getTypeFromTitle(),
           priority: eventData.priority || 1,
@@ -454,9 +464,6 @@ const Planning = ({ title, initialEvents }) => {
       } else if (error.request) {
         console.error("No response received from API");
       }
-
-      // Consider adding user-friendly error notification here
-      // e.g. setCreateError("Impossible de créer l'événement. Veuillez réessayer.");
     }
   };
 
@@ -466,13 +473,28 @@ const Planning = ({ title, initialEvents }) => {
       // API base URL with fallback to relative path
       const baseUrl = import.meta.env.VITE_API_URL || "";
       const apiUrl = `${baseUrl}/api/events/update/${selectedEvent.ID}`;
+
+      // Create copies of the dates to avoid mutating the original objects
+      const adjustedStartDate = new Date(eventData.start);
+      const adjustedEndDate = new Date(eventData.end);
+
+      // Add the timezone offset to compensate for UTC conversion
+      const timezoneOffsetInHours =
+        Math.abs(new Date().getTimezoneOffset()) / 60;
+      adjustedStartDate.setHours(
+        adjustedStartDate.getHours() + timezoneOffsetInHours
+      );
+      adjustedEndDate.setHours(
+        adjustedEndDate.getHours() + timezoneOffsetInHours
+      );
+
       await axios.put(
         apiUrl,
         {
           userId,
           title: eventData.title,
-          startdate: eventData.start,
-          enddate: eventData.end,
+          startdate: adjustedStartDate.toISOString(),
+          enddate: adjustedEndDate.toISOString(),
           description: eventData.description || "",
           type: eventData.type || selectedEvent.type,
           priority: eventData.priority || selectedEvent.priority,
@@ -519,8 +541,6 @@ const Planning = ({ title, initialEvents }) => {
       // API base URL with fallback to relative path
       const baseUrl = import.meta.env.VITE_API_URL || "";
       const apiUrl = `${baseUrl}/api/events/delete/${selectedEvent.ID}`;
-
-      console.log("Deleting event at:", apiUrl);
 
       await axios.delete(apiUrl, {
         // Include userId in the request data
