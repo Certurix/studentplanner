@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Modal,
   Button,
@@ -9,6 +9,9 @@ import {
 } from "flowbite-react";
 import { Icon } from "@iconify-icon/react";
 import moment from "moment";
+import flatpickr from "flatpickr";
+import { French } from "flatpickr/dist/l10n/fr.js";
+import "flatpickr/dist/flatpickr.css";
 
 const EventModal = ({
   show,
@@ -30,6 +33,10 @@ const EventModal = ({
     place: "",
   });
 
+  // Create refs for flatpickr
+  const startDateRef = useRef(null);
+  const endDateRef = useRef(null);
+
   useEffect(() => {
     if (event) {
       setFormData({
@@ -49,6 +56,62 @@ const EventModal = ({
       });
     }
   }, [event, planningTitle]);
+  useEffect(() => {
+    // Initialize flatpickr instances
+    let startPicker, endPicker;
+
+    if (startDateRef.current) {
+      startPicker = flatpickr(startDateRef.current, {
+        locale: French,
+        enableTime: true,
+        dateFormat: "d-m-Y H:i",
+        defaultDate: formData.start,
+        time_24hr: true,
+        minuteIncrement: 5,
+        onChange: (selectedDates) => {
+          handleDateChange("start", selectedDates[0]);
+
+          // Update end date minimum when start date changes
+          if (endPicker && selectedDates[0]) {
+            endPicker.set("minDate", selectedDates[0]);
+
+            // If end date is now before start date, update it
+            if (new Date(formData.end) < selectedDates[0]) {
+              const newEndDate = new Date(selectedDates[0]);
+              newEndDate.setHours(newEndDate.getHours() + 1);
+              endPicker.setDate(newEndDate);
+              handleDateChange("end", newEndDate);
+            }
+          }
+        },
+      });
+    }
+
+    if (endDateRef.current) {
+      endPicker = flatpickr(endDateRef.current, {
+        locale: French,
+        enableTime: true,
+        dateFormat: "d-m-Y H:i",
+        defaultDate: formData.end,
+        time_24hr: true,
+        minuteIncrement: 5,
+        minDate: formData.start,
+        onChange: (selectedDates) => {
+          handleDateChange("end", selectedDates[0]);
+        },
+      });
+    }
+
+    // Update flatpickr instances when form data changes
+    if (startPicker) startPicker.setDate(formData.start);
+    if (endPicker) endPicker.setDate(formData.end);
+
+    // Cleanup function to destroy flatpickr instances
+    return () => {
+      if (startPicker) startPicker.destroy();
+      if (endPicker) endPicker.destroy();
+    };
+  }, [startDateRef, endDateRef, formData.start, formData.end]);
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -64,12 +127,10 @@ const EventModal = ({
       [id]: value,
     }));
   };
-
-  const handleDateChange = (e) => {
-    const { id, value } = e.target;
+  const handleDateChange = (id, date) => {
     setFormData((prevData) => ({
       ...prevData,
-      [id]: new Date(value),
+      [id]: date,
     }));
   };
 
@@ -100,7 +161,6 @@ const EventModal = ({
               required
             />
           </div>
-
           <div>
             <div className="mb-2 block">
               <Label htmlFor="place" value="Lieu" />
@@ -110,19 +170,21 @@ const EventModal = ({
               value={formData.place}
               onChange={handleChange}
             />
-          </div>
-
+          </div>{" "}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <div className="mb-2 block">
                 <Label htmlFor="start" value="Début" />
               </div>
               <TextInput
-                type="datetime-local"
+                type="text"
                 id="start"
-                value={moment(formData.start).format("YYYY-MM-DDTHH:mm")}
-                onChange={handleDateChange}
+                value={moment(formData.start).format("YYYY-MM-DD HH:mm")}
+                onChange={(e) =>
+                  handleDateChange("start", new Date(e.target.value))
+                }
                 required
+                ref={startDateRef}
               />
             </div>
             <div>
@@ -130,15 +192,17 @@ const EventModal = ({
                 <Label htmlFor="end" value="Fin" />
               </div>
               <TextInput
-                type="datetime-local"
+                type="text"
                 id="end"
-                value={moment(formData.end).format("YYYY-MM-DDTHH:mm")}
-                onChange={handleDateChange}
+                value={moment(formData.end).format("YYYY-MM-DD HH:mm")}
+                onChange={(e) =>
+                  handleDateChange("end", new Date(e.target.value))
+                }
                 required
+                ref={endDateRef}
               />
             </div>
           </div>
-
           <div className="grid grid-cols-2 gap-4">
             <div>
               <div className="mb-2 block">
@@ -169,7 +233,6 @@ const EventModal = ({
               </Select>
             </div>
           </div>
-
           <div>
             <div className="mb-2 block">
               <Label htmlFor="description" value="Description" />
@@ -181,7 +244,6 @@ const EventModal = ({
               onChange={handleChange}
             />
           </div>
-
           <div className="flex justify-between">
             <Button color="blue" type="submit">
               {isEdit ? (
@@ -191,7 +253,13 @@ const EventModal = ({
                 </>
               ) : (
                 <>
-                  <Icon icon="fa6-solid:plus" width="16" height="16" className="mr-2 content-center" /> Ajouter
+                  <Icon
+                    icon="fa6-solid:plus"
+                    width="16"
+                    height="16"
+                    className="mr-2 content-center"
+                  />{" "}
+                  Ajouter
                 </>
               )}
             </Button>
