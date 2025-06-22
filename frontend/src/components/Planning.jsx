@@ -1,5 +1,10 @@
-import React, { useState, useRef, useEffect } from "react";
-
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useMemo,
+  useCallback,
+} from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import axios from "axios";
@@ -17,10 +22,11 @@ import { validateResponse } from "@/utils/helpers";
 // Hooks
 import useUser from "@/hooks/useUser";
 
+// Set up localizer for calendar
 moment.locale("fr");
 const localizer = momentLocalizer(moment);
 
-// Calendar translation fields
+// Constants for calendar configuration
 const CALENDAR_MESSAGES = {
   allDay: "Toute la journée",
   previous: "Précédent",
@@ -73,24 +79,9 @@ const PRIORITY_BORDER_WIDTH = {
   3: "3px", // High
 };
 
-// Event style generator based on event type and priority
-const eventStyleGetter = (event) => {
-  const backgroundColor = TYPE_COLORS[event.type] || TYPE_COLORS.default;
-  const borderWidth =
-    PRIORITY_BORDER_WIDTH[event.priority] || PRIORITY_BORDER_WIDTH[1];
-
-  return {
-    style: {
-      backgroundColor,
-      borderWidth,
-      color: "#fff",
-      borderRadius: "4px",
-    },
-  };
-};
-
 const Planning = ({ title, initialEvents }) => {
   const { userId } = useUser();
+  const calendarRef = useRef(null);
 
   // States
   const [events, setEvents] = useState([]);
@@ -103,547 +94,400 @@ const Planning = ({ title, initialEvents }) => {
   const [currentView, setCurrentView] = useState("week");
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  const calendarRef = useRef(null);
-
-  // Determine event type from planning title
-  const getTypeFromTitle = () => {
+  // Memoized functions and values
+  const eventType = useMemo(() => {
     if (title.includes("personnel")) return EVENT_TYPES.PERSONAL;
     if (title.includes("scolaire")) return EVENT_TYPES.ACADEMIC;
     if (title.includes("professionnel")) return EVENT_TYPES.PROFESSIONAL;
-    if (title.includes("Tous")) return EVENT_TYPES.PERSONAL; // Default to personal for "all" view
     return EVENT_TYPES.PERSONAL; // Default
-  };
+  }, [title]);
 
-  // Format initial events
+  const isAllPlannings = useMemo(() => title.includes("Tous"), [title]);
+
+  // Event style generator based on event type and priority
+  const eventStyleGetter = useCallback((event) => {
+    const backgroundColor = TYPE_COLORS[event.type] || TYPE_COLORS.default;
+    const borderWidth =
+      PRIORITY_BORDER_WIDTH[event.priority] || PRIORITY_BORDER_WIDTH[1];
+
+    return {
+      style: {
+        backgroundColor,
+        borderWidth,
+        color: "#fff",
+        borderRadius: "4px",
+      },
+    };
+  }, []);
+
+  // Format initial events on component mount
   useEffect(() => {
-    // Check if initialEvents is an array before using map
     if (initialEvents && Array.isArray(initialEvents)) {
       const formattedEvents = initialEvents.map((event) => ({
         ...event,
         start: new Date(event.startdate),
         end: new Date(event.enddate),
-        title: event.title,
       }));
       setEvents(formattedEvents);
     } else {
-      // If initialEvents is not an array, set events to empty array
       setEvents([]);
-      console.warn("Initial events is not an array or is empty");
     }
   }, [initialEvents]);
 
-  /**
-   * This effect handles initialization and refresh of events
-   * It uses the refreshTrigger to force re-fetching when needed
-   * and properly waits for userId to be available
-   */
+  // Calculate date range based on current view
+  const getDateRange = useCallback((date, view) => {
+    let rangeStart, rangeEnd;
+
+    switch (view) {
+      case "month":
+        rangeStart = new Date(date.getFullYear(), date.getMonth(), 1);
+        rangeEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+        break;
+      case "week":
+        const weekStart = new Date(date);
+        weekStart.setDate(date.getDate() - date.getDay());
+        rangeStart = weekStart;
+
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekStart.getDate() + 6);
+        rangeEnd = weekEnd;
+        break;
+      case "day":
+        rangeStart = date;
+        rangeEnd = date;
+        break;
+      default: // Agenda view - default to current month
+        rangeStart = new Date(date.getFullYear(), date.getMonth(), 1);
+        rangeEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    }
+
+    return { rangeStart, rangeEnd };
+  }, []);
+
+  // Get API base URL
+  const baseUrl = useMemo(() => import.meta.env.VITE_API_URL || "", []);
+
+  // Fetch events from API
+  const fetchEvents = useCallback(
+    async (start, end, viewType) => {
+      if (!userId) return;
+
+      setIsLoading(true);
+      try {
+        const startMonth = start.getMonth() + 1;
+        const endMonth = end.getMonth() + 1;
+        const isSameMonth = startMonth === endMonth || viewType !== "month";
+        let fetchedEvents = [];
+
+        // Define a helper function to fetch events
+        const fetchEventsByTypeAndMonth = async (type, month) => {
+          const apiUrl = `${baseUrl}/api/events/${userId}/month/${month}?type=${type}`;
+          try {
+            const response = await axios.get(apiUrl, {
+              timeout: 10000,
+              headers: { Accept: "application/json" },
+              validateStatus: (status) => status >= 200 && status < 300,
+            });
+            return validateResponse(response);
+          } catch (error) {
+            console.error(
+              `Error fetching events for type ${type}, month ${month}:`,
+              error
+            );
+            return [];
+          }
+        };
+
+        // Determine which events to fetch based on view
+        if (isSameMonth) {
+          // Single month case
+          const typesToFetch = isAllPlannings ? [1, 2, 3] : [eventType];
+          const eventPromises = typesToFetch.map((type) =>
+            fetchEventsByTypeAndMonth(type, startMonth)
+          );
+
+          const results = await Promise.all(eventPromises);
+          results.forEach((events) => fetchedEvents.push(...events));
+        } else {
+          // Multiple month case
+          const typesToFetch = isAllPlannings ? [1, 2, 3] : [eventType];
+          const eventPromises = [];
+
+          // Add promises for both months
+          typesToFetch.forEach((type) => {
+            eventPromises.push(fetchEventsByTypeAndMonth(type, startMonth));
+            eventPromises.push(fetchEventsByTypeAndMonth(type, endMonth));
+          });
+
+          const results = await Promise.all(eventPromises);
+          results.forEach((events) => fetchedEvents.push(...events));
+        }
+
+        // Ensure fetchedEvents is an array
+        if (!Array.isArray(fetchedEvents)) {
+          console.error("Fetched events is not an array");
+          fetchedEvents = [];
+        }
+
+        // Format dates and sort events
+        const formattedEvents = fetchedEvents.map((event) => ({
+          ...event,
+          start: new Date(event.startdate),
+          end: new Date(event.enddate),
+        }));
+
+        formattedEvents.sort((a, b) => a.start - b.start);
+        setEvents(formattedEvents);
+      } catch (error) {
+        console.error("Error in fetchEvents function:", error);
+        setEvents([]);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [userId, baseUrl, eventType, isAllPlannings]
+  );
+
+  // Load events when dependencies change
   useEffect(() => {
-    // Track if the component is still mounted when async operations complete
     let isMounted = true;
 
     const loadEvents = async () => {
-      // Don't proceed if userId isn't available yet
-      if (!userId) {
-        console.log("Waiting for user authentication...");
-        return;
-      }
+      if (!userId) return;
 
       setIsLoading(true);
-
       try {
-        let rangeStart, rangeEnd;
+        const { rangeStart, rangeEnd } = getDateRange(currentDate, currentView);
 
-        // Determine date range based on current view
-        switch (currentView) {
-          case "month":
-            rangeStart = new Date(
-              currentDate.getFullYear(),
-              currentDate.getMonth(),
-              1
-            );
-            rangeEnd = new Date(
-              currentDate.getFullYear(),
-              currentDate.getMonth() + 1,
-              0
-            );
-            break;
-          case "week":
-            const weekStart = new Date(currentDate);
-            weekStart.setDate(currentDate.getDate() - currentDate.getDay());
-            rangeStart = weekStart;
-
-            const weekEnd = new Date(weekStart);
-            weekEnd.setDate(weekStart.getDate() + 6);
-            rangeEnd = weekEnd;
-            break;
-          case "day":
-            rangeStart = currentDate;
-            rangeEnd = currentDate;
-            break;
-          default: // Agenda view - default to current month
-            rangeStart = new Date(
-              currentDate.getFullYear(),
-              currentDate.getMonth(),
-              1
-            );
-            rangeEnd = new Date(
-              currentDate.getFullYear(),
-              currentDate.getMonth() + 1,
-              0
-            );
-        }
-
-        // Only continue if component is still mounted
         if (isMounted) {
           await fetchEvents(rangeStart, rangeEnd, currentView);
         }
       } catch (error) {
         console.error("Error loading events:", error);
       } finally {
-        // Only update loading state if component is still mounted
         if (isMounted) {
           setIsLoading(false);
         }
       }
     };
 
-    // Load events immediately
     loadEvents();
 
-    // Set up a cleanup function
     return () => {
       isMounted = false;
     };
-  }, [userId, currentDate, currentView, refreshTrigger]);
-  // API functions
-  const fetchEvents = async (start, end, viewType) => {
-    if (!userId) return;
+  }, [
+    userId,
+    currentDate,
+    currentView,
+    refreshTrigger,
+    fetchEvents,
+    getDateRange,
+  ]);
 
-    setIsLoading(true);
-    try {
-      const eventType = getTypeFromTitle();
-      const startMonth = start.getMonth() + 1;
-      const endMonth = end.getMonth() + 1;
-      const isAllPlannings = title.includes("Tous");
+  // Helper for adjusting date with timezone offset
+  const adjustDateWithTimezone = useCallback((date) => {
+    const adjustedDate = new Date(date);
+    const timezoneOffsetInHours = Math.abs(new Date().getTimezoneOffset()) / 60;
+    adjustedDate.setHours(adjustedDate.getHours() + timezoneOffsetInHours);
+    return adjustedDate;
+  }, []);
 
-      let fetchedEvents = [];
+  // API operations for events
+  const handleCreateEvent = useCallback(
+    async (eventData) => {
+      if (!userId) return;
 
-      // API base URL with fallback to relative path
-      const baseUrl = import.meta.env.VITE_API_URL || "";
+      try {
+        const apiUrl = `${baseUrl}/api/events/create`;
 
-      // If viewing a single month or less
-      if (startMonth === endMonth || viewType !== "month") {
-        try {
-          if (isAllPlannings) {
-            // fetch events from all types
-            const eventPromises = [1, 2, 3].map((type) => {
-              const apiUrl = `${baseUrl}/api/events/${userId}/month/${startMonth}?type=${type}`;
-              console.log("Fetching events from:", apiUrl);
+        const adjustedStartDate = adjustDateWithTimezone(eventData.start);
+        const adjustedEndDate = adjustDateWithTimezone(eventData.end);
 
-              return axios.get(apiUrl, {
-                timeout: 10000,
-                headers: { Accept: "application/json" },
-                validateStatus: (status) => status >= 200 && status < 300,
-              });
-            });
-
-            const responses = await Promise.all(eventPromises);
-            fetchedEvents = [];
-
-            responses.forEach((response) => {
-              const events = validateResponse(response);
-              fetchedEvents.push(...events);
-            });
-
-            // Sort events by start date
-            fetchedEvents.sort(
-              (a, b) => new Date(a.startdate) - new Date(b.startdate)
-            );
-          } else {
-            // For specific planning types, fetch only that type
-            const apiUrl = `${baseUrl}/api/events/${userId}/month/${startMonth}?type=${eventType}`;
-            console.log("Fetching events from:", apiUrl);
-
-            const response = await axios.get(apiUrl, {
-              // Set timeout to prevent long waiting
-              timeout: 10000,
-              // Ensure we receive JSON response
-              headers: {
-                Accept: "application/json",
-              },
-              // Validate status is 2xx
-              validateStatus: (status) => status >= 200 && status < 300,
-            });
-
-            fetchedEvents = validateResponse(response);
+        await axios.post(
+          apiUrl,
+          {
+            userId,
+            title: eventData.title,
+            startdate: adjustedStartDate.toISOString(),
+            enddate: adjustedEndDate.toISOString(),
+            description: eventData.description || "",
+            type: eventData.type || eventType,
+            priority: eventData.priority || 1,
+            place: eventData.place || "",
+          },
+          {
+            timeout: 10000,
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            validateStatus: (status) => status >= 200 && status < 300,
           }
-        } catch (requestError) {
-          // Handle specific request errors
-          if (requestError.response) {
-            // The request was made and the server responded with a status code
-            // that falls out of the range of 2xx
-            console.error(
-              "API error:",
-              requestError.response.status,
-              requestError.response.statusText
-            );
-          } else if (requestError.request) {
-            // The request was made but no response was received
-            console.error(
-              "No response received from API:",
-              requestError.message
-            );
-          } else {
-            // Something happened in setting up the request
-            console.error(
-              "Error setting up API request:",
-              requestError.message
-            );
-          }
-          fetchedEvents = [];
-        }
-      } else {
-        // If view spans multiple months (like year view), fetch both months
-        try {
-          if (isAllPlannings) {
-            // For "all" plannings, fetch from all types for both months
-            const allResponses = await Promise.all([
-              // First month - all types
-              ...[1, 2, 3].map((type) =>
-                axios.get(
-                  `${baseUrl}/api/events/${userId}/month/${startMonth}?type=${type}`,
-                  {
-                    timeout: 10000,
-                    headers: { Accept: "application/json" },
-                    validateStatus: (status) => status >= 200 && status < 300,
-                  }
-                )
-              ),
-              // Second month - all types
-              ...[1, 2, 3].map((type) =>
-                axios.get(
-                  `${baseUrl}/api/events/${userId}/month/${endMonth}?type=${type}`,
-                  {
-                    timeout: 10000,
-                    headers: { Accept: "application/json" },
-                    validateStatus: (status) => status >= 200 && status < 300,
-                  }
-                )
-              ),
-            ]);
+        );
 
-            fetchedEvents = [];
-            allResponses.forEach((response) => {
-              const events = validateResponse(response);
-              fetchedEvents.push(...events);
-            });
-
-            // Sort events by start date
-            fetchedEvents.sort(
-              (a, b) => new Date(a.startdate) - new Date(b.startdate)
-            );
-          } else {
-            // For specific planning types, fetch only that type for both months
-            const responses = await Promise.all([
-              axios.get(
-                `${baseUrl}/api/events/${userId}/month/${startMonth}?type=${eventType}`,
-                {
-                  timeout: 10000,
-                  headers: { Accept: "application/json" },
-                  validateStatus: (status) => status >= 200 && status < 300,
-                }
-              ),
-              axios.get(
-                `${baseUrl}/api/events/${userId}/month/${endMonth}?type=${eventType}`,
-                {
-                  timeout: 10000,
-                  headers: { Accept: "application/json" },
-                  validateStatus: (status) => status >= 200 && status < 300,
-                }
-              ),
-            ]);
-
-            const data1 = validateResponse(responses[0]);
-            const data2 = validateResponse(responses[1]);
-
-            fetchedEvents = [...data1, ...data2];
-          }
-        } catch (requestError) {
+        setShowEventModal(false);
+        setRefreshTrigger((prev) => prev + 1);
+      } catch (error) {
+        console.error("Error creating event:", error);
+        if (error.response) {
           console.error(
-            "Error fetching events from multiple months:",
-            requestError
+            "API error:",
+            error.response.status,
+            error.response.statusText
           );
-          fetchedEvents = [];
+        } else if (error.request) {
+          console.error("No response received from API");
         }
       }
+    },
+    [userId, baseUrl, eventType, adjustDateWithTimezone]
+  );
 
-      // Double check that fetchedEvents is an array before using map
-      if (!Array.isArray(fetchedEvents)) {
-        console.error(
-          "Fetched events is not an array:",
-          typeof fetchedEvents === "string" && fetchedEvents.length > 100
-            ? fetchedEvents.substring(0, 100) + "..."
-            : fetchedEvents
-        );
-        fetchedEvents = [];
-      }
+  const handleUpdateEvent = useCallback(
+    async (eventData) => {
+      if (!userId || !selectedEvent?.ID) return;
 
-      // Format dates
-      const formattedEvents = fetchedEvents.map((event) => ({
-        ...event,
-        start: new Date(event.startdate),
-        end: new Date(event.enddate),
-      }));
+      try {
+        const apiUrl = `${baseUrl}/api/events/update/${selectedEvent.ID}`;
 
-      setEvents(formattedEvents);
-    } catch (error) {
-      console.error("Error in fetchEvents function:", error);
-      setEvents([]); // Set empty events array on error
-    } finally {
-      setIsLoading(false);
-    }
-  };
+        const adjustedStartDate = adjustDateWithTimezone(eventData.start);
+        const adjustedEndDate = adjustDateWithTimezone(eventData.end);
 
-  const handleCreateEvent = async (eventData) => {
-    if (!userId) return;
-
-    try {
-      // API base URL with fallback to relative path
-      const baseUrl = import.meta.env.VITE_API_URL || "";
-      const apiUrl = `${baseUrl}/api/events/create`;
-
-      const adjustedStartDate = new Date(eventData.start);
-      const adjustedEndDate = new Date(eventData.end);
-
-      const timezoneOffsetInHours =
-        Math.abs(new Date().getTimezoneOffset()) / 60;
-      adjustedStartDate.setHours(
-        adjustedStartDate.getHours() + timezoneOffsetInHours
-      );
-      adjustedEndDate.setHours(
-        adjustedEndDate.getHours() + timezoneOffsetInHours
-      );
-
-      await axios.post(
-        apiUrl,
-        {
-          userId,
-          title: eventData.title,
-          startdate: adjustedStartDate.toISOString(),
-          enddate: adjustedEndDate.toISOString(),
-          description: eventData.description || "",
-          type: eventData.type || getTypeFromTitle(),
-          priority: eventData.priority || 1,
-          place: eventData.place || "",
-        },
-        {
-          // Set timeout to prevent long waiting
-          timeout: 10000,
-          // Ensure we send and receive JSON
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
+        await axios.put(
+          apiUrl,
+          {
+            userId,
+            title: eventData.title,
+            startdate: adjustedStartDate.toISOString(),
+            enddate: adjustedEndDate.toISOString(),
+            description: eventData.description || "",
+            type: eventData.type || selectedEvent.type,
+            priority: eventData.priority || selectedEvent.priority,
+            place: eventData.place || selectedEvent.place,
           },
-          // Validate status is 2xx
-          validateStatus: (status) => status >= 200 && status < 300,
-        }
-      );
-
-      setShowEventModal(false);
-      refreshEvents();
-    } catch (error) {
-      console.error("Error creating event:", error);
-
-      // Log more detailed error information
-      if (error.response) {
-        console.error(
-          "API error response:",
-          error.response.status,
-          error.response.statusText
+          {
+            timeout: 10000,
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            validateStatus: (status) => status >= 200 && status < 300,
+          }
         );
-      } else if (error.request) {
-        console.error("No response received from API");
+
+        setShowEditModal(false);
+        setRefreshTrigger((prev) => prev + 1);
+      } catch (error) {
+        console.error("Error updating event:", error);
       }
-    }
-  };
+    },
+    [userId, baseUrl, selectedEvent, adjustDateWithTimezone]
+  );
 
-  const handleUpdateEvent = async (eventData) => {
-    if (!userId || !selectedEvent?.ID) return;
-    try {
-      // API base URL with fallback to relative path
-      const baseUrl = import.meta.env.VITE_API_URL || "";
-      const apiUrl = `${baseUrl}/api/events/update/${selectedEvent.ID}`;
-
-      // Create copies of the dates to avoid mutating the original objects
-      const adjustedStartDate = new Date(eventData.start);
-      const adjustedEndDate = new Date(eventData.end);
-
-      // Add the timezone offset to compensate for UTC conversion
-      const timezoneOffsetInHours =
-        Math.abs(new Date().getTimezoneOffset()) / 60;
-      adjustedStartDate.setHours(
-        adjustedStartDate.getHours() + timezoneOffsetInHours
-      );
-      adjustedEndDate.setHours(
-        adjustedEndDate.getHours() + timezoneOffsetInHours
-      );
-
-      await axios.put(
-        apiUrl,
-        {
-          userId,
-          title: eventData.title,
-          startdate: adjustedStartDate.toISOString(),
-          enddate: adjustedEndDate.toISOString(),
-          description: eventData.description || "",
-          type: eventData.type || selectedEvent.type,
-          priority: eventData.priority || selectedEvent.priority,
-          place: eventData.place || selectedEvent.place,
-        },
-        {
-          // Set timeout to prevent long waiting
-          timeout: 10000,
-          // Ensure we send and receive JSON
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          // Validate status is 2xx
-          validateStatus: (status) => status >= 200 && status < 300,
-        }
-      );
-
-      setShowEditModal(false);
-      refreshEvents();
-    } catch (error) {
-      console.error("Error updating event:", error);
-
-      // Log more detailed error information
-      if (error.response) {
-        console.error(
-          "API error response:",
-          error.response.status,
-          error.response.statusText
-        );
-      } else if (error.request) {
-        console.error("No response received from API");
-      }
-
-      // Consider adding user-friendly error notification here
-      // e.g. setUpdateError("Impossible de mettre à jour l'événement. Veuillez réessayer.");
-    }
-  };
-
-  const handleDeleteEvent = async () => {
+  const handleDeleteEvent = useCallback(async () => {
     if (!userId || !selectedEvent?.ID) return;
 
     try {
-      // API base URL with fallback to relative path
-      const baseUrl = import.meta.env.VITE_API_URL || "";
       const apiUrl = `${baseUrl}/api/events/delete/${selectedEvent.ID}`;
 
       await axios.delete(apiUrl, {
-        // Include userId in the request data
         data: { userId },
-        // Set timeout to prevent long waiting
         timeout: 10000,
-        // Ensure we receive JSON
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
-        // Validate status is 2xx
         validateStatus: (status) => status >= 200 && status < 300,
       });
 
       setShowEditModal(false);
-      refreshEvents();
+      setRefreshTrigger((prev) => prev + 1);
     } catch (error) {
       console.error("Error deleting event:", error);
-
-      // Log more detailed error information
-      if (error.response) {
-        console.error(
-          "API error response:",
-          error.response.status,
-          error.response.statusText
-        );
-      } else if (error.request) {
-        console.error("No response received from API");
-      }
     }
-  };
+  }, [userId, baseUrl, selectedEvent]);
 
-  // Event handlers
-  const refreshEvents = () => {
-    setRefreshTrigger((prev) => prev + 1);
-  };
-
-  const handleNavigate = (newDate) => {
+  // Event handlers for calendar interactions
+  const handleNavigate = useCallback((newDate) => {
     setCurrentDate(newDate);
-  };
+  }, []);
 
-  const handleViewChange = (view) => {
+  const handleViewChange = useCallback((view) => {
     setCurrentView(view);
-  };
+  }, []);
 
-  const handleSelectSlot = ({ start, end }) => {
-    setSelectedEvent({
-      title: "",
-      start,
-      end,
-      description: "",
-      type: getTypeFromTitle(),
-      priority: 1,
-      place: "",
-    });
-    setShowEventModal(true);
-  };
+  const handleSelectSlot = useCallback(
+    ({ start, end }) => {
+      setSelectedEvent({
+        title: "",
+        start,
+        end,
+        description: "",
+        type: eventType,
+        priority: 1,
+        place: "",
+      });
+      setShowEventModal(true);
+    },
+    [eventType]
+  );
 
-  const handleSelectEvent = (event) => {
+  const handleSelectEvent = useCallback((event) => {
     setSelectedEvent(event);
-    console.log("Selected event:", event);
     setShowEditModal(true);
-  };
+  }, []);
 
-  const toggleFullscreen = () => {
-    setIsFullscreen(!isFullscreen);
-  };
+  const toggleFullscreen = useCallback(() => {
+    setIsFullscreen((prev) => !prev);
+  }, []);
 
-  // Render calendar component
-  const renderCalendar = (height = "31.25rem") => (
-    <Calendar
-      localizer={localizer}
-      culture="fr"
-      events={events}
-      startAccessor="start"
-      endAccessor="end"
-      selectable
-      onSelectSlot={handleSelectSlot}
-      onSelectEvent={handleSelectEvent}
-      defaultView="week"
-      view={currentView}
-      date={currentDate}
-      onNavigate={handleNavigate}
-      onView={handleViewChange}
-      views={["month", "week", "day", "agenda"]}
-      style={{ height }}
-      className="bg-white rounded-lg shadow-sm no-border"
-      components={{
-        toolbar: (props) => (
-          <CustomToolbar
-            {...props}
-            onNavigate={props.onNavigate}
-            onView={props.onView}
-            view={props.view}
-          />
-        ),
-      }}
-      messages={CALENDAR_MESSAGES}
-      formats={CALENDAR_FORMATS}
-      eventPropGetter={eventStyleGetter}
-      ref={calendarRef}
-    />
+  // Render calendar with appropriate height
+  const renderCalendar = useCallback(
+    (height = "31.25rem") => (
+      <Calendar
+        localizer={localizer}
+        culture="fr"
+        events={events}
+        startAccessor="start"
+        endAccessor="end"
+        selectable
+        onSelectSlot={handleSelectSlot}
+        onSelectEvent={handleSelectEvent}
+        defaultView="week"
+        view={currentView}
+        date={currentDate}
+        onNavigate={handleNavigate}
+        onView={handleViewChange}
+        views={["month", "week", "day", "agenda"]}
+        style={{ height }}
+        className="bg-white rounded-lg shadow-sm no-border"
+        components={{
+          toolbar: (props) => (
+            <CustomToolbar
+              {...props}
+              onNavigate={props.onNavigate}
+              onView={props.onView}
+              view={props.view}
+            />
+          ),
+        }}
+        messages={CALENDAR_MESSAGES}
+        formats={CALENDAR_FORMATS}
+        eventPropGetter={eventStyleGetter}
+        ref={calendarRef}
+      />
+    ),
+    [
+      events,
+      handleNavigate,
+      handleSelectEvent,
+      handleSelectSlot,
+      handleViewChange,
+      currentDate,
+      currentView,
+      eventStyleGetter,
+    ]
   );
 
   return (
