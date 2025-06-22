@@ -85,6 +85,11 @@ def users(id: int | None = None):
     """
     return db.get_users(id)
 
+@app.get("/users/{id}/profile")
+def user_profile(id: int):
+    """Get user profile data."""
+    return db.get_user_profile(id)
+
 @app.get("/users/{id}/email")
 def user_email(id: int):
     """Get user email."""

@@ -68,6 +68,18 @@ def get_users(id=None):
     cursor.close()
     return rows
 
+def get_user_profile(id):
+    """Get user profile data."""
+    cursor = get_connection().cursor(dictionary=True)
+    cursor.execute('''
+        SELECT id, name, lastname, email, school, class, avatar
+        FROM user
+        WHERE id = ?
+    ''', (id,))
+    row = cursor.fetchone()
+    cursor.close()
+    return row if row else None
+
 def get_user_name(id):
     """Get user name."""
     cursor = get_connection().cursor()
