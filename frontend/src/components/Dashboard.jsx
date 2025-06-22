@@ -1,4 +1,10 @@
-import React, { useState, useTransition, useEffect, useCallback } from "react";
+import React, {
+  useState,
+  useTransition,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Icon } from "@iconify-icon/react";
@@ -27,266 +33,304 @@ import Settings from "@/pages/Settings";
 // Hooks
 import useUser from "@/hooks/useUser";
 
+// Modèle par défaut pour un événement
+const DEFAULT_EVENT = {
+  title: "",
+  start: new Date(),
+  end: new Date(),
+  description: "",
+  type: 1,
+  priority: 1,
+  place: "",
+};
+
+// Configuration du header pour chaque route
+const ROUTE_CONFIGS = {
+  "/plannings/all": {
+    title: "Tous les plannings",
+    subtitle:
+      "Vue d'ensemble de tous vos événements personnels, scolaires et professionnels",
+    showNewButton: true,
+    planningTitle: "Tous les plannings",
+  },
+  "/plannings/scolaire": {
+    title: "Planning scolaire",
+    subtitle: "Consultez votre planning scolaire et modifiez vos événements",
+    showNewButton: true,
+    planningTitle: "Planning scolaire",
+  },
+  "/plannings/personnel": {
+    title: "Planning personnel",
+    subtitle: "Consultez votre planning personnel et modifiez vos événements",
+    showNewButton: true,
+    planningTitle: "Planning personnel",
+  },
+  "/plannings/professionnel": {
+    title: "Planning professionnel",
+    subtitle:
+      "Consultez votre planning professionnel et modifiez vos événements",
+    showNewButton: true,
+    planningTitle: "Planning professionnel",
+  },
+  "/settings": {
+    title: "Paramètres",
+    subtitle: "Mettez à jour vos informations personnelles et de sécurité",
+    showNewButton: false,
+    planningTitle: "Paramètres",
+  },
+};
+
+/**
+ * Dashboard component - Main layout
+ */
 const Dashboard = () => {
+  // React Router hooks
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Custom hooks
   const { userId, loading } = useUser();
-  const [show, setShow] = useState(false);
 
-  const [selectedEvent, setSelectedEvent] = useState({
-    title: "",
-    start: new Date(),
-    end: new Date(),
-    description: "",
-    type: 1,
-    priority: 1,
-    place: "",
-  });
-
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-
+  // State hooks
+  const [showModal, setShowModal] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(DEFAULT_EVENT);
   const [isPending, startTransition] = useTransition();
-
-  const [name, setName] = useState("");
-  const [lastname, setLastname] = useState("");
-  const [email, setEmail] = useState("");
-  const [school, setSchool] = useState("");
-  const [className, setClassName] = useState("");
+  const [userProfile, setUserProfile] = useState({
+    name: "",
+    lastname: "",
+    email: "",
+    school: "",
+    className: "",
+  });
   const [error, setError] = useState(null);
 
+  // Mobile sidebar state
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false);
+
+  // Constants
   const baseUrl = import.meta.env.VITE_API_URL || "";
 
-  const getUserData = useCallback((field, setter) => {
-    startTransition(() => {
-      axios
-        .get(`${baseUrl}/api/users/${userId}/${field}`)
-        .then((response) => setter(response.data))
-        .catch((error) =>
-          setError(error.message || "Network response was not ok")
-        );
-    });
-  }, [baseUrl, userId, startTransition]);
+  // Récupération des données utilisateur
+  const fetchUserData = useCallback(async () => {
+    if (!userId) return;
 
+    startTransition(async () => {
+      try {
+        const response = await axios.get(
+          `${baseUrl}/api/users/${userId}/profile`
+        );
+
+        if (response.data) {
+          setUserProfile({
+            name: response.data.name || "",
+            lastname: response.data.lastname || "",
+            email: response.data.email || "",
+            school: response.data.school || "",
+            className: response.data.classname || "",
+          });
+        }
+      } catch (err) {
+        const errorMessage =
+          err.response?.status === 404
+            ? "User profile not found"
+            : err.response?.status === 403
+            ? "Unauthorized access to user data"
+            : err.message || "Failed to fetch user data";
+
+        setError(errorMessage);
+      }
+    });
+  }, [baseUrl, userId]);
+
+  // Traitement de la création d'un événement
+  const handleCreateEvent = useCallback(
+    async (eventData) => {
+      startTransition(async () => {
+        try {
+          const response = await fetch(`${baseUrl}/api/events/create`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userId,
+              title: eventData.title,
+              startdate: eventData.start,
+              enddate: eventData.end,
+              description: eventData.description || "",
+              type: eventData.type || 1,
+              priority: eventData.priority || 1,
+              place: eventData.place || "",
+            }),
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || "Failed to create event");
+          }
+
+          setShowModal(false);
+        } catch (err) {
+          setError(`Event creation failed: ${err.message}`);
+        }
+      });
+    },
+    [baseUrl, userId]
+  );
+
+  // Traitement de la mise à jour d'un événement
+  const handleUpdateEvent = useCallback((eventData) => {
+    console.log("Update event:", eventData);
+    setShowModal(false);
+  }, []);
+
+  // Traitement de la suppression d'un événement
+  const handleDeleteEvent = useCallback(() => {
+    console.log("Delete event");
+    setShowModal(false);
+  }, []);
+
+  // Traitement de l'affichage du modal
+  const handleShowModal = useCallback(() => {
+    setShowModal(true);
+  }, []);
+
+  // Traitement de la fermeture du modal
+  const handleCloseModal = useCallback(() => {
+    setShowModal(false);
+  }, []);
+
+  // Récupération des données utilisateur au chargement du composant
   useEffect(() => {
     if (userId !== null) {
-      getUserData("name", setName);
-      getUserData("lastname", setLastname);
-      getUserData("email", setEmail);
-      getUserData("school", setSchool);
-      getUserData("classname", setClassName);
+      fetchUserData();
     }
-  }, [userId, getUserData]);
+  }, [userId, fetchUserData]);
 
+  // Redirection vers la page de connexion si l'utilisateur n'est pas connecté
+  useEffect(() => {
+    if (userId === null && !loading) {
+      sessionStorage.setItem(
+        "loginMessage",
+        "Veuillez vous connecter pour accéder au dashboard"
+      );
+      navigate("/login");
+    }
+  }, [userId, loading, navigate]);
+
+  // Configuration du titre et des boutons du header en fonction de la route
+  const routeConfig = useMemo(
+    () =>
+      ROUTE_CONFIGS[location.pathname] || {
+        title: `Bonjour, ${userProfile.name}`,
+        subtitle: "Consultez vos dernières informations et détails",
+        showNewButton: false,
+        planningTitle: "Planning",
+      },
+    [location.pathname, userProfile.name]
+  );
+
+  // Configuration des boutons du header
+  const headerBtnData = useMemo(
+    () =>
+      routeConfig.showNewButton
+        ? [
+            {
+              text: "Nouveau",
+              icon: (
+                <Icon
+                  icon="tabler:plus"
+                  width="20"
+                  height="20"
+                  style={{ display: "block" }}
+                />
+              ),
+              onClick: handleShowModal,
+            },
+          ]
+        : [],
+    [routeConfig.showNewButton, handleShowModal]
+  );
+
+  // Gestion du chargement
   if (loading) {
     return <Loader loading={true} />;
   }
 
-  if (userId === null) {
-    sessionStorage.setItem(
-      "loginMessage",
-      "Veuillez vous connecter pour accéder au dashboard"
-    );
-    navigate("/login");
-    return null;
-  }
-
-  const handleCreateEvent = (eventData) => {
-    startTransition(() => {
-      fetch(`${baseUrl}/api/events/create`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId,
-          title: eventData.title,
-          startdate: eventData.start,
-          enddate: eventData.end,
-          description: eventData.description || "",
-          type: eventData.type || 1,
-          priority: eventData.priority || 1,
-          place: eventData.place || "",
-        }),
-      })
-        .then((res) => {
-          if (!res.ok) throw new Error("Network response was not ok");
-          return res.json();
-        })
-        .then(() => {
-          handleClose();
-        })
-        .catch(setError);
-    });
-  };
-
-  const handleUpdateEvent = (eventData) => {
-    console.log("Update event:", eventData);
-    handleClose();
-  };
-
-  const handleDeleteEvent = () => {
-    console.log("Delete event");
-    handleClose();
-  };
-
-  const getHeaderProps = () => {
-    switch (location.pathname) {
-      case "/plannings/all":
-        return {
-          title: "Tous les plannings",
-          subtitle:
-            "Vue d'ensemble de tous vos événements personnels, scolaires et professionnels",
-          btnData: [
-            {
-              text: "Nouveau",
-              icon: (
-                <Icon
-                  icon="tabler:plus"
-                  width="20"
-                  height="20"
-                  style={{ display: "block" }}
-                />
-              ),
-              onClick: handleShow,
-            },
-          ],
-        };
-      case "/plannings/scolaire":
-        return {
-          title: "Planning scolaire",
-          subtitle:
-            "Consultez votre planning scolaire et modifiez vos événements",
-          btnData: [
-            {
-              text: "Nouveau",
-              icon: (
-                <Icon
-                  icon="tabler:plus"
-                  width="20"
-                  height="20"
-                  style={{ display: "block" }}
-                />
-              ),
-              onClick: handleShow,
-            },
-          ],
-        };
-      case "/plannings/personnel":
-        return {
-          title: "Planning personnel",
-          subtitle:
-            "Consultez votre planning personnel et modifiez vos événements",
-          btnData: [
-            {
-              text: "Nouveau",
-              icon: (
-                <Icon
-                  icon="tabler:plus"
-                  width="20"
-                  height="20"
-                  style={{ display: "block" }}
-                />
-              ),
-              onClick: handleShow,
-            },
-          ],
-        };
-      case "/plannings/professionnel":
-        return {
-          title: "Planning professionnel",
-          subtitle:
-            "Consultez votre planning professionnel et modifiez vos événements",
-          btnData: [
-            {
-              text: "Nouveau",
-              icon: (
-                <Icon
-                  icon="tabler:plus"
-                  width="20"
-                  height="20"
-                  style={{ display: "block" }}
-                />
-              ),
-              onClick: handleShow,
-            },
-          ],
-        };
-      case "/settings":
-        return {
-          title: "Paramètres",
-          subtitle:
-            "Mettez à jour vos informations personnelles et de sécurité",
-          btnData: [],
-        };
-      default:
-        return {
-          title: `Bonjour, ${name}`,
-          subtitle: "Consultez vos dernières informations et détails",
-          btnData: [],
-        };
-    }
-  };
-
-  const headerProps = getHeaderProps();
-
-  const getPlanningTitle = () => {
-    if (location.pathname.includes("all")) return "Tous les plannings";
-    if (location.pathname.includes("scolaire")) return "Planning scolaire";
-    if (location.pathname.includes("personnel")) return "Planning personnel";
-    if (location.pathname.includes("professionnel"))
-      return "Planning professionnel";
-    return "Planning";
-  };
-
   return (
     <div className="flex min-h-screen bg-gray-100 font-inter">
       <Loader loading={isPending} />
-      <Sidebar data={{ name, lastname, email }} />
-      <div className="flex-1 p-6">
-        {error && <Alert type="error" message={error} title="Erreur" />}
-        <Header
-          title={headerProps.title}
-          subtitle={headerProps.subtitle}
-          btnData={headerProps.btnData}
-          onClick={handleShow}
-        />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/plannings/all" element={<AllPlannings />} />
-          <Route path="/plannings/scolaire" element={<Scolaire />} />
-          <Route path="/plannings/personnel" element={<Personnel />} />
-          <Route path="/plannings/professionnel" element={<Professionnel />} />
-          <Route
-            path="/settings"
-            element={
-              <Settings
-                data={{ userId, name, lastname, email, className, school }}
-              />
-            }
+      <Sidebar
+        data={{
+          name: userProfile.name,
+          lastname: userProfile.lastname,
+          email: userProfile.email,
+        }}
+      />
+      <div
+        className={`flex-1 transition-all duration-300 flex flex-col h-screen
+          md:ml-64`}
+      >
+        <div className="flex-1 p-4 md:p-6 overflow-y-auto">
+          {error && <Alert type="error" message={error} title="Erreur" />}
+
+          <Header
+            title={routeConfig.title}
+            subtitle={routeConfig.subtitle}
+            btnData={headerBtnData}
+            onClick={handleShowModal}
           />
-          <Route path="/search" element={<SearchResults />} />
-        </Routes>
-        <EventModal
-          show={show}
-          onHide={handleClose}
-          event={selectedEvent}
-          isEdit={false}
-          onCreateEvent={handleCreateEvent}
-          onUpdateEvent={handleUpdateEvent}
-          onDeleteEvent={handleDeleteEvent}
-          planningTitle={getPlanningTitle()}
-        />
+
+          <div className="mt-6">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/plannings/all" element={<AllPlannings />} />
+              <Route path="/plannings/scolaire" element={<Scolaire />} />
+              <Route path="/plannings/personnel" element={<Personnel />} />
+              <Route
+                path="/plannings/professionnel"
+                element={<Professionnel />}
+              />
+              <Route
+                path="/settings"
+                element={
+                  <Settings
+                    data={{
+                      userId,
+                      name: userProfile.name,
+                      lastname: userProfile.lastname,
+                      email: userProfile.email,
+                      className: userProfile.className,
+                      school: userProfile.school,
+                    }}
+                  />
+                }
+              />
+              <Route path="/search" element={<SearchResults />} />
+            </Routes>
+          </div>
+
+          <EventModal
+            show={showModal}
+            onHide={handleCloseModal}
+            event={selectedEvent}
+            isEdit={false}
+            onCreateEvent={handleCreateEvent}
+            onUpdateEvent={handleUpdateEvent}
+            onDeleteEvent={handleDeleteEvent}
+            planningTitle={routeConfig.planningTitle}
+          />
+        </div>
       </div>
     </div>
   );
 };
 
 const Home = () => (
-  <div className="grid grid-cols-3 gap-6">
-    <div className="col-span-2 space-y-6">
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+    <div className="col-span-1 md:col-span-2 space-y-4 md:space-y-6">
       <Calendar />
       <EventsList />
     </div>
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <EventStats />
       <TimeDistribution />
     </div>
