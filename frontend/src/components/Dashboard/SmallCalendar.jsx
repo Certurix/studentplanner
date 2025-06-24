@@ -23,12 +23,10 @@ const SmallCalendar = () => {
         try {
           // Get the base URL from environment variables or use an empty string as fallback
           const baseUrl = import.meta.env.VITE_API_URL || "";
-          
+
           // Fetch all events for the current month
           const response = await axios.get(
-            `${baseUrl}/api/events/${userId}/month/${
-              new Date().getMonth() + 1
-            }`
+            `${baseUrl}/api/events/${userId}/month/${new Date().getMonth() + 1}`
           );
           setEvents(response.data);
         } catch (error) {
@@ -48,7 +46,7 @@ const SmallCalendar = () => {
   const getEventsForDay = (day) => {
     // Ensure events is an array before filtering
     if (!Array.isArray(events)) return [];
-    
+
     // Filter events that occur on the specified day
     return events.filter((event) => {
       const eventDate = new Date(event.startdate);
@@ -68,16 +66,16 @@ const SmallCalendar = () => {
     }
     // If we have multiple events with different types, prioritize them
     // Personal > Professional > Academic
-    const eventTypes = dayEvents.map(event => event.type);
+    const eventTypes = dayEvents.map((event) => event.type);
     if (eventTypes.includes("1") || eventTypes.includes(1)) {
-      return getEventTypeColor(1);
+      return `bg-[${getEventTypeColor(1)}] text-white`; // Personal event
     } else if (eventTypes.includes("3") || eventTypes.includes(3)) {
-      return getEventTypeColor(3);
+      return `bg-[${getEventTypeColor(3)}] text-white`; // Professional event
     } else if (eventTypes.includes("2") || eventTypes.includes(2)) {
-      return getEventTypeColor(2);
+      return `bg-[${getEventTypeColor(2)}] text-white`; // Academic event
     }
     // Fallback to the type of the first event
-    return getEventTypeColor(dayEvents[0].type);
+    return `bg-[${getEventTypeColor(dayEvents[0].type)}] text-white`;
   };
 
   /**
@@ -88,8 +86,8 @@ const SmallCalendar = () => {
   const getTooltipText = (day) => {
     const dayEvents = getEventsForDay(day);
     if (dayEvents.length === 0) return "";
-    
-    return dayEvents.map(event => event.title).join(", ");
+
+    return dayEvents.map((event) => event.title).join(", ");
   };
 
   return (
@@ -112,7 +110,7 @@ const SmallCalendar = () => {
           const dayEventStyle = getDayStyle(day);
           const tooltipText = getTooltipText(day);
           const hasEvents = getEventsForDay(day).length > 0;
-          
+
           return (
             <div
               key={i}
@@ -122,7 +120,10 @@ const SmallCalendar = () => {
             >
               {day}
               {hasEvents && dayEventStyle === "text-gray-700" && (
-                <span className="absolute w-1 h-1 bg-blue-500 rounded-full" style={{ bottom: "2px" }}></span>
+                <span
+                  className="absolute w-1 h-1 bg-blue-500 rounded-full"
+                  style={{ bottom: "2px" }}
+                ></span>
               )}
             </div>
           );

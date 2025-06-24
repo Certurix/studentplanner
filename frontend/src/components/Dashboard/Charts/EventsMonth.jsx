@@ -67,7 +67,7 @@ const EventsMonth = () => {
       background: "transparent",
     },
     labels: labels,
-    colors: ["#ff5a1f", "#3f83f8", "#0e9f6e"], // orange-500, blue-500, yellow-400
+    colors: ["#3f83f8", "#ff5a1f", "#0e9f6e"], // orange-500, blue-500, yellow-400
     legend: {
       position: "bottom",
     },

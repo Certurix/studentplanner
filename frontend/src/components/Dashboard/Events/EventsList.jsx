@@ -35,7 +35,7 @@ const EventsList = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const {userId} = useUser();
+  const { userId } = useUser();
   const currentMonth = new Date().getMonth() + 1;
 
   useEffect(() => {
@@ -43,12 +43,16 @@ const EventsList = () => {
       const fetchEvents = async () => {
         try {
           const response = await axios.get(
-            `${import.meta.env.VITE_API_URL}/api/events/${userId}/month/${currentMonth}?future=true`
+            `${
+              import.meta.env.VITE_API_URL
+            }/api/events/${userId}/month/${currentMonth}?future=true`
           );
           // Ensure response.data is an array before using map
-          const responseData = Array.isArray(response.data) ? response.data : [];
+          const responseData = Array.isArray(response.data)
+            ? response.data
+            : [];
           const fetchedEvents = responseData.map((event) => ({
-            color: getEventTypeColor(event.type),
+            color: `bg-[${getEventTypeColor(event.type)}]`,
             title: event.title,
             date: formatDate(event.startdate, event.enddate),
           }));
