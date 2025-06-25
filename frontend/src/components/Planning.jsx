@@ -21,6 +21,7 @@ import { validateResponse } from "@/utils/helpers";
 
 // Hooks
 import useUser from "@/hooks/useUser";
+import { getEventTypeColor } from "@/utils/constants";
 
 // Set up localizer for calendar
 moment.locale("fr");
@@ -67,10 +68,11 @@ const EVENT_TYPES = {
 };
 
 const TYPE_COLORS = {
-  [EVENT_TYPES.PERSONAL]: "#4CAF50",
-  [EVENT_TYPES.ACADEMIC]: "#9C27B0",
-  [EVENT_TYPES.PROFESSIONAL]: "#FF9800",
-  default: "#3174ad",
+  [EVENT_TYPES.PERSONAL]: getEventTypeColor(EVENT_TYPES.PERSONAL) || "#3b82f6",
+  [EVENT_TYPES.ACADEMIC]: getEventTypeColor(EVENT_TYPES.ACADEMIC) || "#10b981",
+  [EVENT_TYPES.PROFESSIONAL]:
+    getEventTypeColor(EVENT_TYPES.PROFESSIONAL) || "#f59e0b",
+  default: getEventTypeColor() || "#6b7280",
 };
 
 const PRIORITY_BORDER_WIDTH = {
@@ -106,7 +108,12 @@ const Planning = ({ title, initialEvents }) => {
 
   // Event style generator based on event type and priority
   const eventStyleGetter = useCallback((event) => {
-    const backgroundColor = TYPE_COLORS[event.type] || TYPE_COLORS.default;
+    const backgroundColor =
+      getEventTypeColor(event.type) || TYPE_COLORS.default;
+
+    console.log(
+      `Event Type: ${event.type}, Background Color: ${backgroundColor}`
+    );
     const borderWidth =
       PRIORITY_BORDER_WIDTH[event.priority] || PRIORITY_BORDER_WIDTH[1];
 
