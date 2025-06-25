@@ -47,11 +47,17 @@ const EventsList = () => {
               import.meta.env.VITE_API_URL
             }/api/events/${userId}/month/${currentMonth}?future=true`
           );
-          // Ensure response.data is an array before using map
+          // Ensure response.data is an array before filtering and mapping
           const responseData = Array.isArray(response.data)
             ? response.data
             : [];
-          const fetchedEvents = responseData.map((event) => ({
+
+          const currentDate = new Date();
+          const upcomingEvents = responseData.filter(
+            (event) => new Date(event.enddate) >= currentDate
+          );
+
+          const fetchedEvents = upcomingEvents.map((event) => ({
             color: getEventTypeTwClass(event.type),
             title: event.title,
             date: formatDate(event.startdate, event.enddate),
