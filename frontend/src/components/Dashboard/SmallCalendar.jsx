@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import useUser from "@/hooks/useUser";
-import { getEventTypeColor } from "@/utils/constants";
+import { getEventTypeTwClass } from "@/utils/constants";
 
 const SmallCalendar = () => {
   const [events, setEvents] = useState([]);
@@ -67,15 +67,16 @@ const SmallCalendar = () => {
     // If we have multiple events with different types, prioritize them
     // Personal > Professional > Academic
     const eventTypes = dayEvents.map((event) => event.type);
+    console.log("Event types for day", day, ":", eventTypes);
     if (eventTypes.includes("1") || eventTypes.includes(1)) {
-      return `bg-[${getEventTypeColor(1)}] text-white`; // Personal event
-    } else if (eventTypes.includes("3") || eventTypes.includes(3)) {
-      return `bg-[${getEventTypeColor(3)}] text-white`; // Professional event
+      return `${getEventTypeTwClass(1)} text-white`; // Personal event
     } else if (eventTypes.includes("2") || eventTypes.includes(2)) {
-      return `bg-[${getEventTypeColor(2)}] text-white`; // Academic event
+      return `${getEventTypeTwClass(2)} text-white`; // Academic event
+    } else if (eventTypes.includes("3") || eventTypes.includes(3)) {
+      return `${getEventTypeTwClass(3)} text-white`; // Professional event
     }
     // Fallback to the type of the first event
-    return `bg-[${getEventTypeColor(dayEvents[0].type)}] text-white`;
+    return `${getEventTypeTwClass(dayEvents[0].type)} text-white`;
   };
 
   /**

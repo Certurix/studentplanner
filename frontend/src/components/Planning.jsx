@@ -111,9 +111,6 @@ const Planning = ({ title, initialEvents }) => {
     const backgroundColor =
       getEventTypeColor(event.type) || TYPE_COLORS.default;
 
-    console.log(
-      `Event Type: ${event.type}, Background Color: ${backgroundColor}`
-    );
     const borderWidth =
       PRIORITY_BORDER_WIDTH[event.priority] || PRIORITY_BORDER_WIDTH[1];
 

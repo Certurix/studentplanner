@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import useUser from "@/hooks/useUser";
-import { getEventTypeLabel, getEventTypeColor } from "@/utils/constants";
+import { getEventTypeLabel, getEventTypeTwClass } from "@/utils/constants";
 
 const TimeDistribution = () => {
   const [data, setData] = useState([]);
@@ -29,7 +29,7 @@ const TimeDistribution = () => {
             if (!eventTypeCounts[label])
               eventTypeCounts[label] = {
                 count: 0,
-                color: `bg-[${getEventTypeColor(event.type)}]`,
+                color: getEventTypeTwClass(event.type),
               };
             eventTypeCounts[label].count++;
           });

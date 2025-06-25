@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import useUser from "@/hooks/useUser";
-import { getEventTypeColor } from "@/utils/constants";
+import { getEventTypeTwClass } from "@/utils/constants";
 
 const EventItem = ({ color, title, date }) => (
   <div className="flex items-center justify-between mb-4 p-4 bg-white rounded-lg shadow-md">
@@ -52,7 +52,7 @@ const EventsList = () => {
             ? response.data
             : [];
           const fetchedEvents = responseData.map((event) => ({
-            color: `bg-[${getEventTypeColor(event.type)}]`,
+            color: getEventTypeTwClass(event.type),
             title: event.title,
             date: formatDate(event.startdate, event.enddate),
           }));

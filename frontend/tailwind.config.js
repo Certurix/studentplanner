@@ -15,6 +15,10 @@ module.exports = {
       colors: {
         accent: "#6C6FD7",
         primary_hover: "#3F43CA",
+        "event-personnel": "#f97316",
+        "event-scolaire": "#3b82f6",
+        "event-professionnel": "#10b981",
+        "event-tous": "#6b7280",
       },
       animation: {
         "slide-in-right": "slideInRight 0.3s forwards",
