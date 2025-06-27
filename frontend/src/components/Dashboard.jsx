@@ -14,10 +14,10 @@ import SearchResults from "./SearchResults";
 import Sidebar from "./Dashboard/Sidebar";
 import Header from "./Dashboard/Header";
 import Calendar from "./Dashboard/SmallCalendar";
-import EventsList from "./Dashboard/Events/EventsList";
-import EventStats from "./Dashboard/Events/EventStats";
+import EventsList from "./Dashboard/Charts/EventsList";
+import EventStats from "./Dashboard/Charts/EventStats";
 import TimeDistribution from "./Dashboard/Charts/Time";
-import EventModal from "./Dashboard/Events/EventModal";
+import EventModal from "./Dashboard/Modals/EventModal";
 
 // UI components
 import Alert from "@/components/ui/Alert";

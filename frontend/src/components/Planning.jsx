@@ -17,7 +17,7 @@ import "./Dashboard/Calendar.css";
 // Components
 import { Button, Modal } from "flowbite-react";
 import CustomToolbar from "./CustomToolbar";
-import EventModal from "./Dashboard/Events/EventModal";
+import EventModal from "./Dashboard/Modals/EventModal";
 import { validateResponse } from "@/utils/helpers";
 
 // Hooks
