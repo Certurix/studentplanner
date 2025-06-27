@@ -14,6 +14,7 @@ import { FaCompress, FaExpand } from "react-icons/fa";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./Dashboard/Calendar.css";
 
+// Components
 import { Button, Modal } from "flowbite-react";
 import CustomToolbar from "./CustomToolbar";
 import EventModal from "./Dashboard/Events/EventModal";
@@ -21,6 +22,9 @@ import { validateResponse } from "@/utils/helpers";
 
 // Hooks
 import useUser from "@/hooks/useUser";
+import useNotification from "@/hooks/useNotification";
+
+// Utils
 import { getEventTypeColor } from "@/utils/constants";
 
 // Set up localizer for calendar
@@ -83,6 +87,7 @@ const PRIORITY_BORDER_WIDTH = {
 
 const Planning = ({ title, initialEvents }) => {
   const { userId } = useUser();
+  const { success, error } = useNotification();
   const calendarRef = useRef(null);
 
   // States
@@ -329,7 +334,7 @@ const Planning = ({ title, initialEvents }) => {
             validateStatus: (status) => status >= 200 && status < 300,
           }
         );
-
+        success(`Événement créé !`);
         setShowEventModal(false);
         setRefreshTrigger((prev) => prev + 1);
       } catch (error) {
@@ -379,7 +384,7 @@ const Planning = ({ title, initialEvents }) => {
             validateStatus: (status) => status >= 200 && status < 300,
           }
         );
-
+        success("Événement mis à jour !");
         setShowEditModal(false);
         setRefreshTrigger((prev) => prev + 1);
       } catch (error) {
@@ -404,7 +409,7 @@ const Planning = ({ title, initialEvents }) => {
         },
         validateStatus: (status) => status >= 200 && status < 300,
       });
-
+      success("Événement supprimé !");
       setShowEditModal(false);
       setRefreshTrigger((prev) => prev + 1);
     } catch (error) {

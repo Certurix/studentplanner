@@ -32,6 +32,7 @@ import Settings from "@/pages/Settings";
 
 // Hooks
 import useUser from "@/hooks/useUser";
+import useNotification from "@/hooks/useNotification";
 
 // Modèle par défaut pour un événement
 const DEFAULT_EVENT = {
@@ -102,10 +103,13 @@ const Dashboard = () => {
     school: "",
     className: "",
   });
-  const [error, setError] = useState(null);
 
-  // Mobile sidebar state
-  const [isSidebarVisible, setIsSidebarVisible] = useState(false);
+  // Notifications
+  const {
+    error,
+    success,
+    info,
+  } = useNotification();
 
   // Constants
   const baseUrl = import.meta.env.VITE_API_URL || "";
@@ -137,7 +141,7 @@ const Dashboard = () => {
             ? "Unauthorized access to user data"
             : err.message || "Failed to fetch user data";
 
-        setError(errorMessage);
+        error(errorMessage, { title: "Profile Error" });
       }
     });
   }, [baseUrl, userId]);
@@ -161,32 +165,38 @@ const Dashboard = () => {
               place: eventData.place || "",
             }),
           });
-
           if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
             throw new Error(errorData.message || "Failed to create event");
           }
 
           setShowModal(false);
+          showSuccess("Event created successfully", { title: "Success" });
         } catch (err) {
-          setError(`Event creation failed: ${err.message}`);
+          error(`Event creation failed: ${err.message}`, {
+            title: "Event Error",
+          });
         }
       });
     },
     [baseUrl, userId]
   );
-
   // Traitement de la mise à jour d'un événement
-  const handleUpdateEvent = useCallback((eventData) => {
-    console.log("Update event:", eventData);
-    setShowModal(false);
-  }, []);
+  const handleUpdateEvent = useCallback(
+    (eventData) => {
+      console.log("Update event:", eventData);
+      setShowModal(false);
+      success("Event updated successfully", { title: "Success" });
+    },
+    [success]
+  );
 
   // Traitement de la suppression d'un événement
   const handleDeleteEvent = useCallback(() => {
     console.log("Delete event");
     setShowModal(false);
-  }, []);
+    info("Event deleted successfully", { title: "Information" });
+  }, [info]);
 
   // Traitement de l'affichage du modal
   const handleShowModal = useCallback(() => {
@@ -264,14 +274,12 @@ const Dashboard = () => {
           lastname: userProfile.lastname,
           email: userProfile.email,
         }}
-      />
+      />{" "}
       <div
         className={`flex-1 transition-all duration-300 flex flex-col h-screen
           md:ml-64`}
       >
         <div className="flex-1 p-4 md:p-6 overflow-y-auto">
-          {error && <Alert type="error" message={error} title="Erreur" />}
-
           <Header
             title={routeConfig.title}
             subtitle={routeConfig.subtitle}
