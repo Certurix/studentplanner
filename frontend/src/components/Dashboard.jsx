@@ -46,6 +46,13 @@ const DEFAULT_EVENT = {
 
 // Configuration du header pour chaque route
 const ROUTE_CONFIGS = {
+  "/dashboard": {
+    title: "Dashboard",
+    subtitle:
+      "Vue d'ensemble de vos événements et statistiques",
+    showNewButton: false,
+    planningTitle: "Dashboard",
+  },
   "/dashboard/plannings/all": {
     title: "Tous les plannings",
     subtitle:
@@ -284,25 +291,25 @@ const Dashboard = () => {
 
           <div className="mt-6">
             <Routes>
-              <Route path="/dashboard/*" element={<Home />} />
+              <Route path="/" element={<Home />} />
               <Route
-                path="/dashboard/plannings/all"
+                path="/plannings/all"
                 element={<AllPlannings />}
               />
               <Route
-                path="/dashboard/plannings/scolaire"
+                path="/plannings/scolaire"
                 element={<Scolaire />}
               />
               <Route
-                path="/dashboard/plannings/personnel"
+                path="/plannings/personnel"
                 element={<Personnel />}
               />
               <Route
-                path="/dashboard/plannings/professionnel"
+                path="/plannings/professionnel"
                 element={<Professionnel />}
               />
               <Route
-                path="/dashboard/settings"
+                path="/settings"
                 element={
                   <Settings
                     data={{
@@ -316,7 +323,7 @@ const Dashboard = () => {
                   />
                 }
               />
-              <Route path="/dashboard/search" element={<SearchResults />} />
+              <Route path="/search" element={<SearchResults />} />
             </Routes>
           </div>
 
