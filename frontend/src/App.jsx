@@ -5,7 +5,7 @@ import { NotificationProvider } from "./context/NotificationContext";
 import Dashboard from "./components/Dashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import LandingPage from "./pages/LandingPage";
+import Home from "./pages/Home";
 import { createTheme, Flowbite } from "flowbite-react";
 
 import "./App.css";
@@ -46,7 +46,7 @@ function App() {
         <NotificationProvider>
           <Router>
             <Routes>
-              <Route path="/" element={<LandingPage />} />
+              <Route path="/" element={<Home />} />
               <Route path="/dashboard/*" element={<Dashboard />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
