@@ -48,7 +48,7 @@ const Login = () => {
 
       if (typeof userId === "number") {
         updateUserId(userId);
-        window.location.href = "/";
+        window.location.href = "/dashboard";
       } else {
         throw new Error("Format de réponse invalide");
       }
