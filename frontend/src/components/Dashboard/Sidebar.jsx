@@ -116,28 +116,28 @@ export default function SidebarComponent({ data }) {
 	`;
 
   // Définition des éléments de navigation
-  const mainNavItems = [{ to: "/", icon: "home", label: "Accueil" }];
+  const mainNavItems = [{ to: "/dashboard", icon: "home", label: "Accueil" }];
 
   const planningItems = [
-    { to: "/plannings/all", icon: "calendar", label: "Tous" },
-    { to: "/plannings/scolaire", icon: "school", label: "Scolaire" },
-    { to: "/plannings/personnel", icon: "user", label: "Personnel" },
+    { to: "/dashboard/plannings/all", icon: "calendar", label: "Tous" },
+    { to: "/dashboard/plannings/scolaire", icon: "school", label: "Scolaire" },
+    { to: "/dashboard/plannings/personnel", icon: "user", label: "Personnel" },
     {
-      to: "/plannings/professionnel",
+      to: "/dashboard/plannings/professionnel",
       icon: "briefcase",
       label: "Professionnel",
     },
   ];
 
   const classItems = [
-    { to: "/class/chat", icon: "messages", label: "Chat" },
-    { to: "/class/members", icon: "users", label: "Membres" },
+    { to: "/dashboard/class/chat", icon: "messages", label: "Chat" },
+    { to: "/dashboard/class/members", icon: "users", label: "Membres" },
     { disabled: true, icon: "ban", label: "Personnel" },
   ];
 
   const footerItems = [
-    { to: "/support", icon: "lifebuoy", label: "Assistance" },
-    { to: "/settings", icon: "settings", label: "Paramètres" },
+    { to: "/dashboard/support", icon: "lifebuoy", label: "Assistance" },
+    { to: "/dashboard/settings", icon: "settings", label: "Paramètres" },
   ];
 
   return (

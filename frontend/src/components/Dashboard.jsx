@@ -20,7 +20,6 @@ import TimeDistribution from "./Dashboard/Charts/Time";
 import EventModal from "./Dashboard/Modals/EventModal";
 
 // UI components
-import Alert from "@/components/ui/Alert";
 import Loader from "@/components/ui/Loader";
 
 // Pages
@@ -47,33 +46,33 @@ const DEFAULT_EVENT = {
 
 // Configuration du header pour chaque route
 const ROUTE_CONFIGS = {
-  "/plannings/all": {
+  "/dashboard/plannings/all": {
     title: "Tous les plannings",
     subtitle:
       "Vue d'ensemble de tous vos événements personnels, scolaires et professionnels",
     showNewButton: true,
     planningTitle: "Tous les plannings",
   },
-  "/plannings/scolaire": {
+  "/dashboard/plannings/scolaire": {
     title: "Planning scolaire",
     subtitle: "Consultez votre planning scolaire et modifiez vos événements",
     showNewButton: true,
     planningTitle: "Planning scolaire",
   },
-  "/plannings/personnel": {
+  "/dashboard/plannings/personnel": {
     title: "Planning personnel",
     subtitle: "Consultez votre planning personnel et modifiez vos événements",
     showNewButton: true,
     planningTitle: "Planning personnel",
   },
-  "/plannings/professionnel": {
+  "/dashboard/plannings/professionnel": {
     title: "Planning professionnel",
     subtitle:
       "Consultez votre planning professionnel et modifiez vos événements",
     showNewButton: true,
     planningTitle: "Planning professionnel",
   },
-  "/settings": {
+  "/dashboard/settings": {
     title: "Paramètres",
     subtitle: "Mettez à jour vos informations personnelles et de sécurité",
     showNewButton: false,
@@ -105,11 +104,7 @@ const Dashboard = () => {
   });
 
   // Notifications
-  const {
-    error,
-    success,
-    info,
-  } = useNotification();
+  const { error, success, info } = useNotification();
 
   // Constants
   const baseUrl = import.meta.env.VITE_API_URL || "";
@@ -171,7 +166,7 @@ const Dashboard = () => {
           }
 
           setShowModal(false);
-          showSuccess("Event created successfully", { title: "Success" });
+          success("Event created successfully", { title: "Success" });
         } catch (err) {
           error(`Event creation failed: ${err.message}`, {
             title: "Event Error",
@@ -289,16 +284,25 @@ const Dashboard = () => {
 
           <div className="mt-6">
             <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/plannings/all" element={<AllPlannings />} />
-              <Route path="/plannings/scolaire" element={<Scolaire />} />
-              <Route path="/plannings/personnel" element={<Personnel />} />
+              <Route path="/dashboard/*" element={<Home />} />
               <Route
-                path="/plannings/professionnel"
+                path="/dashboard/plannings/all"
+                element={<AllPlannings />}
+              />
+              <Route
+                path="/dashboard/plannings/scolaire"
+                element={<Scolaire />}
+              />
+              <Route
+                path="/dashboard/plannings/personnel"
+                element={<Personnel />}
+              />
+              <Route
+                path="/dashboard/plannings/professionnel"
                 element={<Professionnel />}
               />
               <Route
-                path="/settings"
+                path="/dashboard/settings"
                 element={
                   <Settings
                     data={{
@@ -312,7 +316,7 @@ const Dashboard = () => {
                   />
                 }
               />
-              <Route path="/search" element={<SearchResults />} />
+              <Route path="/dashboard/search" element={<SearchResults />} />
             </Routes>
           </div>
 
