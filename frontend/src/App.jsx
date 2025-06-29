@@ -6,12 +6,22 @@ import Dashboard from "./components/Dashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import LandingPage from "./pages/LandingPage";
-import { Flowbite } from "flowbite-react";
+import { createTheme, Flowbite } from "flowbite-react";
 
 import "./App.css";
 
-// Define custom theme (optional)
-const flowbiteTheme = {
+const customTheme = createTheme({
+  button: {
+    base: "inline-flex items-center justify-center rounded-md font-medium transition-colors",
+    color: {
+      default: "text-white bg-indigo-600 enabled:hover:bg-indigo-700",
+    },
+  },
+  navbar: {
+    link: {
+      base: "text-gray-700 enabled:hover:text-indigo-600 hover:text-indigo-600",
+    },
+  },
   floatingLabel: {
     base: "relative",
     input: {
@@ -27,12 +37,12 @@ const flowbiteTheme = {
       },
     },
   },
-};
+});
 
 function App() {
   return (
     <UserProvider>
-      <Flowbite theme={{ theme: flowbiteTheme }}>
+      <Flowbite theme={{ theme: customTheme, mode: "light" }}>
         <NotificationProvider>
           <Router>
             <Routes>
