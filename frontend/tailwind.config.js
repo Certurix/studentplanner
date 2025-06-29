@@ -13,7 +13,7 @@ module.exports = {
         inter: ['"Inter"', ...defaultTheme.fontFamily.sans],
       },
       colors: {
-        accent: "#6C6FD7",
+        accent: "indigo-600",
         primary_hover: "#3F43CA",
         "event-personnel": "#f97316",
         "event-scolaire": "#3b82f6",
@@ -23,6 +23,7 @@ module.exports = {
       animation: {
         "slide-in-right": "slideInRight 0.3s forwards",
         "slide-out-right": "slideOutRight 0.3s forwards",
+        marquee: "marquee 40s linear infinite",
       },
       keyframes: {
         shake: {
@@ -58,6 +59,10 @@ module.exports = {
             transform: "translateX(100%)",
             opacity: "0",
           },
+        },
+        marquee: {
+          "0%": { transform: "translateX(100%)" },
+          "100%": { transform: "translateX(-200%)" },
         },
       },
     },
