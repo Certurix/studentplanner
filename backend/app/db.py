@@ -230,6 +230,19 @@ def set_user_avatar(id, avatar):
     cursor.close()
     return True
 
+def set_user_password(id, password):
+    """Update user password."""
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute('''
+        UPDATE user
+        SET password = ?
+        WHERE id = ?
+    ''', (password, id))
+    connection.commit()
+    cursor.close()
+    return True
+
 def get_events_month(id, month, future=False, type=None):
     """Get list of events in given month and user ID. Optionally, only return future events and filter by event type."""
     cursor = get_connection().cursor(dictionary=True)

@@ -140,6 +140,11 @@ def set_user_lastname(id: int, lastname: UserLastname):
     """Set user lastname."""
     return db.set_user_lastname(id, lastname.lastname)
 
+@app.post("/users/{id}/password")
+def set_user_password(id: int, password: str):
+    """Set user password."""
+    return db.set_user_password(id, password)
+
 @app.get("/users/{id}/avatar")
 def user_avatar(id: int):
     """Get user avatar."""
