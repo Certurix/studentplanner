@@ -67,7 +67,6 @@ const SmallCalendar = () => {
     // If we have multiple events with different types, prioritize them
     // Personal > Professional > Academic
     const eventTypes = dayEvents.map((event) => event.type);
-    console.log("Event types for day", day, ":", eventTypes);
     if (eventTypes.includes("1") || eventTypes.includes(1)) {
       return `${getEventTypeTwClass(1)} text-white`; // Personal event
     } else if (eventTypes.includes("2") || eventTypes.includes(2)) {
