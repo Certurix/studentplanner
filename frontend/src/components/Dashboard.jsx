@@ -23,11 +23,11 @@ import EventModal from "./Dashboard/Modals/EventModal";
 import Loader from "@/components/ui/Loader";
 
 // Pages
-import Scolaire from "@/pages/plannings/scolaire";
-import Personnel from "@/pages/plannings/personnel";
-import Professionnel from "@/pages/plannings/professionnel";
-import AllPlannings from "@/pages/plannings/all";
-import Settings from "@/pages/Settings";
+import Scolaire from "@/pages/dashboard/plannings/scolaire";
+import Personnel from "@/pages/dashboard/plannings/personnel";
+import Professionnel from "@/pages/dashboard/plannings/professionnel";
+import AllPlannings from "@/pages/dashboard/plannings/all";
+import Settings from "@/pages/dashboard/Settings";
 
 // Hooks
 import useUser from "@/hooks/useUser";
@@ -48,8 +48,7 @@ const DEFAULT_EVENT = {
 const ROUTE_CONFIGS = {
   "/dashboard": {
     title: "Dashboard",
-    subtitle:
-      "Vue d'ensemble de vos événements et statistiques",
+    subtitle: "Vue d'ensemble de vos événements et statistiques",
     showNewButton: false,
     planningTitle: "Dashboard",
   },
@@ -292,18 +291,9 @@ const Dashboard = () => {
           <div className="mt-6">
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route
-                path="/plannings/all"
-                element={<AllPlannings />}
-              />
-              <Route
-                path="/plannings/scolaire"
-                element={<Scolaire />}
-              />
-              <Route
-                path="/plannings/personnel"
-                element={<Personnel />}
-              />
+              <Route path="/plannings/all" element={<AllPlannings />} />
+              <Route path="/plannings/scolaire" element={<Scolaire />} />
+              <Route path="/plannings/personnel" element={<Personnel />} />
               <Route
                 path="/plannings/professionnel"
                 element={<Professionnel />}
