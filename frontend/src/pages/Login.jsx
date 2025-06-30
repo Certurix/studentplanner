@@ -1,9 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import axios from "axios";
-import Alert from "@/components/ui/Alert";
 import useUser from "@/hooks/useUser";
 import useNotification from "@/hooks/useNotification";
-import Logo from "@/components/ui/Logo";
 import Navbar from "@/components/ui/Navbar";
 
 /**

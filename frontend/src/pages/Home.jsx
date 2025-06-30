@@ -14,13 +14,10 @@ const Home = () => {
         Aller au contenu principal
       </a>
 
-      {/* Header */}
-      <header className="bg-white shadow-lg">
-        <Navbar />
-      </header>
+      <Navbar />
 
       {/* Contenu principal */}
-      <main id="main" className="flex-1">
+      <main className="flex-1">
         {/* Section Hero */}
         <section className="relative overflow-hidden">
           {/* Décoration */}
