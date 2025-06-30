@@ -32,6 +32,8 @@ import Settings from "@/pages/dashboard/Settings";
 // Hooks
 import useUser from "@/hooks/useUser";
 import useNotification from "@/hooks/useNotification";
+import Chat from "@/pages/dashboard/class/chat";
+import Members from "@/pages/dashboard/class/members";
 
 // Modèle par défaut pour un événement
 const DEFAULT_EVENT = {
@@ -83,6 +85,18 @@ const ROUTE_CONFIGS = {
     subtitle: "Mettez à jour vos informations personnelles et de sécurité",
     showNewButton: false,
     planningTitle: "Paramètres",
+  },
+  "/dashboard/class/chat": {
+    title: "Chat de classe",
+    subtitle: "Communiquez avec vos camarades de classe en temps réel",
+    showNewButton: false,
+    planningTitle: "Chat",
+  },
+  "/dashboard/class/members": {
+    title: "Membres de la classe",
+    subtitle: "Consultez et gérez les informations des membres de votre classe",
+    showNewButton: false,
+    planningTitle: "Membres",
   },
 };
 
@@ -298,6 +312,8 @@ const Dashboard = () => {
                 path="/plannings/professionnel"
                 element={<Professionnel />}
               />
+              <Route path="/class/chat" element={<Chat />} />
+              <Route path="/class/members" element={<Members />} />
               <Route
                 path="/settings"
                 element={
