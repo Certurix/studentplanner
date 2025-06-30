@@ -3,9 +3,11 @@ import axios from "axios";
 import Alert from "@/components/ui/Alert";
 import Logo from "@/components/ui/Logo";
 import Navbar from "@/components/ui/Navbar";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
   const [alertMessage, setAlertMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,7 +22,6 @@ const Register = () => {
       setAlertMessage("Veuillez remplir tous les champs");
       return;
     }
-    console.log(import.meta.env.VITE_API_URL);
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL || ""}/api/register`,
@@ -36,7 +37,7 @@ const Register = () => {
       console.log("Registration successful:", response.data);
 
       // Redirect to the login page or another page
-      window.location.href = "/login";
+      navigate("/login");
     } catch (error) {
       console.error("Error:", error);
       setAlertMessage("Une erreur s'est produite lors de l'inscription");
