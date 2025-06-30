@@ -98,19 +98,19 @@ export default function SidebarComponent({ data }) {
 
   // Classes pour les liens de navigation (actif/inactif)
   const getNavLinkClass = ({ isActive }) => `
-		flex items-center py-2.5 w-full transition-colors duration-150 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent
+		flex items-center py-2.5 w-full transition-colors duration-150 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600
 		${
       isActive
-        ? "bg-blue-100 text-blue-700 font-semibold"
+        ? "bg-indigo-600 text-blue-700 font-semibold"
         : "hover:bg-gray-100 text-gray-700"
     }
 	`;
 
   const getSubNavLinkClass = ({ isActive }) => `
-		pl-11 py-2 w-full flex items-center transition-colors duration-150 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent
+		pl-11 py-2 w-full flex items-center transition-colors duration-150 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600
 		${
       isActive
-        ? "bg-blue-100 text-blue-700 font-semibold"
+        ? "bg-indigo-600 text-blue-700 font-semibold"
         : "hover:bg-gray-100 text-gray-700"
     }
 	`;
@@ -216,7 +216,7 @@ export default function SidebarComponent({ data }) {
                   <input
                     id="sidebar-search"
                     type="search"
-                    className="block w-full pl-10 py-2 text-sm text-gray-500 border border-gray-300 rounded-lg bg-gray-50 focus:ring-accent focus:border-accent"
+                    className="block w-full pl-10 py-2 text-sm text-gray-500 border border-gray-300 rounded-lg bg-gray-50 focus:ring-indigo-600 focus:border-indigo-600"
                     placeholder="Rechercher"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
@@ -336,7 +336,7 @@ export default function SidebarComponent({ data }) {
                     color="alternative"
                     pill
                     size="xs"
-                    className="hover:bg-red-100 text-gray-500 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-accent"
+                    className="hover:bg-red-100 text-gray-500 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-indigo-600"
                     aria-label="Déconnexion"
                     type="button"
                   >

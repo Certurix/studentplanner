@@ -26,35 +26,35 @@ const CustomToolbar = ({ label, onNavigate, onView, view }) => {
       <div className="flex flex-row gap-2">
         <ButtonGroup aria-label="Navigation">
           <Button
-            className="bg-accent hover:bg-primary_hover"
+            className="bg-indigo-600 hover:bg-primary_hover"
             onClick={goToBack}
           >
             Précédent
           </Button>
-          <Button className="bg-accent" onClick={goToCurrent}>
+          <Button className="bg-indigo-600" onClick={goToCurrent}>
             Aujourd&apos;hui
           </Button>
-          <Button className="bg-accent" onClick={goToNext}>
+          <Button className="bg-indigo-600" onClick={goToNext}>
             Suivant
           </Button>
         </ButtonGroup>
         <ButtonGroup aria-label="View">
           <Button
-            className={view === "month" ? "bg-accent" : ""}
+            className={view === "month" ? "bg-indigo-600" : ""}
             onClick={() => onView("month")}
             aria-pressed={view === "month"}
           >
             Mois
           </Button>
           <Button
-            className={view === "week" ? "bg-accent" : ""}
+            className={view === "week" ? "bg-indigo-600" : ""}
             onClick={() => onView("week")}
             aria-pressed={view === "week"}
           >
             Semaine
           </Button>
           <Button
-            className={view === "day" ? "bg-accent" : ""}
+            className={view === "day" ? "bg-indigo-600" : ""}
             onClick={() => onView("day")}
             aria-pressed={view === "day"}
           >

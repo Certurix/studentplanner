@@ -121,7 +121,7 @@ const SmallCalendar = () => {
               {day}
               {hasEvents && dayEventStyle === "text-gray-700" && (
                 <span
-                  className="absolute w-1 h-1 bg-blue-500 rounded-full"
+                  className="absolute w-1 h-1 bg-indigo-600 rounded-full"
                   style={{ bottom: "2px" }}
                 ></span>
               )}

@@ -13,7 +13,7 @@ const Header = ({ title, subtitle, btnData, onClick }) => {
 					<Button
 						key={index}
 						onClick={btn.onClick || onClick}
-						className="flex items-center bg-accent"
+						className="flex items-center bg-indigo-600"
 					>
 						{btn.icon && <span className="mr-2">{btn.icon}</span>}
 						{btn.text}

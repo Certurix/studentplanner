@@ -48,7 +48,7 @@ export default function EventStats() {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold mb-4 text-accent">
+      <h2 className="text-2xl font-bold mb-4 text-indigo-600">
       ÉVÉNEMENTS DU MOIS
       </h2>
       <div className="flex flex-col md:flex-row items-center justify-between mb-6">

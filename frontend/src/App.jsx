@@ -14,7 +14,7 @@ const customTheme = createTheme({
   button: {
     base: "inline-flex items-center justify-center rounded-md font-medium transition-colors",
     color: {
-      default: "text-white bg-indigo-600 enabled:hover:bg-indigo-700",
+      default: "text-white bg-indigo-600 enabled:hover:bg-indigo-600",
     },
   },
   navbar: {

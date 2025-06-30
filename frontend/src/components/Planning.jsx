@@ -515,7 +515,7 @@ const Planning = ({ title, initialEvents }) => {
       <div className="flex justify-end mt-3">
         <Button
           onClick={toggleFullscreen}
-          className="w-10 h-9 flex items-center justify-center bg-accent"
+          className="w-10 h-9 flex items-center justify-center bg-indigo-600"
           aria-label={isFullscreen ? "Réduire" : "Agrandir"}
         >
           {isFullscreen ? <FaCompress /> : <FaExpand />}
@@ -536,7 +536,7 @@ const Planning = ({ title, initialEvents }) => {
         <Modal.Footer>
           <Button
             onClick={toggleFullscreen}
-            className="w-10 h-10 flex items-center justify-center bg-accent"
+            className="w-10 h-10 flex items-center justify-center bg-indigo-600"
             aria-label="Réduire"
           >
             <FaCompress />

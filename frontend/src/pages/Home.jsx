@@ -9,7 +9,7 @@ const Home = () => {
     <div className="min-h-screen bg-white font-inter">
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded z-50"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-indigo-600 text-white px-4 py-2 rounded z-50"
       >
         Aller au contenu principal
       </a>
@@ -272,7 +272,7 @@ const Home = () => {
                 Propulsez votre organisation et rejoignez-nous !
               </p>
             </div>
-            <button className="bg-indigo-600 text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-indigo-700 transition-colors">
+            <button className="bg-indigo-600 text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-indigo-600 transition-colors">
               Commencer
             </button>
           </div>

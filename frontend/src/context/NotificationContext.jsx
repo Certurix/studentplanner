@@ -57,10 +57,10 @@ const TOAST_TYPES = {
         className="text-blue-700 dark:text-blue-300"
       />
     ),
-    bgColor: "bg-blue-100 dark:bg-blue-800 dark:bg-opacity-20",
-    textColor: "text-blue-700 dark:text-blue-400",
-    borderColor: "border-blue-500",
-    iconBgColor: "bg-blue-100 dark:bg-blue-800",
+    bgColor: "bg-indigo-100 dark:bg-indigo-800 dark:bg-opacity-20",
+    textColor: "text-indigo-700 dark:text-indigo-400",
+    borderColor: "border-indigo-500",
+    iconBgColor: "bg-indigo-100 dark:bg-indigo-800",
   },
 };
 
