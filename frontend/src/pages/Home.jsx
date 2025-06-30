@@ -70,7 +70,10 @@ const Home = () => {
               <p className="text-indigo-600 text-lg mb-3">
                 Une plateforme que les étudiants vont adorer.
               </p>
-              <h2 className="text-4xl font-extrabold text-gray-900 mb-6">
+              <h2
+                id="about"
+                className="text-4xl font-extrabold text-gray-900 mb-6"
+              >
                 QU'EST-CE QUE STUDENT PLANNER ?
               </h2>
               <p className="text-xl text-gray-600">
@@ -296,12 +299,12 @@ const Home = () => {
               </h4>
               <ul className="space-y-2">
                 <li>
-                  <a href="#" className="text-gray-600 hover:text-indigo-600">
+                  <a href="#about" className="text-gray-600 hover:text-indigo-600">
                     À propos
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-600 hover:text-indigo-600">
+                  <a href="/dashboard/support" className="text-gray-600 hover:text-indigo-600">
                     Contact
                   </a>
                 </li>
