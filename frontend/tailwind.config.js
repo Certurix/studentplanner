@@ -13,7 +13,6 @@ module.exports = {
         inter: ['"Inter"', ...defaultTheme.fontFamily.sans],
       },
       colors: {
-        accent: "indigo-600",
         primary_hover: "#3F43CA",
         "event-personnel": "#f97316",
         "event-scolaire": "#3b82f6",
