@@ -3,6 +3,7 @@ import axios from "axios";
 import useUser from "@/hooks/useUser";
 import useNotification from "@/hooks/useNotification";
 import Navbar from "@/components/ui/Navbar";
+import { useNavigate } from "react-router-dom";
 
 /**
  * Composant de connexion utilisateur
@@ -10,6 +11,7 @@ import Navbar from "@/components/ui/Navbar";
 const Login = () => {
   const { updateUserId } = useUser();
   const { error: showError, warning: showWarning } = useNotification();
+  const navigate = useNavigate();
 
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
@@ -46,7 +48,7 @@ const Login = () => {
 
       if (typeof userId === "number") {
         updateUserId(userId);
-        window.location.href = "/dashboard";
+        navigate("/dashboard?justLoggedIn=true");
       } else {
         throw new Error("Format de réponse invalide");
       }
@@ -131,7 +133,7 @@ const Login = () => {
             {/* Submit button */}
             <button
               type="submit"
-              className="w-full btn btn-primary py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="w-full btn btn-primary py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               Se connecter
             </button>
