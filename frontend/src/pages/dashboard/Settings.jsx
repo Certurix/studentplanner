@@ -102,6 +102,62 @@ export default function UserSettings({ data }) {
     }
   };
 
+  const handlePasswordSubmit = async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const currentPassword = form.elements["currentPassword"].value;
+    const newPassword = form.elements["newPassword"].value;
+    const confirmPassword = form.elements["confirmPassword"].value;
+
+    // Validation du formulaire
+    if (newPassword !== confirmPassword) {
+      error("Les mots de passe ne correspondent pas", {
+        title: "Erreur de validation",
+      });
+      return;
+    }
+
+    if (newPassword.length < 8) {
+      error("Le mot de passe doit contenir au moins 8 caractères", {
+        title: "Erreur de validation",
+      });
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${baseUrl}/api/users/${data.userId}/password`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            currentPassword: currentPassword,
+            newPassword: newPassword,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to update password");
+      }
+
+      success("Mot de passe mis à jour avec succès", {
+        title: "Sécurité",
+        duration: 5000,
+      });
+
+      form.reset();
+    } catch (err) {
+      console.error("Error updating password:", err);
+      error(`Échec de la mise à jour du mot de passe: ${err.message}`, {
+        title: "Erreur de sécurité",
+      });
+    }
+  };
+
   return (
     <section className="container mx-auto mt-4">
       <Tabs aria-label="Paramètres utilisateur" defaultIndex={0}>
@@ -212,11 +268,57 @@ export default function UserSettings({ data }) {
         </TabItem>
         <TabItem title="Sécurité">
           <Card className="p-4 shadow-sm">
-            <h3 className="text-lg font-medium mb-2">Sécurité</h3>
-            <p className="text-sm text-gray-500 mb-4">
-              Mettez à jour vos paramètres de sécurité.
-            </p>
-            {/* TODO: Security settings */}
+            <form onSubmit={handlePasswordSubmit} className="space-y-4">
+              <div>
+                <Label htmlFor="currentPassword" value="Mot de passe actuel" />
+                <TextInput
+                  id="currentPassword"
+                  name="currentPassword"
+                  type="password"
+                  placeholder="Entrez votre mot de passe actuel"
+                  className="rounded"
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="newPassword" value="Nouveau mot de passe" />
+                <TextInput
+                  id="newPassword"
+                  name="newPassword"
+                  type="password"
+                  placeholder="Entrez votre nouveau mot de passe"
+                  className="rounded"
+                  minLength={8}
+                  required
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Le mot de passe doit contenir au moins 8 caractères
+                </p>
+              </div>
+
+              <div>
+                <Label
+                  htmlFor="confirmPassword"
+                  value="Confirmer le nouveau mot de passe"
+                />
+                <TextInput
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  placeholder="Confirmez votre nouveau mot de passe"
+                  className="rounded"
+                  required
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-4">
+                <Button color="red" type="button">
+                  Annuler
+                </Button>
+                <Button type="submit">Changer le mot de passe</Button>
+              </div>
+            </form>
           </Card>
         </TabItem>
       </Tabs>
