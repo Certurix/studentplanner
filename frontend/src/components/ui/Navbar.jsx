@@ -5,7 +5,7 @@ import useUser from "@/hooks/useUser";
 const Navbar = () => {
   const { isAuth } = useUser();
   return (
-    <header className="bg-white shadow-lg">
+    <header className="bg-white font-inter shadow-lg">
       <FlowbiteNavbar fluid className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FlowbiteNavbar.Brand href="/">
           <img
