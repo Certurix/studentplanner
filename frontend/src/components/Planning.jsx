@@ -9,88 +9,30 @@ import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import axios from "axios";
 import { FaCompress, FaExpand } from "react-icons/fa";
+import { Button, Modal } from "flowbite-react";
 
-// Custom styles
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./Dashboard/Calendar.css";
 
-// Components
-import { Button, Modal } from "flowbite-react";
 import CustomToolbar from "./CustomToolbar";
 import EventModal from "./Dashboard/Modals/EventModal";
-import { validateResponse } from "@/utils/helpers";
-
-// Hooks
 import useUser from "@/hooks/useUser";
 import useNotification from "@/hooks/useNotification";
+import { validateResponse } from "@/utils/helpers";
+import {
+  getEventTypeColor,
+  CALENDAR_CONFIG,
+  PRIORITY_STYLES,
+} from "@/utils/constants";
 
-// Utils
-import { getEventTypeColor } from "@/utils/constants";
-
-// Set up localizer for calendar
 moment.locale("fr");
 const localizer = momentLocalizer(moment);
 
-// Constants for calendar configuration
-const CALENDAR_MESSAGES = {
-  allDay: "Toute la journée",
-  previous: "Précédent",
-  next: "Suivant",
-  today: "Aujourd'hui",
-  month: "Mois",
-  week: "Semaine",
-  day: "Jour",
-  agenda: "Agenda",
-  date: "Date",
-  time: "Heure",
-  event: "Événement",
-  noEventsInRange: "Aucun événement dans cette période.",
-  showMore: (total) => `+ ${total} plus`,
-};
-
-const CALENDAR_FORMATS = {
-  timeGutterFormat: (date, culture, localizer) =>
-    localizer.format(date, "HH:mm", culture),
-  eventTimeRangeFormat: ({ start, end }, culture, localizer) =>
-    `${localizer.format(start, "HH:mm", culture)} - ${localizer.format(
-      end,
-      "HH:mm",
-      culture
-    )}`,
-  agendaTimeRangeFormat: ({ start, end }, culture, localizer) =>
-    `${localizer.format(start, "HH:mm", culture)} - ${localizer.format(
-      end,
-      "HH:mm",
-      culture
-    )}`,
-};
-
-const EVENT_TYPES = {
-  PERSONAL: 1,
-  ACADEMIC: 2,
-  PROFESSIONAL: 3,
-};
-
-const TYPE_COLORS = {
-  [EVENT_TYPES.PERSONAL]: getEventTypeColor(EVENT_TYPES.PERSONAL) || "#3b82f6",
-  [EVENT_TYPES.ACADEMIC]: getEventTypeColor(EVENT_TYPES.ACADEMIC) || "#10b981",
-  [EVENT_TYPES.PROFESSIONAL]:
-    getEventTypeColor(EVENT_TYPES.PROFESSIONAL) || "#f59e0b",
-  default: getEventTypeColor() || "#6b7280",
-};
-
-const PRIORITY_BORDER_WIDTH = {
-  1: "1px", // Low
-  2: "2px", // Medium
-  3: "3px", // High
-};
-
 const Planning = ({ title, initialEvents }) => {
   const { userId } = useUser();
-  const { success, error } = useNotification();
+  const { success } = useNotification();
   const calendarRef = useRef(null);
 
-  // States
   const [events, setEvents] = useState([]);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showEventModal, setShowEventModal] = useState(false);
@@ -101,82 +43,68 @@ const Planning = ({ title, initialEvents }) => {
   const [currentView, setCurrentView] = useState("week");
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  // Memoized functions and values
+  const baseUrl = useMemo(() => import.meta.env.VITE_API_URL || "", []);
+
   const eventType = useMemo(() => {
-    if (title.includes("personnel")) return EVENT_TYPES.PERSONAL;
-    if (title.includes("scolaire")) return EVENT_TYPES.ACADEMIC;
-    if (title.includes("professionnel")) return EVENT_TYPES.PROFESSIONAL;
-    return EVENT_TYPES.PERSONAL; // Default
+    if (title.includes("personnel")) return 1;
+    if (title.includes("scolaire")) return 2;
+    if (title.includes("professionnel")) return 3;
+    return 1;
   }, [title]);
 
   const isAllPlannings = useMemo(() => title.includes("Tous"), [title]);
 
-  // Event style generator based on event type and priority
   const eventStyleGetter = useCallback((event) => {
-    const backgroundColor =
-      getEventTypeColor(event.type) || TYPE_COLORS.default;
-
-    const borderWidth =
-      PRIORITY_BORDER_WIDTH[event.priority] || PRIORITY_BORDER_WIDTH[1];
+    const backgroundColor = getEventTypeColor(event.type);
+    const priorityBorderWidth = { 1: "1px", 2: "2px", 3: "3px" };
 
     return {
       style: {
         backgroundColor,
-        borderWidth,
         color: "#fff",
         borderRadius: "4px",
+        borderWidth: priorityBorderWidth[event.priority] || "1px",
       },
     };
   }, []);
 
-  // Format initial events on component mount
   useEffect(() => {
-    if (initialEvents && Array.isArray(initialEvents)) {
-      const formattedEvents = initialEvents.map((event) => ({
-        ...event,
-        start: new Date(event.startdate),
-        end: new Date(event.enddate),
-      }));
-      setEvents(formattedEvents);
-    } else {
-      setEvents([]);
-    }
+    const formattedEvents = initialEvents?.length
+      ? initialEvents.map((event) => ({
+          ...event,
+          start: new Date(event.startdate),
+          end: new Date(event.enddate),
+        }))
+      : [];
+    setEvents(formattedEvents);
   }, [initialEvents]);
 
-  // Calculate date range based on current view
   const getDateRange = useCallback((date, view) => {
-    let rangeStart, rangeEnd;
+    const year = date.getFullYear();
+    const month = date.getMonth();
 
     switch (view) {
       case "month":
-        rangeStart = new Date(date.getFullYear(), date.getMonth(), 1);
-        rangeEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-        break;
+        return {
+          rangeStart: new Date(year, month, 1),
+          rangeEnd: new Date(year, month + 1, 0),
+        };
       case "week":
         const weekStart = new Date(date);
         weekStart.setDate(date.getDate() - date.getDay());
-        rangeStart = weekStart;
-
         const weekEnd = new Date(weekStart);
         weekEnd.setDate(weekStart.getDate() + 6);
-        rangeEnd = weekEnd;
-        break;
+        return { rangeStart: weekStart, rangeEnd: weekEnd };
       case "day":
-        rangeStart = date;
-        rangeEnd = date;
-        break;
-      default: // Agenda view - default to current month
-        rangeStart = new Date(date.getFullYear(), date.getMonth(), 1);
-        rangeEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+        return { rangeStart: date, rangeEnd: date };
+      default:
+        return {
+          rangeStart: new Date(year, month, 1),
+          rangeEnd: new Date(year, month + 1, 0),
+        };
     }
-
-    return { rangeStart, rangeEnd };
   }, []);
 
-  // Get API base URL
-  const baseUrl = useMemo(() => import.meta.env.VITE_API_URL || "", []);
-
-  // Fetch events from API
   const fetchEvents = useCallback(
     async (start, end, viewType) => {
       if (!userId) return;
@@ -185,19 +113,20 @@ const Planning = ({ title, initialEvents }) => {
       try {
         const startMonth = start.getMonth() + 1;
         const endMonth = end.getMonth() + 1;
-        const isSameMonth = startMonth === endMonth || viewType !== "month";
-        let fetchedEvents = [];
+        const months =
+          startMonth === endMonth || viewType !== "month"
+            ? [startMonth]
+            : [startMonth, endMonth];
 
-        // Define a helper function to fetch events
+        const typesToFetch = isAllPlannings ? [1, 2, 3] : [eventType];
+
         const fetchEventsByTypeAndMonth = async (type, month) => {
-          const apiUrl = `${baseUrl}/api/events/${userId}/month/${month}?type=${type}`;
           try {
-            const response = await axios.get(apiUrl, {
-              timeout: 10000,
-              headers: { Accept: "application/json" },
-              validateStatus: (status) => status >= 200 && status < 300,
-            });
-            return validateResponse(response);
+            const response = await axios.get(
+              `${baseUrl}/api/events/${userId}/month/${month}?type=${type}`,
+              { timeout: 10000, headers: { Accept: "application/json" } }
+            );
+            return validateResponse(response) || [];
           } catch (error) {
             console.error(
               `Error fetching events for type ${type}, month ${month}:`,
@@ -207,48 +136,24 @@ const Planning = ({ title, initialEvents }) => {
           }
         };
 
-        // Determine which events to fetch based on view
-        if (isSameMonth) {
-          // Single month case
-          const typesToFetch = isAllPlannings ? [1, 2, 3] : [eventType];
-          const eventPromises = typesToFetch.map((type) =>
-            fetchEventsByTypeAndMonth(type, startMonth)
-          );
+        const promises = months.flatMap((month) =>
+          typesToFetch.map((type) => fetchEventsByTypeAndMonth(type, month))
+        );
 
-          const results = await Promise.all(eventPromises);
-          results.forEach((events) => fetchedEvents.push(...events));
-        } else {
-          // Multiple month case
-          const typesToFetch = isAllPlannings ? [1, 2, 3] : [eventType];
-          const eventPromises = [];
+        const results = await Promise.all(promises);
+        const fetchedEvents = results.flat();
 
-          // Add promises for both months
-          typesToFetch.forEach((type) => {
-            eventPromises.push(fetchEventsByTypeAndMonth(type, startMonth));
-            eventPromises.push(fetchEventsByTypeAndMonth(type, endMonth));
-          });
+        const formattedEvents = fetchedEvents
+          .map((event) => ({
+            ...event,
+            start: new Date(event.startdate),
+            end: new Date(event.enddate),
+          }))
+          .sort((a, b) => a.start - b.start);
 
-          const results = await Promise.all(eventPromises);
-          results.forEach((events) => fetchedEvents.push(...events));
-        }
-
-        // Ensure fetchedEvents is an array
-        if (!Array.isArray(fetchedEvents)) {
-          console.error("Fetched events is not an array");
-          fetchedEvents = [];
-        }
-
-        // Format dates and sort events
-        const formattedEvents = fetchedEvents.map((event) => ({
-          ...event,
-          start: new Date(event.startdate),
-          end: new Date(event.enddate),
-        }));
-
-        formattedEvents.sort((a, b) => a.start - b.start);
         setEvents(formattedEvents);
       } catch (error) {
-        console.error("Error in fetchEvents function:", error);
+        console.error("Error fetching events:", error);
         setEvents([]);
       } finally {
         setIsLoading(false);
@@ -257,34 +162,11 @@ const Planning = ({ title, initialEvents }) => {
     [userId, baseUrl, eventType, isAllPlannings]
   );
 
-  // Load events when dependencies change
   useEffect(() => {
-    let isMounted = true;
+    if (!userId || isAllPlannings) return;
 
-    const loadEvents = async () => {
-      if (!userId) return;
-
-      setIsLoading(true);
-      try {
-        const { rangeStart, rangeEnd } = getDateRange(currentDate, currentView);
-
-        if (isMounted) {
-          await fetchEvents(rangeStart, rangeEnd, currentView);
-        }
-      } catch (error) {
-        console.error("Error loading events:", error);
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    loadEvents();
-
-    return () => {
-      isMounted = false;
-    };
+    const { rangeStart, rangeEnd } = getDateRange(currentDate, currentView);
+    fetchEvents(rangeStart, rangeEnd, currentView);
   }, [
     userId,
     currentDate,
@@ -292,65 +174,123 @@ const Planning = ({ title, initialEvents }) => {
     refreshTrigger,
     fetchEvents,
     getDateRange,
+    isAllPlannings,
   ]);
 
-  // Helper for adjusting date with timezone offset
-  const adjustDateWithTimezone = useCallback((date) => {
-    const adjustedDate = new Date(date);
-    const timezoneOffsetInHours = Math.abs(new Date().getTimezoneOffset()) / 60;
-    adjustedDate.setHours(adjustedDate.getHours() + timezoneOffsetInHours);
-    return adjustedDate;
+  const apiRequest = useCallback(async (url, method, data = null) => {
+    const config = {
+      timeout: 10000,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    };
+
+    return method === "delete" && data
+      ? axios.delete(url, { ...config, data })
+      : axios[method](url, data, config);
   }, []);
 
-  // API operations for events
+  const refreshEvents = useCallback(() => {
+    if (!isAllPlannings) {
+      setRefreshTrigger((prev) => prev + 1);
+    }
+  }, [isAllPlannings]);
+
+  const addEventToCalendar = useCallback(
+    (newEvent) => {
+      if (isAllPlannings || newEvent.type === eventType) {
+        const formattedEvent = {
+          ...newEvent,
+          start: new Date(newEvent.startdate),
+          end: new Date(newEvent.enddate),
+        };
+        setEvents((prevEvents) => [...prevEvents, formattedEvent]);
+      }
+    },
+    [isAllPlannings, eventType]
+  );
+
+  const updateEventInCalendar = useCallback(
+    (updatedEvent) => {
+      const formattedEvent = {
+        ...updatedEvent,
+        start: new Date(updatedEvent.startdate),
+        end: new Date(updatedEvent.enddate),
+      };
+
+      setEvents((prevEvents) => {
+        const eventExists = prevEvents.some(
+          (event) => event.ID === updatedEvent.ID
+        );
+        if (eventExists) {
+          return prevEvents.map((event) =>
+            event.ID === updatedEvent.ID ? formattedEvent : event
+          );
+        }
+        // Ajouter si l'événement doit être affiché dans cette vue
+        return isAllPlannings || updatedEvent.type === eventType
+          ? [...prevEvents, formattedEvent]
+          : prevEvents;
+      });
+    },
+    [isAllPlannings, eventType]
+  );
+
+  const removeEventFromCalendar = useCallback((eventId) => {
+    setEvents((prevEvents) =>
+      prevEvents.filter((event) => event.ID !== eventId)
+    );
+  }, []);
+
   const handleCreateEvent = useCallback(
     async (eventData) => {
       if (!userId) return;
 
       try {
-        const apiUrl = `${baseUrl}/api/events/create`;
-
-        const adjustedStartDate = adjustDateWithTimezone(eventData.start);
-        const adjustedEndDate = adjustDateWithTimezone(eventData.end);
-
-        await axios.post(
-          apiUrl,
+        const response = await apiRequest(
+          `${baseUrl}/api/events/create`,
+          "post",
           {
             userId,
             title: eventData.title,
-            startdate: adjustedStartDate.toISOString(),
-            enddate: adjustedEndDate.toISOString(),
+            startdate: eventData.start.toISOString(),
+            enddate: eventData.end.toISOString(),
             description: eventData.description || "",
             type: eventData.type || eventType,
             priority: eventData.priority || 1,
             place: eventData.place || "",
-          },
-          {
-            timeout: 10000,
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-            },
-            validateStatus: (status) => status >= 200 && status < 300,
           }
         );
-        success(`Événement créé !`);
+
+        const newEvent = {
+          ID: response.data?.ID || response.data?.id || Date.now(),
+          title: eventData.title,
+          startdate: eventData.start.toISOString(),
+          enddate: eventData.end.toISOString(),
+          description: eventData.description || "",
+          type: eventData.type || eventType,
+          priority: eventData.priority || 1,
+          place: eventData.place || "",
+        };
+
+        success("Événement créé !");
         setShowEventModal(false);
-        setRefreshTrigger((prev) => prev + 1);
+        addEventToCalendar(newEvent);
+        refreshEvents();
       } catch (error) {
         console.error("Error creating event:", error);
-        if (error.response) {
-          console.error(
-            "API error:",
-            error.response.status,
-            error.response.statusText
-          );
-        } else if (error.request) {
-          console.error("No response received from API");
-        }
       }
     },
-    [userId, baseUrl, eventType, adjustDateWithTimezone]
+    [
+      userId,
+      baseUrl,
+      eventType,
+      apiRequest,
+      addEventToCalendar,
+      refreshEvents,
+      success,
+    ]
   );
 
   const handleUpdateEvent = useCallback(
@@ -358,73 +298,84 @@ const Planning = ({ title, initialEvents }) => {
       if (!userId || !selectedEvent?.ID) return;
 
       try {
-        const apiUrl = `${baseUrl}/api/events/update/${selectedEvent.ID}`;
-
-        const adjustedStartDate = adjustDateWithTimezone(eventData.start);
-        const adjustedEndDate = adjustDateWithTimezone(eventData.end);
-
-        await axios.put(
-          apiUrl,
+        await apiRequest(
+          `${baseUrl}/api/events/update/${selectedEvent.ID}`,
+          "put",
           {
             userId,
             title: eventData.title,
-            startdate: adjustedStartDate.toISOString(),
-            enddate: adjustedEndDate.toISOString(),
+            startdate: eventData.start.toISOString(),
+            enddate: eventData.end.toISOString(),
             description: eventData.description || "",
             type: eventData.type || selectedEvent.type,
             priority: eventData.priority || selectedEvent.priority,
             place: eventData.place || selectedEvent.place,
-          },
-          {
-            timeout: 10000,
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-            },
-            validateStatus: (status) => status >= 200 && status < 300,
           }
         );
+
+        const updatedEvent = {
+          ...selectedEvent,
+          title: eventData.title,
+          startdate: eventData.start.toISOString(),
+          enddate: eventData.end.toISOString(),
+          description: eventData.description || "",
+          type: eventData.type || selectedEvent.type,
+          priority: eventData.priority || selectedEvent.priority,
+          place: eventData.place || selectedEvent.place,
+        };
+
         success("Événement mis à jour !");
         setShowEditModal(false);
-        setRefreshTrigger((prev) => prev + 1);
+        updateEventInCalendar(updatedEvent);
+        refreshEvents();
       } catch (error) {
         console.error("Error updating event:", error);
       }
     },
-    [userId, baseUrl, selectedEvent, adjustDateWithTimezone]
+    [
+      userId,
+      baseUrl,
+      selectedEvent,
+      apiRequest,
+      updateEventInCalendar,
+      refreshEvents,
+      success,
+    ]
   );
 
   const handleDeleteEvent = useCallback(async () => {
     if (!userId || !selectedEvent?.ID) return;
 
     try {
-      const apiUrl = `${baseUrl}/api/events/delete/${selectedEvent.ID}`;
+      await apiRequest(
+        `${baseUrl}/api/events/delete/${selectedEvent.ID}`,
+        "delete",
+        { userId }
+      );
 
-      await axios.delete(apiUrl, {
-        data: { userId },
-        timeout: 10000,
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        validateStatus: (status) => status >= 200 && status < 300,
-      });
       success("Événement supprimé !");
       setShowEditModal(false);
-      setRefreshTrigger((prev) => prev + 1);
+      removeEventFromCalendar(selectedEvent.ID);
+      refreshEvents();
     } catch (error) {
       console.error("Error deleting event:", error);
     }
-  }, [userId, baseUrl, selectedEvent]);
+  }, [
+    userId,
+    baseUrl,
+    selectedEvent,
+    apiRequest,
+    removeEventFromCalendar,
+    refreshEvents,
+    success,
+  ]);
 
-  // Event handlers for calendar interactions
-  const handleNavigate = useCallback((newDate) => {
-    setCurrentDate(newDate);
-  }, []);
-
-  const handleViewChange = useCallback((view) => {
-    setCurrentView(view);
-  }, []);
+  const handleNavigate = useCallback((newDate) => setCurrentDate(newDate), []);
+  const handleViewChange = useCallback((view) => setCurrentView(view), []);
+  const toggleFullscreen = useCallback(
+    () => setIsFullscreen((prev) => !prev),
+    []
+  );
 
   const handleSelectSlot = useCallback(
     ({ start, end }) => {
@@ -447,104 +398,89 @@ const Planning = ({ title, initialEvents }) => {
     setShowEditModal(true);
   }, []);
 
-  const toggleFullscreen = useCallback(() => {
-    setIsFullscreen((prev) => !prev);
-  }, []);
-
-  // Render calendar with appropriate height
-  const renderCalendar = useCallback(
-    (height = "31.25rem") => (
-      <Calendar
-        localizer={localizer}
-        culture="fr"
-        events={events}
-        startAccessor="start"
-        endAccessor="end"
-        selectable
-        onSelectSlot={handleSelectSlot}
-        onSelectEvent={handleSelectEvent}
-        defaultView="week"
-        view={currentView}
-        date={currentDate}
-        onNavigate={handleNavigate}
-        onView={handleViewChange}
-        views={["month", "week", "day", "agenda"]}
-        style={{ height }}
-        className="bg-white rounded-lg shadow-sm no-border"
-        components={{
-          toolbar: (props) => (
-            <CustomToolbar
-              {...props}
-              onNavigate={props.onNavigate}
-              onView={props.onView}
-              view={props.view}
-            />
-          ),
-        }}
-        messages={CALENDAR_MESSAGES}
-        formats={CALENDAR_FORMATS}
-        eventPropGetter={eventStyleGetter}
-        ref={calendarRef}
-      />
-    ),
+  const calendarProps = useMemo(
+    () => ({
+      localizer,
+      culture: "fr",
+      events,
+      startAccessor: "start",
+      endAccessor: "end",
+      selectable: true,
+      onSelectSlot: handleSelectSlot,
+      onSelectEvent: handleSelectEvent,
+      defaultView: "week",
+      view: currentView,
+      date: currentDate,
+      onNavigate: handleNavigate,
+      onView: handleViewChange,
+      views: ["month", "week", "day", "agenda"],
+      className: "bg-white rounded-lg shadow-sm no-border",
+      components: {
+        toolbar: (props) => (
+          <CustomToolbar
+            {...props}
+            onNavigate={props.onNavigate}
+            onView={props.onView}
+            view={props.view}
+          />
+        ),
+      },
+      messages: CALENDAR_CONFIG.messages,
+      formats: CALENDAR_CONFIG.formats,
+      eventPropGetter: eventStyleGetter,
+      ref: calendarRef,
+    }),
     [
       events,
-      handleNavigate,
-      handleSelectEvent,
-      handleSelectSlot,
-      handleViewChange,
-      currentDate,
       currentView,
+      currentDate,
+      handleNavigate,
+      handleViewChange,
+      handleSelectSlot,
+      handleSelectEvent,
       eventStyleGetter,
     ]
   );
 
   return (
     <div className="p-4 bg-white rounded-lg shadow-md">
-      <div className="calendar-container">
+      <div className="calendar-container relative">
         {isLoading && (
-          <div className="loading-overlay">
-            <div className="spinner-border text-primary" role="status">
-              <span className="visually-hidden">Chargement...</span>
-            </div>
+          <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-10">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600" />
           </div>
         )}
-        {renderCalendar("31.25rem")}
+        <Calendar {...calendarProps} style={{ height: "31.25rem" }} />
       </div>
 
       <div className="flex justify-end mt-3">
         <Button
           onClick={toggleFullscreen}
-          className="w-10 h-9 flex items-center justify-center bg-indigo-600"
+          className="w-10 h-9 flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 transition-colors"
           aria-label={isFullscreen ? "Réduire" : "Agrandir"}
         >
           {isFullscreen ? <FaCompress /> : <FaExpand />}
         </Button>
       </div>
 
-      {/* Fullscreen Modal */}
-      <Modal
-        show={isFullscreen}
-        onClose={toggleFullscreen}
-        size="full"
-        position="center"
-      >
-        <Modal.Header>{title}</Modal.Header>
-        <Modal.Body>
-          <div className="calendar-container">{renderCalendar("100vh")}</div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            onClick={toggleFullscreen}
-            className="w-10 h-10 flex items-center justify-center bg-indigo-600"
-            aria-label="Réduire"
-          >
-            <FaCompress />
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      {isFullscreen && (
+        <Modal show onClose={toggleFullscreen} size="full" position="center">
+          <Modal.Header>{title}</Modal.Header>
+          <Modal.Body>
+            <Calendar {...calendarProps} style={{ height: "100vh" }} />
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              onClick={toggleFullscreen}
+              className="w-10 h-10 flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 transition-colors"
+              aria-label="Réduire"
+            >
+              <FaCompress />
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      )}
 
-      {/* Event Modals */}
       <EventModal
         show={showEventModal}
         onHide={() => setShowEventModal(false)}

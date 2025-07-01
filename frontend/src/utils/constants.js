@@ -33,3 +33,43 @@ export function getEventTypeTwClass(type) {
   const key = String(type);
   return EVENT_TYPES[key]?.twClass || "bg-gray-200";
 }
+
+export const CALENDAR_CONFIG = {
+  messages: {
+    allDay: "Toute la journée",
+    previous: "Précédent",
+    next: "Suivant",
+    today: "Aujourd'hui",
+    month: "Mois",
+    week: "Semaine",
+    day: "Jour",
+    agenda: "Agenda",
+    date: "Date",
+    time: "Heure",
+    event: "Événement",
+    noEventsInRange: "Aucun événement dans cette période.",
+    showMore: (total) => `+ ${total} plus`,
+  },
+  formats: {
+    timeGutterFormat: (date, culture, localizer) =>
+      localizer.format(date, "HH:mm", culture),
+    eventTimeRangeFormat: ({ start, end }, culture, localizer) =>
+      `${localizer.format(start, "HH:mm", culture)} - ${localizer.format(
+        end,
+        "HH:mm",
+        culture
+      )}`,
+    agendaTimeRangeFormat: ({ start, end }, culture, localizer) =>
+      `${localizer.format(start, "HH:mm", culture)} - ${localizer.format(
+        end,
+        "HH:mm",
+        culture
+      )}`,
+  },
+};
+
+export const PRIORITY_STYLES = {
+  1: "border-1",
+  2: "border-2",
+  3: "border-4",
+};
