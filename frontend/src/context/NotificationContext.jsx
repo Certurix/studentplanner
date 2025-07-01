@@ -9,7 +9,7 @@ const TOAST_TYPES = {
   success: {
     icon: (
       <Icon
-        icon="mdi:check-circle"
+        icon="tabler:circle-check-filled"
         width="20"
         height="20"
         className="text-green-700 dark:text-green-300"
@@ -23,7 +23,7 @@ const TOAST_TYPES = {
   error: {
     icon: (
       <Icon
-        icon="mdi:alert-circle"
+        icon="tabler:alert-circle-filled"
         width="20"
         height="20"
         className="text-red-700 dark:text-red-300"
@@ -37,7 +37,7 @@ const TOAST_TYPES = {
   warning: {
     icon: (
       <Icon
-        icon="mdi:alert"
+        icon="tabler:alert-triangle-filled"
         width="20"
         height="20"
         className="text-yellow-700 dark:text-yellow-300"
@@ -51,7 +51,7 @@ const TOAST_TYPES = {
   info: {
     icon: (
       <Icon
-        icon="mdi:information"
+        icon="tabler:info-circle-filled"
         width="20"
         height="20"
         className="text-blue-700 dark:text-blue-300"

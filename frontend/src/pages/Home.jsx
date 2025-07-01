@@ -46,8 +46,10 @@ const Home = () => {
                 >
                   Découvrir
                   <Icon
-                    icon="akar-icons:arrow-right"
-                    className="ml-2 h-5 w-5 self-center"
+                    icon="tabler:arrow-right"
+                    width="20"
+                    height="20"
+                    className="ml-2 self-center"
                   />
                 </Button>
               </div>

@@ -248,13 +248,12 @@ const EventModal = ({
             <Button color="blue" type="submit">
               {isEdit ? (
                 <>
-                  <Icon icon="fa6-solid:pen-to-square" className="mr-2" />{" "}
-                  Mettre à jour
+                  <Icon icon="tabler:edit" className="mr-2" /> Mettre à jour
                 </>
               ) : (
                 <>
                   <Icon
-                    icon="fa6-solid:plus"
+                    icon="tabler:plus"
                     width="16"
                     height="16"
                     className="mr-2 content-center"
@@ -266,7 +265,7 @@ const EventModal = ({
 
             {isEdit && (
               <Button color="failure" onClick={() => onDeleteEvent()}>
-                <Icon icon="fa6-solid:trash" className="mr-2" /> Supprimer
+                <Icon icon="tabler:trash" className="mr-2" /> Supprimer
               </Button>
             )}
           </div>

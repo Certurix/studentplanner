@@ -59,7 +59,9 @@ const Members = () => {
         <div className="relative">
           <Icon
             icon="tabler:search"
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"
+            width="20"
+            height="20"
+            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
           />
           <input
             type="text"
@@ -117,8 +119,10 @@ const Members = () => {
         {filteredMembers.length === 0 && (
           <div className="text-center py-8">
             <Icon
-              icon="tabler:users-off"
-              className="w-12 h-12 text-gray-400 mx-auto mb-2"
+              icon="tabler:users-group"
+              width="40"
+              height="40"
+              className="text-gray-400 mx-auto mb-2"
             />
             <p className="text-gray-500">Aucun membre trouvé</p>
           </div>
