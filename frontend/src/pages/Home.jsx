@@ -26,7 +26,7 @@ const Home = () => {
           <div className="max-w-7xl mx-auto px-4 py-12 lg:py-20">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div className="space-y-8">
-                <h1 className="text-4xl lg:text-6xl font-bold leading-tight">
+                <h1 className="text-4xl lg:text-6xl font-bold leading-tight text-gray-900">
                   <span className="text-indigo-600">ADIEU</span> LES AGENDAS
                   SURCHARGÉS 😟
                   <br />
@@ -252,7 +252,7 @@ const Home = () => {
 
         {/* Section du tableau de bord */}
         <section className="py-24 text-center">
-          <h2 className="text-4xl font-bold text-slate-700 drop-shadow-lg mb-16">
+          <h2 className="text-4xl font-bold text-gray-900 drop-shadow-lg mb-16">
             LE TABLEAU DE BORD
           </h2>
           <div className="py-16">
@@ -299,12 +299,18 @@ const Home = () => {
               </h4>
               <ul className="space-y-2">
                 <li>
-                  <a href="#about" className="text-gray-600 hover:text-indigo-600">
+                  <a
+                    href="#about"
+                    className="text-gray-600 hover:text-indigo-600"
+                  >
                     À propos
                   </a>
                 </li>
                 <li>
-                  <a href="/dashboard/support" className="text-gray-600 hover:text-indigo-600">
+                  <a
+                    href="/dashboard/support"
+                    className="text-gray-600 hover:text-indigo-600"
+                  >
                     Contact
                   </a>
                 </li>
