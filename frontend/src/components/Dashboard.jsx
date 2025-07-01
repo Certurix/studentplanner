@@ -105,6 +105,12 @@ const ROUTE_CONFIGS = {
     showNewButton: false,
     planningTitle: "Paramètres",
   },
+  "/dashboard/search": {
+    title: null,
+    subtitle: null,
+    showNewButton: false,
+    planningTitle: "Recherche",
+  },
 };
 
 /**

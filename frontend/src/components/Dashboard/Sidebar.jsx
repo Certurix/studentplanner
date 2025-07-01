@@ -87,7 +87,7 @@ export default function SidebarComponent({ data }) {
   // Gestion de la soumission du formulaire de recherche
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    navigate(`/events/search?query=${encodeURIComponent(searchQuery)}`);
+    navigate(`/dashboard/search?query=${encodeURIComponent(searchQuery)}`);
     if (window.innerWidth < 768) setIsMobileOpen(false);
   };
 

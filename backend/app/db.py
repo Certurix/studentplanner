@@ -317,3 +317,33 @@ def update_event(event_id, title, description, type, priority, startdate, enddat
     connection.commit()
     cursor.close()
     return True
+
+def search_events(query, user_id):
+    """Search for events by query for a specific user."""
+    print(f"DB search: query='{query}', user_id={user_id}")
+    connection = get_connection()
+    if connection is None:
+        print("DB connection failed")
+        return []
+    
+    cursor = connection.cursor(dictionary=True)
+    try:
+        sql = '''
+            SELECT ID, title, description, type, priority, startdate, enddate, place
+            FROM events
+            WHERE (title LIKE ? OR description LIKE ?) AND id_user = ?
+            ORDER BY startdate ASC
+        '''
+        params = ('%' + query + '%', '%' + query + '%', user_id)
+        print(f"Executing SQL: {sql}")
+        print(f"With params: {params}")
+        cursor.execute(sql, params)
+        rows = cursor.fetchall()
+        print(f"DB returned {len(rows)} rows")
+        return rows
+    except Exception as e:
+        print(f"DB search error: {e}")
+        return []
+    finally:
+        cursor.close()
+        connection.close()
