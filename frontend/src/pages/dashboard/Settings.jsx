@@ -35,22 +35,18 @@ export default function UserSettings({ data }) {
       lastname: form.elements["lastname"].value,
       email: form.elements["email"].value,
       school: form.elements["school"].value,
-      class: form.elements["class"].value,
+      classname: form.elements["class"].value, // Map 'class' form field to 'classname' for API
       avatar: data.avatar,
     };
 
     try {
       // Send individual requests to update user data
-      const updateFields = [
-        "name",
-        "lastname",
-        "email",
-        "school",
-        "classname",
-        "avatar",
-      ];
+      const updateFields = ["name", "lastname", "email", "school", "classname"];
+
+
       for (const field of updateFields) {
-        if (formData[field]) {
+        if (formData[field] && formData[field].trim() !== "") {
+
           const response = await fetch(
             `${baseUrl}/api/users/${data.userId}/${field}`,
             {
@@ -65,13 +61,18 @@ export default function UserSettings({ data }) {
           );
 
           if (!response.ok) {
-            throw new Error(`Failed to update ${field}`);
+            const errorText = await response.text();
+            throw new Error(
+              `Failed to update ${field}: ${response.status} ${errorText}`
+            );
           }
+
         }
       }
 
       // Update avatar if it exists
       if (formData.avatar) {
+
         const response = await fetch(
           `${baseUrl}/api/users/${data.userId}/avatar`,
           {
@@ -84,16 +85,18 @@ export default function UserSettings({ data }) {
         );
 
         if (!response.ok) {
-          throw new Error("Failed to update avatar");
+          const errorText = await response.text();
+          throw new Error(
+            `Failed to update avatar: ${response.status} ${errorText}`
+          );
         }
+
       }
       success("Paramètres du profil mis à jour avec succès", {
         duration: 5000,
       });
-      // Reload with a small delay to let the user see the notification first
-      setTimeout(() => window.location.reload(), 1000);
+      window.location.reload();
     } catch (err) {
-      console.error("Error saving settings:", err);
       error(`Echec de la sauvegarde des paramètres: ${err.message}`, {
         title: "Erreur",
       });
@@ -124,6 +127,7 @@ export default function UserSettings({ data }) {
     }
 
     try {
+
       const response = await fetch(
         `${baseUrl}/api/users/${data.userId}/password`,
         {
@@ -139,7 +143,9 @@ export default function UserSettings({ data }) {
       );
 
       if (!response.ok) {
-        const errorData = await response.json();
+        const errorData = await response
+          .json()
+          .catch(() => ({ message: "Unknown error" }));
         throw new Error(errorData.message || "Failed to update password");
       }
 
@@ -150,7 +156,6 @@ export default function UserSettings({ data }) {
 
       form.reset();
     } catch (err) {
-      console.error("Error updating password:", err);
       error(`Échec de la mise à jour du mot de passe: ${err.message}`, {
         title: "Erreur de sécurité",
       });
@@ -159,11 +164,7 @@ export default function UserSettings({ data }) {
 
   return (
     <section className="container mx-auto mt-4">
-      <Tabs
-        aria-label="Paramètres utilisateur"
-        variant="underline"
-        defaultIndex={0}
-      >
+      <Tabs aria-label="Paramètres utilisateur" variant="underline">
         <TabItem title="Mes infos">
           <Card className="p-4 shadow-sm">
             <form onSubmit={handleSubmit} className="space-y-6">

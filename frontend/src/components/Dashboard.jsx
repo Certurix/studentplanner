@@ -158,7 +158,7 @@ const Dashboard = () => {
             lastname: response.data.lastname || "",
             email: response.data.email || "",
             school: response.data.school || "",
-            className: response.data.classname || "",
+            className: response.data.class || "",
           });
         }
       } catch (err) {
@@ -337,7 +337,7 @@ const Dashboard = () => {
                       name: userProfile.name,
                       lastname: userProfile.lastname,
                       email: userProfile.email,
-                      className: userProfile.className,
+                      class: userProfile.className, // Rename to 'class' to match Settings expectation
                       school: userProfile.school,
                     }}
                   />
