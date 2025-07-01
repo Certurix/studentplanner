@@ -187,11 +187,4 @@ def update_event(id: int, event: Event):
 @app.get("/events/search")
 def search_events(query: str, user_id: int):
     """Search for events by query for a specific user."""
-    print(f"Searching for '{query}' for user {user_id}")
-    try:
-        results = db.search_events(query, user_id)
-        print(f"Found {len(results)} results")
-        return results
-    except Exception as e:
-        print(f"Search error: {e}")
-        raise HTTPException(status_code=500, detail=f"Search failed: {str(e)}")
+    return db.search_events(query, user_id)
