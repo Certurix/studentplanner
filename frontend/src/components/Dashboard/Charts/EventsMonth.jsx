@@ -3,6 +3,7 @@ import Chart from "react-apexcharts";
 import axios from "axios";
 import useUser from "@/hooks/useUser";
 import { getEventTypeLabel } from "@/utils/constants";
+import Loader from "@/components/ui/Loader";
 
 // Donut chart to show the percentage of events per type in the current month
 // Uses ApexCharts with react-apexcharts
@@ -54,7 +55,7 @@ const EventsMonth = () => {
   }, [userId, currentMonth, currentYear]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
 
   if (error) {

@@ -89,7 +89,7 @@ const EventsList = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>Chargement...</div>;
   }
 
   if (error) {
