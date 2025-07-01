@@ -132,7 +132,6 @@ export default function SidebarComponent({ data }) {
   const classItems = [
     { to: "/dashboard/class/chat", icon: "messages", label: "Chat" },
     { to: "/dashboard/class/members", icon: "users", label: "Membres" },
-    { disabled: true, icon: "ban", label: "Personnel" },
   ];
 
   const footerItems = [
