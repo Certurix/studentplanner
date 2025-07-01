@@ -87,16 +87,15 @@ export default function UserSettings({ data }) {
           throw new Error("Failed to update avatar");
         }
       }
-      success("Profile settings updated successfully", {
-        title: "Settings Saved",
+      success("Paramètres du profil mis à jour avec succès", {
         duration: 5000,
       });
       // Reload with a small delay to let the user see the notification first
       setTimeout(() => window.location.reload(), 1000);
     } catch (err) {
       console.error("Error saving settings:", err);
-      error(`Failed to update profile: ${err.message}`, {
-        title: "Settings Error",
+      error(`Echec de la sauvegarde des paramètres: ${err.message}`, {
+        title: "Erreur",
       });
       return;
     }
@@ -160,7 +159,11 @@ export default function UserSettings({ data }) {
 
   return (
     <section className="container mx-auto mt-4">
-      <Tabs aria-label="Paramètres utilisateur" defaultIndex={0}>
+      <Tabs
+        aria-label="Paramètres utilisateur"
+        variant="underline"
+        defaultIndex={0}
+      >
         <TabItem title="Mes infos">
           <Card className="p-4 shadow-sm">
             <form onSubmit={handleSubmit} className="space-y-6">
