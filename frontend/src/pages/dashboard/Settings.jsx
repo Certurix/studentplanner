@@ -164,7 +164,7 @@ export default function UserSettings({ data }) {
 
   return (
     <section className="container mx-auto mt-4">
-      <Tabs aria-label="Paramètres utilisateur" variant="underline">
+      <Tabs aria-label="Paramètres utilisateur" variant="underline" color="default">
         <TabItem title="Mes infos">
           <Card className="p-4 shadow-sm">
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -263,7 +263,7 @@ export default function UserSettings({ data }) {
                 <Button color="red" type="button">
                   Annuler
                 </Button>
-                <Button color="blue" type="submit">
+                <Button color="default" type="submit">
                   Sauvegarder
                 </Button>
               </div>
@@ -320,7 +320,7 @@ export default function UserSettings({ data }) {
                 <Button color="red" type="button">
                   Annuler
                 </Button>
-                <Button type="submit">Changer le mot de passe</Button>
+                <Button color="default" type="submit">Sauvegarder</Button>
               </div>
             </form>
           </Card>
