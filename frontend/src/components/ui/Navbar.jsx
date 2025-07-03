@@ -71,7 +71,7 @@ const Navbar = () => {
             A propos
           </FlowbiteNavbar.Link>
           <FlowbiteNavbar.Link
-            href="/contact"
+            href="/dashboard/contact"
             className="md:text-gray-700 hover:text-indigo-600"
           >
             Contact
