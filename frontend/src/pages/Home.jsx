@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "flowbite-react";
 import { Icon } from "@iconify-icon/react";
 import Navbar from "@/components/ui/Navbar";
@@ -6,18 +6,11 @@ import Logo from "@/components/ui/Logo";
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-white font-inter">
-      <a
-        href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-indigo-600 text-white px-4 py-2 rounded z-50"
-      >
-        Aller au contenu principal
-      </a>
-
+    <main className="min-h-screen bg-white font-inter">
       <Navbar />
 
       {/* Contenu principal */}
-      <main className="flex-1">
+      <div className="flex-1">
         {/* Section Hero */}
         <section className="relative overflow-hidden">
           {/* Décoration */}
@@ -43,6 +36,7 @@ const Home = () => {
                   color="default"
                   size="lg"
                   className="items-center content-center"
+                  href="#about"
                 >
                   Découvrir
                   <Icon
@@ -64,7 +58,6 @@ const Home = () => {
             </div>
           </div>
         </section>
-
         {/* Section d'introduction */}
         <section className="py-24 px-4">
           <div className="max-w-6xl mx-auto">
@@ -118,7 +111,6 @@ const Home = () => {
             </div>
           </div>
         </section>
-
         {/* Section "marketing" */}
         <section
           className="py-24 bg-cover bg-center bg-no-repeat relative"
@@ -186,7 +178,6 @@ const Home = () => {
             </div>
           </div>
         </section>
-
         {/* Section des types de plannings */}
         <section className="py-24 px-4">
           <div className="max-w-6xl mx-auto text-center">
@@ -251,7 +242,6 @@ const Home = () => {
             </div>
           </div>
         </section>
-
         {/* Section du tableau de bord */}
         <section className="py-24 text-center">
           <h2 className="text-4xl font-bold text-gray-900 drop-shadow-lg mb-16">
@@ -259,14 +249,13 @@ const Home = () => {
           </h2>
           <div className="py-16">
             <img
-              src="Vector.png"
+              src="dashboard.png"
               alt="Illustration du tableau de bord"
-              className="mx-auto max-w-full h-auto"
+              className="mx-auto w-full max-w-3xl h-auto rounded-xl shadow-lg"
             />
           </div>
         </section>
 
-        {/* Section CTA */}
         <section className="py-24 bg-gray-50">
           <div className="max-w-4xl mx-auto text-center px-4 space-y-10">
             <div className="space-y-5">
@@ -277,12 +266,17 @@ const Home = () => {
                 Propulsez votre organisation et rejoignez-nous !
               </p>
             </div>
-            <button className="bg-indigo-600 text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-indigo-600 transition-colors">
+            <Button
+              color="default"
+              size="lg"
+              className="items-center content-center"
+              href="/register"
+            >
               Commencer
-            </button>
+            </Button>
           </div>
         </section>
-      </main>
+      </div>
 
       {/* Footer */}
       <footer className="bg-white border-t border-gray-200">
@@ -325,7 +319,10 @@ const Home = () => {
               </h4>
               <ul className="space-y-2">
                 <li>
-                  <a href="#" className="text-gray-600 hover:text-indigo-600">
+                  <a
+                    href="/dashboard/support"
+                    className="text-gray-600 hover:text-indigo-600"
+                  >
                     Assistance
                   </a>
                 </li>
@@ -340,7 +337,7 @@ const Home = () => {
           </div>
         </div>
       </footer>
-    </div>
+    </main>
   );
 };
 
