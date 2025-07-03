@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import useUser from "@/hooks/useUser";
 import EventsMonth from "@/components/Dashboard/Charts/EventsMonth";
+import { adjustDateForLocalTimezone } from "@/utils/helpers";
 
 export default function EventStats() {
   const [events, setEvents] = useState([]);
@@ -33,7 +34,7 @@ export default function EventStats() {
   const currentDate = new Date();
   const safeEvents = Array.isArray(events) ? events : [];
   const achievedEvents = safeEvents.filter(
-    (event) => new Date(event.enddate) < currentDate
+    (event) => adjustDateForLocalTimezone(event.enddate) < currentDate
   ).length;
   const upcomingEvents = safeEvents.length - achievedEvents;
   const totalEvents = safeEvents.length;

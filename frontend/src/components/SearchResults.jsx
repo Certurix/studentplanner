@@ -6,6 +6,7 @@ import { Icon } from "@iconify-icon/react";
 import useUser from "@/hooks/useUser";
 import EventModal from "./Dashboard/Modals/EventModal";
 import useNotification from "@/hooks/useNotification";
+import { dateToBackendFormat } from "@/utils/helpers";
 
 const SearchResults = () => {
   const [events, setEvents] = useState([]);
@@ -125,8 +126,8 @@ const SearchResults = () => {
             description: eventData.description,
             type: eventData.type,
             priority: eventData.priority,
-            startdate: eventData.start.toISOString(),
-            enddate: eventData.end.toISOString(),
+            startdate: dateToBackendFormat(eventData.start),
+            enddate: dateToBackendFormat(eventData.end),
             place: eventData.place,
           }
         );

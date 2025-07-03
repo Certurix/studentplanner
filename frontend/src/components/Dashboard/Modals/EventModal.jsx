@@ -12,6 +12,7 @@ import moment from "moment";
 import flatpickr from "flatpickr";
 import { French } from "flatpickr/dist/l10n/fr.js";
 import "flatpickr/dist/flatpickr.css";
+import { adjustDateForLocalTimezone } from "@/utils/helpers";
 
 const EventModal = ({
   show,
@@ -41,8 +42,8 @@ const EventModal = ({
     if (event) {
       setFormData({
         title: event.title || "",
-        start: event.start || new Date(),
-        end: event.end || new Date(),
+        start: adjustDateForLocalTimezone(event.start || new Date()),
+        end: adjustDateForLocalTimezone(event.end || new Date()),
         description: event.description || "",
         type:
           event.type ||

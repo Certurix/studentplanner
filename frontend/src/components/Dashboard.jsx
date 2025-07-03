@@ -32,6 +32,7 @@ import Settings from "@/pages/dashboard/Settings";
 // Hooks
 import useUser from "@/hooks/useUser";
 import useNotification from "@/hooks/useNotification";
+import { dateToBackendFormat } from "@/utils/helpers";
 import Chat from "@/pages/dashboard/class/chat";
 import Members from "@/pages/dashboard/class/members";
 import Support from "@/pages/dashboard/Support";
@@ -185,8 +186,8 @@ const Dashboard = () => {
             body: JSON.stringify({
               userId,
               title: eventData.title,
-              startdate: eventData.start,
-              enddate: eventData.end,
+              startdate: dateToBackendFormat(eventData.start),
+              enddate: dateToBackendFormat(eventData.end),
               description: eventData.description || "",
               type: eventData.type || 1,
               priority: eventData.priority || 1,

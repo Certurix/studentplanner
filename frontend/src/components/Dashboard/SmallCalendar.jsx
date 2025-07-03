@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import useUser from "@/hooks/useUser";
 import { getEventTypeTwClass } from "@/utils/constants";
+import { adjustDateForLocalTimezone, isSameLocalDay } from "@/utils/helpers";
 
 const SmallCalendar = () => {
   const [events, setEvents] = useState([]);
@@ -47,10 +48,17 @@ const SmallCalendar = () => {
     // Ensure events is an array before filtering
     if (!Array.isArray(events)) return [];
 
-    // Filter events that occur on the specified day
+    // Create a date for the given day in the current month
+    const targetDate = new Date(
+      new Date().getFullYear(),
+      new Date().getMonth(),
+      day
+    );
+
+    // Filter events that occur on the specified day using proper timezone comparison
     return events.filter((event) => {
-      const eventDate = new Date(event.startdate);
-      return eventDate.getDate() === day;
+      const eventStartDate = adjustDateForLocalTimezone(event.startdate);
+      return isSameLocalDay(eventStartDate, targetDate);
     });
   };
 

@@ -19,11 +19,8 @@ import EventModal from "./Dashboard/Modals/EventModal";
 import useUser from "@/hooks/useUser";
 import useNotification from "@/hooks/useNotification";
 import { validateResponse } from "@/utils/helpers";
-import {
-  getEventTypeColor,
-  CALENDAR_CONFIG,
-  PRIORITY_STYLES,
-} from "@/utils/constants";
+import { getEventTypeColor, CALENDAR_CONFIG } from "@/utils/constants";
+import { adjustDateForLocalTimezone, dateToBackendFormat } from "@/utils/helpers";
 
 moment.locale("fr");
 const localizer = momentLocalizer(moment);
@@ -72,8 +69,8 @@ const Planning = ({ title, initialEvents }) => {
     const formattedEvents = initialEvents?.length
       ? initialEvents.map((event) => ({
           ...event,
-          start: new Date(event.startdate),
-          end: new Date(event.enddate),
+          start: adjustDateForLocalTimezone(event.startdate),
+          end: adjustDateForLocalTimezone(event.enddate),
         }))
       : [];
     setEvents(formattedEvents);
@@ -146,8 +143,8 @@ const Planning = ({ title, initialEvents }) => {
         const formattedEvents = fetchedEvents
           .map((event) => ({
             ...event,
-            start: new Date(event.startdate),
-            end: new Date(event.enddate),
+            start: adjustDateForLocalTimezone(event.startdate),
+            end: adjustDateForLocalTimezone(event.enddate),
           }))
           .sort((a, b) => a.start - b.start);
 
@@ -202,8 +199,8 @@ const Planning = ({ title, initialEvents }) => {
       if (isAllPlannings || newEvent.type === eventType) {
         const formattedEvent = {
           ...newEvent,
-          start: new Date(newEvent.startdate),
-          end: new Date(newEvent.enddate),
+          start: adjustDateForLocalTimezone(newEvent.startdate),
+          end: adjustDateForLocalTimezone(newEvent.enddate),
         };
         setEvents((prevEvents) => [...prevEvents, formattedEvent]);
       }
@@ -215,8 +212,9 @@ const Planning = ({ title, initialEvents }) => {
     (updatedEvent) => {
       const formattedEvent = {
         ...updatedEvent,
-        start: new Date(updatedEvent.startdate),
-        end: new Date(updatedEvent.enddate),
+        // Traiter les dates de la même façon que lors du chargement initial depuis l'API
+        start: adjustDateForLocalTimezone(updatedEvent.startdate),
+        end: adjustDateForLocalTimezone(updatedEvent.enddate),
       };
 
       setEvents((prevEvents) => {
@@ -248,14 +246,17 @@ const Planning = ({ title, initialEvents }) => {
       if (!userId) return;
 
       try {
+        const startDateFormatted = dateToBackendFormat(eventData.start);
+        const endDateFormatted = dateToBackendFormat(eventData.end);
+
         const response = await apiRequest(
           `${baseUrl}/api/events/create`,
           "post",
           {
             userId,
             title: eventData.title,
-            startdate: eventData.start.toISOString(),
-            enddate: eventData.end.toISOString(),
+            startdate: startDateFormatted,
+            enddate: endDateFormatted,
             description: eventData.description || "",
             type: eventData.type || eventType,
             priority: eventData.priority || 1,
@@ -266,8 +267,8 @@ const Planning = ({ title, initialEvents }) => {
         const newEvent = {
           ID: response.data?.ID || response.data?.id || Date.now(),
           title: eventData.title,
-          startdate: eventData.start.toISOString(),
-          enddate: eventData.end.toISOString(),
+          startdate: startDateFormatted,
+          enddate: endDateFormatted,
           description: eventData.description || "",
           type: eventData.type || eventType,
           priority: eventData.priority || 1,
@@ -298,14 +299,17 @@ const Planning = ({ title, initialEvents }) => {
       if (!userId || !selectedEvent?.ID) return;
 
       try {
+        const startDateFormatted = dateToBackendFormat(eventData.start);
+        const endDateFormatted = dateToBackendFormat(eventData.end);
+
         await apiRequest(
           `${baseUrl}/api/events/update/${selectedEvent.ID}`,
           "put",
           {
             userId,
             title: eventData.title,
-            startdate: eventData.start.toISOString(),
-            enddate: eventData.end.toISOString(),
+            startdate: startDateFormatted,
+            enddate: endDateFormatted,
             description: eventData.description || "",
             type: eventData.type || selectedEvent.type,
             priority: eventData.priority || selectedEvent.priority,
@@ -316,8 +320,8 @@ const Planning = ({ title, initialEvents }) => {
         const updatedEvent = {
           ...selectedEvent,
           title: eventData.title,
-          startdate: eventData.start.toISOString(),
-          enddate: eventData.end.toISOString(),
+          startdate: startDateFormatted,
+          enddate: endDateFormatted,
           description: eventData.description || "",
           type: eventData.type || selectedEvent.type,
           priority: eventData.priority || selectedEvent.priority,
