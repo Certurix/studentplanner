@@ -57,11 +57,14 @@ const EventsList = () => {
             (event) => new Date(event.enddate) >= currentDate
           );
 
-          const fetchedEvents = upcomingEvents.map((event) => ({
-            color: getEventTypeTwClass(event.type),
-            title: event.title,
-            date: formatDate(event.startdate, event.enddate),
-          }));
+          const fetchedEvents = upcomingEvents
+            .map((event) => ({
+              color: getEventTypeTwClass(event.type),
+              title: event.title,
+              date: formatDate(event.startdate, event.enddate),
+              startdate: event.startdate,
+            }))
+            .sort((a, b) => new Date(a.startdate) - new Date(b.startdate));
           setEvents(fetchedEvents);
           setLoading(false);
         } catch (error) {
