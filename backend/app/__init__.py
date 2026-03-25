@@ -14,8 +14,7 @@ origins = [
     "localhost:5173", 
     "http://localhost:5174", 
     "localhost:5174",
-    "http://157.90.111.60",
-    "http://studentplanner.157.90.111.60.sslip.io"
+    "https://studentplanner.romainfurfaro.fr"
 ]
 
 app.add_middleware(
