@@ -14,7 +14,8 @@ origins = [
     "localhost:5173", 
     "http://localhost:5174", 
     "localhost:5174",
-    "https://studentplanner.romainfurfaro.fr"
+    "https://studentplanner.romainfurfaro.fr",
+    "studentplanner.romainfurfaro.fr"
 ]
 
 app.add_middleware(
